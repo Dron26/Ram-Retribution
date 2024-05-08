@@ -1,15 +1,18 @@
-public class PlayerData
+namespace _Project_.CodeBase.Scripts
 {
-    public int health;
-    public int damage;
-    public int armor;
-    public float attackSpeed;
-    
-    public PlayerData(int initialHealth, int initialDamage, int initialArmor, float initialAttackSpeed, int initialGold, int initialHorn, int initialProgress)
+    public class PlayerData
     {
-        health = initialHealth;
-        damage = initialDamage;
-        armor = initialArmor;
-        attackSpeed = initialAttackSpeed;
+        public int health;
+        public int damage;
+        public int armor;
+        public float attackSpeed;
+    
+        public PlayerData(int initialHealth, int initialDamage, int initialArmor, float initialAttackSpeed, int initialGold, int initialHorn, int initialProgress)
+        {
+            health = initialHealth;
+            damage = initialDamage;
+            armor = initialArmor;
+            attackSpeed = initialAttackSpeed;
+        }
     }
 }

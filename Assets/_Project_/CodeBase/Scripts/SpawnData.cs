@@ -1,17 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnData
+namespace _Project_.CodeBase.Scripts
 {
-    public float SpawnTime; // Время между спаунами врагов
-    public int EnemiesToSpawn; // Количество врагов для спавна
-    public Dictionary<List<int>, List<Enemy>> EnemyGroup;
-    public Transform[] SpawnPoints; // Точки спавна врагов
-
-    public SpawnData(float spawnTime, int enemiesToSpawn, Transform[] spawnPoints)
+    public class SpawnData
     {
-        SpawnTime = spawnTime;
-        EnemiesToSpawn = enemiesToSpawn;
-        SpawnPoints = spawnPoints;
+        public float SpawnTime; // Время между спаунами врагов
+        public int EnemiesToSpawn; // Количество врагов для спавна
+        public Dictionary<List<int>, List<Enemy>> EnemyGroup;
+        public Transform[] SpawnPoints; // Точки спавна врагов
+
+        public SpawnData(float spawnTime, int enemiesToSpawn, Transform[] spawnPoints)
+        {
+            SpawnTime = spawnTime;
+            EnemiesToSpawn = enemiesToSpawn;
+            SpawnPoints = spawnPoints;
+        }
     }
 }

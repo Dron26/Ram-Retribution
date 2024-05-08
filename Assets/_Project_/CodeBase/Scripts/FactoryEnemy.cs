@@ -1,17 +1,22 @@
+using _Project_.CodeBase.Scripts.Common.AssetLoad;
+using CompanyName.RamRetribution.Interfaces;
 using UnityEngine;
 
-public class FactoryEnemy : IFactory
+namespace _Project_.CodeBase.Scripts
 {
-    private readonly IAssets _assets;
-
-    public FactoryEnemy(IAssets assets)
+    public class FactoryEnemy : IFactory
     {
-        _assets = assets;
-    }
+        private readonly IAssets _assets;
 
-    public GameObject Create(Vector3 at)
-    {
-        GameObject spawnerPrefab = _assets.Instantiate(AssetPath.Spawner, at);
-        return spawnerPrefab;
+        public FactoryEnemy(IAssets assets)
+        {
+            _assets = assets;
+        }
+
+        public GameObject Create(Vector3 at)
+        {
+            GameObject spawnerPrefab = _assets.Instantiate(AssetPath.SpawnPoint, at);
+            return spawnerPrefab;
+        }
     }
 }

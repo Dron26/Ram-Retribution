@@ -1,11 +1,14 @@
-public class GateData
+namespace _Project_.CodeBase.Scripts
 {
-    public int GateLevel;// Уровень ворот
-    public int MaxHealth;// Максимальное здоровье
-    
-    public GateData(int gateLevel, int maxHealth)
+    public class GateData
     {
-        GateLevel = gateLevel;
-        MaxHealth = maxHealth;
+        public int GateLevel;// Уровень ворот
+        public int MaxHealth;// Максимальное здоровье
+    
+        public GateData(int gateLevel, int maxHealth)
+        {
+            GateLevel = gateLevel;
+            MaxHealth = maxHealth;
+        }
     }
 }
