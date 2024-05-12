@@ -1,5 +1,5 @@
 using _Project_.CodeBase.Scripts.Common.AssetLoad;
-using CompanyName.RamRetribution.Interfaces;
+using _Project_.CodeBase.Scripts.Interfaces;
 using UnityEngine;
 
 namespace _Project_.CodeBase.Scripts

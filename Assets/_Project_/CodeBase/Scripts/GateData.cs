@@ -1,14 +1,21 @@
+using _Project_.CodeBase.Scripts.Common.Enums;
 namespace _Project_.CodeBase.Scripts
 {
     public class GateData
     {
-        public int GateLevel;// Уровень ворот
-        public int MaxHealth;// Максимальное здоровье
+        public int GateLevel;
+        public int MaxHealth;
+        public int StrengthIndex;
+        public GateType Material;
+        public int ReductionModifier;
     
-        public GateData(int gateLevel, int maxHealth)
+        public GateData(int gateLevel, int maxHealth,GateType material, int reductionModifier, int strengthIndex)
         {
             GateLevel = gateLevel;
+            StrengthIndex = strengthIndex;
+            ReductionModifier = reductionModifier;
             MaxHealth = maxHealth;
+            Material = material;
         }
     }
 }

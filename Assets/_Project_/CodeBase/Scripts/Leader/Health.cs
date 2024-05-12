@@ -1,5 +1,5 @@
 using System;
-using CompanyName.RamRetribution.Interfaces;
+using _Project_.CodeBase.Scripts.Interfaces;
 
 namespace _Project_.CodeBase.Scripts.Leader
 {

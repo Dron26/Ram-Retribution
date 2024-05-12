@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Interfaces
+namespace _Project_.CodeBase.Scripts.Interfaces
 {
    public interface IAssets
    {
