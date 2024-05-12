@@ -10,9 +10,9 @@ namespace _Project_.CodeBase.Scripts.Particles
         private Enemy  _enemy;
         private IEnemyObservable _observable;
         
-        public void Init(Enemy  _enemy)
+        public void Init(Enemy  enemy)
         {
-            _enemy = _enemy;
+            _enemy = enemy;
             
             _observable = _enemy as IEnemyObservable;
             
