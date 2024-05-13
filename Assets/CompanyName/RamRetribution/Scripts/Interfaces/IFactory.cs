@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
-    public interface IFactory
+    public interface IFactory<T>
     {
-        GameObject Create(Vector3 at);
+        T Create(Vector3 at);
     }
 }

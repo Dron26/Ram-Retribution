@@ -1,20 +1,23 @@
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Ram;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Common.AssetLoad
 {
     public class AssetProvider : IAssets
     {
-        public GameObject Instantiate(string path)
+        public T GetRam<T>(string path) 
+            where T : Unit
         {
-            GameObject prefab = Resources.Load<GameObject>(path);
-            return Object.Instantiate(prefab);
+            T prefab = Resources.Load<T>(path);
+            return prefab;
         }
 
-        public GameObject Instantiate(string path, Vector3 at)
+        public T GetEnemy<T>(string path) 
+            where T : Enemy
         {
-            GameObject prefab = Resources.Load<GameObject>(path);
-            return Object.Instantiate(prefab, at, Quaternion.identity);
+            T prefab = Resources.Load<T>(path);
+            return prefab;
         }
     }
 }
