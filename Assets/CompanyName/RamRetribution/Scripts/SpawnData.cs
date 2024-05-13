@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts
+namespace CompanyName.RamRetribution.Scripts
 {
     public class SpawnData
     {

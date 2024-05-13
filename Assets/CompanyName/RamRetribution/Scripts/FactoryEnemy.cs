@@ -1,8 +1,8 @@
-using _Project_.CodeBase.Scripts.Common.AssetLoad;
-using CompanyName.RamRetribution.Interfaces;
+using CompanyName.RamRetribution.Scripts.Common.AssetLoad;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts
+namespace CompanyName.RamRetribution.Scripts
 {
     public class FactoryEnemy : IFactory
     {

@@ -1,4 +1,4 @@
-namespace _Project_.CodeBase.Scripts
+namespace CompanyName.RamRetribution.Scripts
 {
     public class PlayerData
     {

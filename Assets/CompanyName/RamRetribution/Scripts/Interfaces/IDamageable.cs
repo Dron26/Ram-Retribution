@@ -1,4 +1,4 @@
-namespace CompanyName.RamRetribution.Interfaces
+namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IDamageable
     {

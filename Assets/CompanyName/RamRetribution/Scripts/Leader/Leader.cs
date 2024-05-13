@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts.Leader
+namespace CompanyName.RamRetribution.Scripts.Leader
 {
     public class Leader : MonoBehaviour
     {

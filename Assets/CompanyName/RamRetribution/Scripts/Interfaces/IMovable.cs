@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts.Interfaces
+namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IMovable
     {

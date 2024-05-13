@@ -1,4 +1,4 @@
-namespace _Project_.CodeBase.Scripts.Common.AssetLoad
+namespace CompanyName.RamRetribution.Scripts.Common.AssetLoad
 {
     public static class AssetPath
     {

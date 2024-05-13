@@ -1,7 +1,7 @@
 using System;
-using CompanyName.RamRetribution.Interfaces;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 
-namespace _Project_.CodeBase.Scripts.Leader
+namespace CompanyName.RamRetribution.Scripts.Leader
 {
     public class Health : IDamageable
     {

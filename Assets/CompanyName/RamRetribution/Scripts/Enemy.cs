@@ -1,7 +1,7 @@
-using _Project_.CodeBase.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts
+namespace CompanyName.RamRetribution.Scripts
 {
     public class Enemy : MonoBehaviour, ICharacter
     {
