@@ -1,7 +1,7 @@
 using System;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using _Project_.CodeBase.Scripts.Interfaces;
 
-namespace CompanyName.RamRetribution.Scripts.Ram
+namespace _Project_.CodeBase.Scripts.Leader
 {
     public class Health : IDamageable
     {
@@ -15,9 +15,6 @@ namespace CompanyName.RamRetribution.Scripts.Ram
             _armor = armor;
             _value = _max;
         }
-
-        public int Value => _value;
-        public int Armor => _armor;
         
         public void TakeDamage(int damage)
         {

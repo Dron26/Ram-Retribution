@@ -1,4 +1,4 @@
-namespace CompanyName.RamRetribution.Scripts.Interfaces
+namespace _Project_.CodeBase.Scripts.Interfaces
 {
     public interface IAbilityCaster
     {
