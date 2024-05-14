@@ -1,5 +1,6 @@
-using _Project_.CodeBase.Scripts.Common.Enums;
-namespace _Project_.CodeBase.Scripts
+using CompanyName.RamRetribution.Scripts.Common.Enums;
+
+namespace CompanyName.RamRetribution.Scripts
 {
     public class GateData
     {

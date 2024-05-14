@@ -1,8 +1,8 @@
-using _Project_.CodeBase.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts.Common.Abstracts
+namespace CompanyName.RamRetribution.Scripts.Common.Abstracts
 {
-    public abstract class Character:MonoBehaviour,ICharacter
+    public abstract class Character: MonoBehaviour,ICharacter
     {}
 }

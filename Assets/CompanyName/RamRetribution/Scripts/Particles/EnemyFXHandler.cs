@@ -1,16 +1,15 @@
-using _Project_.CodeBase.Scripts.Common.Enums;
-using _Project_.CodeBase.Scripts.Enemyes;
-using _Project_.CodeBase.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts.Particles
+namespace CompanyName.RamRetribution.Scripts.Particles
 {
     public class EnemyFXHandler:IEnemyObserver
     {
-        private Enemy  _enemy;
+        private Enemyes.Enemy  _enemy;
         private IEnemyObservable _observable;
         
-        public void Init(Enemy  enemy)
+        public void Init(Enemyes.Enemy  enemy)
         {
             _enemy = enemy;
             

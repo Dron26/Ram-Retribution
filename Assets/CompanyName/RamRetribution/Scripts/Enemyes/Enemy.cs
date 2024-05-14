@@ -1,10 +1,10 @@
 using System;
-using _Project_.CodeBase.Scripts.Common.Enums;
-using _Project_.CodeBase.Scripts.Interfaces;
-using _Project_.CodeBase.Scripts.Particles;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Particles;
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts.Enemyes
+namespace CompanyName.RamRetribution.Scripts.Enemyes
 {
     [RequireComponent(typeof(EnemyFXHandler))]
     public class Enemy : Component, ICharacter,IDamageable

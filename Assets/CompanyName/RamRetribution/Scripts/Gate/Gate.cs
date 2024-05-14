@@ -1,9 +1,9 @@
-using _Project_.CodeBase.Scripts.Common.Enums;
-using _Project_.CodeBase.Scripts.Interfaces;
-using _Project_.CodeBase.Scripts.Leader;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Ram;
 using UnityEngine;
 
-namespace _Project_.CodeBase.Scripts.Gate
+namespace CompanyName.RamRetribution.Scripts.Gate
 {
     public class Gate : MonoBehaviour, IDamageable
     {

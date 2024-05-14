@@ -1,3 +1,4 @@
+
 namespace CompanyName.RamRetribution.Scripts
 {
     public class LevelData
