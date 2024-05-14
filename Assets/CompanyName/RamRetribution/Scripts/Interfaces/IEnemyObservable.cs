@@ -1,10 +1,10 @@
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
-    public interface  IEnemyObservable
+    public interface IEnemyObservable
     {
-        void AddObserver(IEnemyObserver observer);
-        void RemoveObserver(IEnemyObserver observer);
-        void NotifyMoveStarted();
-        void NotifyDamaged(int damage);
+        public void AddObserver(IEnemyObserver observer);
+        public void RemoveObserver(IEnemyObserver observer);
+        public void NotifyMoveStarted();
+        public void NotifyDamaged(int damage);
     }
 }

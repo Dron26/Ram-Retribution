@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6489721430457477595}
+  - component: {fileID: 819773578836096352}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -32,6 +33,18 @@ Transform:
   - {fileID: 4931331161080452215}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &819773578836096352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781943825567781472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e078bc5485dbe4b88b237d41187849, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1406989019906008333
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,7 +107,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2d135648b2d351141bbf908a6ecf4fe9, type: 2}
+  - {fileID: 2100000, guid: a5945b7952519e84f887f008039aeef6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

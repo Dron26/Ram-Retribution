@@ -19,6 +19,7 @@ namespace CompanyName.RamRetribution.Scripts.Enemyes
         {
             OnEventNotified?.Invoke(eventType);
         }
+        
         public void Init()
         {
             GetComponent<EnemyFXHandler>().Init(this);

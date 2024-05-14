@@ -1,29 +1,33 @@
+using System;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Ram
 {
-    public abstract class Unit : MonoBehaviour
+    public abstract class Unit : MonoBehaviour, IUnit
     {
-        private readonly Health _health;
-        private readonly Movement _movement;
-        private readonly int _damage;
+        public event Action HealthChanged;
         
-        public void TakeDamage(int damage)
+        public void TakeDamage(int amount)
         {
             //_health.TakeDamage(damage);
-            Debug.Log($"Получил урон: {damage}");
+            Debug.Log($"Получил урон: {amount}");
+        }
+
+        public void Flee()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Heal(int amount)
+        {
+            throw new NotImplementedException();
         }
 
         public void Move(Vector3 destination)
         {
             //_movement.Move(Vector3.zero);
             Debug.Log("Передвинулся");
-        }
-
-        public void ShowInfo()
-        {
-            Debug.Log($"Health {_health.Value}, Movement {_movement != null}, Armor {_health.Armor}, Damage {_damage}");
         }
 
         public abstract void Accept(IRamVisitor visitor);

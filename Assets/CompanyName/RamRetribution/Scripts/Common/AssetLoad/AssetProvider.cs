@@ -1,22 +1,14 @@
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Ram;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Common.AssetLoad
 {
     public class AssetProvider : IAssets
     {
-        public T GetRam<T>(string path) 
-            where T : Unit
+        public T Get<T>(string path) 
+            where T : Object
         {
-            T prefab = Resources.Load<T>(path);
-            return prefab;
-        }
-
-        public T GetEnemy<T>(string path) 
-            where T : Enemy
-        {
-            T prefab = Resources.Load<T>(path);
+            var prefab = Resources.Load<T>(path);
             return prefab;
         }
     }

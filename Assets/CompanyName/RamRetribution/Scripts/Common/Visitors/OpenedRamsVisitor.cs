@@ -27,10 +27,10 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors
 
         public void Visit(Tank tank)
         {
-
+            
         }
 
-        public void Visit(Ram.Leader leader)
+        public void Visit(Leader leader)
         {
 
         }
