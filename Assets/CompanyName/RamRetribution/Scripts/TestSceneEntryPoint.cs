@@ -9,7 +9,7 @@ namespace CompanyName.RamRetribution.Scripts
             
         }
 
-        public void Init(PlayerData playerData,LevelData levelData) 
+        public void Init(LeaderDataState leaderDataState,LevelData levelData) 
         {
             
         }

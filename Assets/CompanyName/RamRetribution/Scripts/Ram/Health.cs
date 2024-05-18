@@ -15,9 +15,11 @@ namespace CompanyName.RamRetribution.Scripts.Ram
             _armor = armor;
             _value = _max;
         }
-
+        
+        public event Action<int> ValueChanged;
         public int Value => _value;
         public int Armor => _armor;
+        public int TotalArmor => _armor * 100;
         
         public void TakeDamage(int damage)
         {
@@ -25,13 +27,15 @@ namespace CompanyName.RamRetribution.Scripts.Ram
                 throw new NotImplementedException(message: "Damage can`t be less than 0");
             
             ApplyArmorEffect(damage);
+            
+            ValueChanged?.Invoke(_value);
         }
 
         private int ApplyArmorEffect(int damage)
         {
             //эффект брони = armor / armor + baseArmorCoefficient 
             // damage -= эффект брони;
-
+            
             return damage;
         }
     }

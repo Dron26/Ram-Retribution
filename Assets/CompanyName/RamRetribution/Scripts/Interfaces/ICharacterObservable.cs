@@ -1,6 +1,6 @@
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
-    public interface  ICharacterObservable
+    public interface ICharacterObservable
     {
         void AddObserver(ICharacterObserver observer);
 
@@ -9,6 +9,5 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
         void NotifyMoveStart();
 
         void NotifyDamageTaken();
-
     }
 }

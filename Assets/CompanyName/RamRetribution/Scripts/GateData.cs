@@ -1,22 +1,13 @@
-using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts
 {
-    public class GateData
+    [System.Serializable]
+    public class GateData : ISave
     {
-        public int GateLevel;
-        public int MaxHealth;
-        public int StrengthIndex;
-        public GateType Material;
-        public int ReductionModifier;
-    
-        public GateData(int gateLevel, int maxHealth,GateType material, int reductionModifier, int strengthIndex)
-        {
-            GateLevel = gateLevel;
-            StrengthIndex = strengthIndex;
-            ReductionModifier = reductionModifier;
-            MaxHealth = maxHealth;
-            Material = material;
-        }
+        public int Strength;
+        public int HealthValue;
+
+        public string Name { get; } = "GateData";
     }
 }

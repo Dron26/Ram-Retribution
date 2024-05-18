@@ -16,7 +16,7 @@ namespace CompanyName.RamRetribution.Scripts.Gate
         
         private void Init(GateData data)
         {
-            _data=data;
+            _data = data;
             CalculateModifiers();
         }
 
@@ -28,11 +28,11 @@ namespace CompanyName.RamRetribution.Scripts.Gate
         
         private void CalculateHealth()
         {
-            _health = new Health(_data.StrengthIndex * _data.MaxHealth,0);
+            _health = new Health(_data.Strength * _data.HealthValue);
         }
         private void CalculateReduction()
         {
-            _damageReductionModifier = _data.ReductionModifier;
+            //_damageReductionModifier = _data.ReductionModifier;
         }
 
 
