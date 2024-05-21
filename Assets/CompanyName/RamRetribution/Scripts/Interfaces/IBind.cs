@@ -1,7 +1,7 @@
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IBind<T> 
-        where T : ISave
+        where T : ISaveable
     {
         public void Bind(T data);
     }

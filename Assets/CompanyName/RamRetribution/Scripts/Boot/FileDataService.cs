@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             _serializer = serializer;
         }
         
-        public void Save(GameData data, bool overwrite = true)
+        public void Save(ISaveable data, bool overwrite = true)
         {
             string dataPath = GetFilePath(data.Name.ToString());
 
@@ -29,14 +29,15 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             File.WriteAllText(dataPath, _serializer.Serialize(data));
         }
 
-        public GameData Load(string name)
+        public ISaveable Load<T>(string name)
+        where T : ISaveable
         {
             string dataPath = GetFilePath(name);
 
             if (!IsExists(dataPath))
                 throw new ArgumentException($"No data with name {name}");
 
-            return _serializer.Deserialize<GameData>(File.ReadAllText(dataPath));
+            return _serializer.Deserialize<T>(File.ReadAllText(dataPath));
         }
 
         public void Delete(string name)

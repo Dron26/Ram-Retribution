@@ -14,7 +14,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             _serializer = serializer;
         }
         
-        public void Save(GameData data, bool overwrite = true)
+        public void Save(ISaveable data, bool overwrite = true)
         {
             if (!overwrite && PlayerPrefs.HasKey(data.Name.ToString()))
                 throw new IOException($"File '{data.Name}' is already exists and cannot overwritten");
@@ -23,14 +23,15 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             PlayerPrefs.Save();
         }
 
-        public GameData Load(string name)
+        public ISaveable Load<T>(string name)
+        where T : ISaveable
         {
             if (!IsExists(name))
                 throw new ArgumentException($"No data with name '{name}'");
             
             string json = PlayerPrefs.GetString(name);
             
-            return _serializer.Deserialize<GameData>(json);
+            return _serializer.Deserialize<T>(json);
         }
 
         public void Delete(string name)

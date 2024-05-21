@@ -5,12 +5,13 @@ namespace CompanyName.RamRetribution.Scripts.Boot
     [System.Serializable]
     public class GameData
     {
-        public SaveNames Name;
+        public DataNames Name;
         public LeaderDataState LeaderDataState;
         public LevelData LevelData;
         public GateData GateData;
+        public HiredRamsData HiredRamsData;
         
-        public GameData(SaveNames name, LeaderDataState leaderDataState, LevelData levelData, GateData gateData)
+        public GameData(DataNames name, LeaderDataState leaderDataState, LevelData levelData, GateData gateData)
         {
             Name = name;
             LeaderDataState = leaderDataState;

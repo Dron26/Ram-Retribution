@@ -1,7 +1,7 @@
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
-    public interface ISave
+    public interface IUnit
     {
-        public string Name { get; }
+        
     }
 }
