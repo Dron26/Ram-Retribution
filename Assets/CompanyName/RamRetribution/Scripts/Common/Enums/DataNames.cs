@@ -4,7 +4,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Enums
     {
         LeaderDataState,
         LevelData,
-        GateData,
         HiredRamsData
     }
 }

@@ -8,7 +8,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     {
         [SerializeField] private int _health;
         
-        public AllyType Type { get; private set; }
+        public UnitTypes Type { get; private set; }
         public int Health => _health;
     }
 }

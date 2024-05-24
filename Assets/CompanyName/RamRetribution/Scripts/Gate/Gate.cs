@@ -1,3 +1,4 @@
+using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Ram;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Gate
 {
-    public class Gate : MonoBehaviour, IDamageable, IBind<GateData>
+    public class Gate : MonoBehaviour, IDamageable
     {
         [SerializeField] private TMP_Text _infoTextField;
         
@@ -14,12 +15,10 @@ namespace CompanyName.RamRetribution.Scripts.Gate
         private int _maxHealth;
         private int _currentHealth;
         private float _damageReductionModifier;
-        private GateData _data;
         private Health _health;
         
-        private void Init(GateData data)
+        private void Init()
         {
-            _data = data;
             CalculateModifiers();
         }
 
@@ -31,7 +30,6 @@ namespace CompanyName.RamRetribution.Scripts.Gate
         
         private void CalculateHealth()
         {
-            _health = new Health(_data.Strength * _data.HealthValue);
         }
         
         private void CalculateReduction()
@@ -52,19 +50,6 @@ namespace CompanyName.RamRetribution.Scripts.Gate
         private void Die()
         {
             gameObject.SetActive(false); 
-        }
-
-        public void Bind(GateData data)
-        {
-            _maxHealth = data.HealthValue;
-            _damageReductionModifier = data.Strength;
-            ShowInfo();
-        }
-
-        private void ShowInfo()
-        {
-            _infoTextField.text = string.Format($"Health: {_maxHealth} " +
-                                                $"\nStrength: {_damageReductionModifier}");
         }
     }
 }
