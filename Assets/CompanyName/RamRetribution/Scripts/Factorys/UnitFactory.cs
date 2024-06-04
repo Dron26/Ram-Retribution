@@ -1,15 +1,14 @@
 using System;
-using CompanyName.RamRetribution.Scripts.Common.AssetLoad;
+using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Ram;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace CompanyName.RamRetribution.Scripts.Factorys
 {
-    public class UnitFactory : IFactory<Unit>
+    public class UnitFactory
     {
         public Unit Create(UnitTypes type, Vector3 at) 
         {
@@ -36,6 +35,6 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         private T LoadAsset<T>()
             where T : Object
             => Services.ResourceLoadService.Load<T>(
-                $"{AssetPath.RamDataPath}{typeof(T).Name}");
+                $"{AssetPaths.RamData}{typeof(T).Name}");
     }
 }

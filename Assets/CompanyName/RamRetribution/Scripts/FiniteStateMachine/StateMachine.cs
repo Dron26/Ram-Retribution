@@ -11,10 +11,13 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
         private readonly HashSet<ITransition> _anyTransitions = new HashSet<ITransition>();
         private StateNode _currentNode;
         
-        public void SetState(IState state)
+        public void SetState<TState>()
+        where TState : IState
         {
+            var type = typeof(TState);
+            
             _currentNode?.State.Exit();
-            _currentNode = _nodes[state.GetType()];
+            _currentNode = _nodes[type];
             _currentNode.State.Enter();
         }
         

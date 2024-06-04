@@ -18,8 +18,8 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             _serializer = serializer;
         }
         
-        public void Save<T>(T data, bool overwrite = true)
-        where T : ISaveable
+        public void Save<TSaveable>(TSaveable data, bool overwrite = true)
+        where TSaveable : ISaveable
         {
             string dataPath = GetFilePath(data.Name.ToString());
 
@@ -30,15 +30,15 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             File.WriteAllText(dataPath, _serializer.Serialize(data));
         }
 
-        public T Load<T>(string name)
-        where T : ISaveable
+        public TSaveable Load<TSaveable>(string name)
+        where TSaveable : ISaveable, new()
         {
             string dataPath = GetFilePath(name);
 
             if (!IsExists(dataPath))
-                throw new ArgumentException($"No data with name {name}");
+                return new TSaveable();
 
-            return _serializer.Deserialize<T>(File.ReadAllText(dataPath));
+            return _serializer.Deserialize<TSaveable>(File.ReadAllText(dataPath));
         }
 
         public void Delete(string name)

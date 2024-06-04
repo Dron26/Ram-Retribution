@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb636257db8945bba9fba52f6702729a, type: 3}
+  m_Name: Red
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: Red
+  <Sprite>k__BackingField: {fileID: 1161628633, guid: 0584d5ada6fe2ad4ebcb8df9d6ae25c3, type: 3}
+  <CurrencyType>k__BackingField: 0
+  <Cost>k__BackingField: 100
+  <Model>k__BackingField: {fileID: 2963512515285840153, guid: 07f4b18209e302c4eaf6627a8840c520, type: 3}
+  <SkinType>k__BackingField: 1

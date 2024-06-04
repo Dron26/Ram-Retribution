@@ -8,9 +8,19 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
     {
         public bool FirstEntry;
         public int CurrentLevel;
-        public int Gold;
+        public int Money;
         public int Horns;
+        public int BrokenGates;
 
-        public DataNames Name => DataNames.LevelData;
+        public GameData()
+        {
+            FirstEntry = true;
+            CurrentLevel = 1;
+            Money = 100;
+            Horns = 100;
+            BrokenGates = 0;
+        }
+        
+        public DataNames Name => DataNames.GameData;
     }
 }
