@@ -68,8 +68,23 @@ namespace CompanyName.RamRetribution.Scripts.UI.Shop
         
         public void Select(ShopItemView view)
         {
-            for (int i = 0; i < _itemViews.Count; i++)
-                _itemViews[i].Unselect();
+            if (view.Item is RamItem)
+            {
+                foreach (var itemVieww in _itemViews)
+                {
+                    _selectedItemChecker.Visit(itemVieww.Item);
+                    
+                    if(_selectedItemChecker.IsSelected)
+                        itemVieww.Select();
+                    else
+                        itemVieww.Unselect();
+                }
+                
+                return;
+            }
+            
+            foreach (var itemView in _itemViews)
+                itemView.Unselect();
 
             view.Select();
         }

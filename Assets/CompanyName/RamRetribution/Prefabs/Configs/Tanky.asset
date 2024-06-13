@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de252fd7dcc24366b77add821aa1afe4, type: 3}
+  m_Name: Tanky
+  m_EditorClassIdentifier: 
+  <Id>k__BackingField: Tanky
+  <Prefab>k__BackingField: {fileID: 6946624918866920278, guid: 74c070f16b23b284faac8f30121b3acf, type: 3}
+  _healthValue: 800
+  <ArmorType>k__BackingField: 2
+  <ArmorValue>k__BackingField: 0
+  <ArmorReduceCoefficient>k__BackingField: 0
+  _damage: 15
+  <AttackType>k__BackingField: 0
+  <AttackSpeed>k__BackingField: 0
+  <AttackDistance>k__BackingField: 0

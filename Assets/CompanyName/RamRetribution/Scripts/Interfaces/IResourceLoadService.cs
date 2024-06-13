@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Ram;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Interfaces

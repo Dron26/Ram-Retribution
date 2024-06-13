@@ -2,6 +2,7 @@ using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States;
+using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 using UnityEngine;
