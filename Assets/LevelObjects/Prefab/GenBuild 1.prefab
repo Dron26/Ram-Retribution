@@ -1,0 +1,172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2265075359545193414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8947895152931894998}
+  m_Layer: 0
+  m_Name: GenBuild 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8947895152931894998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2265075359545193414}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3299608206121079815}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3145960066671727859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3299608206121079815}
+  - component: {fileID: 79106940911745099}
+  m_Layer: 0
+  m_Name: RandomCityGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3299608206121079815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3145960066671727859}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8947895152931894998}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &79106940911745099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3145960066671727859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb4122e2ce13f1545b8f95a79e7006e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gridSize: 16
+  _tileSize: 9
+  _treeDensity: 3
+  _frequencyCorner: 1
+  _frequencyHill: 3
+  _hightHill: 4
+  _isMountainRimCreate: 1
+  _heightIncrement: 1.62
+  _isPlantForest: 1
+  _isFillUpMountain: 0
+  _groundTiles:
+  - {fileID: 111596, guid: 1bf189413448aec4197104c6df48a2da, type: 3}
+  _treeTiles:
+  - {fileID: 6560475461426694950, guid: 1e8a0c0ba0c13154caf03fba50b12ada, type: 3}
+  - {fileID: 2614599874057011417, guid: ebe9c23348883224d87be15c7faa454a, type: 3}
+  - {fileID: 7928963845294441533, guid: 8635441ed25a485469c9b71b7a0ec34a, type: 3}
+  - {fileID: 4260854143407463761, guid: d05002c7f06789747bc14383e8be4490, type: 3}
+  - {fileID: 814513855260006562, guid: a1b47415a896270499efe4023179d467, type: 3}
+  - {fileID: 6684691481445198036, guid: d391d898bd90afd43a860dac21ee7704, type: 3}
+  - {fileID: 8065478008240671348, guid: 3245ad2e0a90a9e4a8e688c9fa4e9d8b, type: 3}
+  - {fileID: 4473008296587394705, guid: 59bb70270cbd99044ab9808fbbc758ed, type: 3}
+  - {fileID: 2304985063580076718, guid: 881155e18b2b84c419a7c646354c024e, type: 3}
+  - {fileID: 8444133360647149246, guid: a0234a0f96d7f3a4888f21576e764c3b, type: 3}
+  - {fileID: 2118592767640482431, guid: aa3f455017704004c80a5aa6476f07ba, type: 3}
+  - {fileID: 8697767730050473879, guid: ff5699519e2123f44ba10d8aadeb99c3, type: 3}
+  - {fileID: 221457901367365995, guid: 843858d759fcc1c479adeea10a8a5391, type: 3}
+  - {fileID: 8318886447063981662, guid: e3d26072e5b08b146a95e10ca74dcbc3, type: 3}
+  - {fileID: 409191128814821325, guid: 753d615194da14848bbfe6ff0259cdde, type: 3}
+  - {fileID: 3299165237101815793, guid: 6e809a81a7daae44e86a5ed789598b42, type: 3}
+  - {fileID: 2688578507760538505, guid: 298db9e259359154cbd61be2e8f14a3e, type: 3}
+  - {fileID: 6698227920692677496, guid: b837179ab84bd84458b1ac5bdede1c66, type: 3}
+  - {fileID: 4943302393349508819, guid: b7676d31051ced94fb242f6a1dad75a7, type: 3}
+  - {fileID: 3506104966819357901, guid: 0d68e48e821b16449af08e7ca374eb80, type: 3}
+  - {fileID: 7992151151188796477, guid: 25da719aa28068d44b8d6ee488589918, type: 3}
+  - {fileID: 8205666467550403042, guid: 7534f579cb2ebcc4c82d12918b9bf1f3, type: 3}
+  - {fileID: 709803270221593589, guid: 1dec768ef9a3d3046827005e3348735b, type: 3}
+  - {fileID: 3497830898387680970, guid: d613dd50b41cc8d48980849baea35549, type: 3}
+  _bushTiles:
+  - {fileID: 8388578849209339635, guid: d694e42525e990a4eb32c3e44f0ed125, type: 3}
+  - {fileID: 7629707223501495539, guid: 211184879aa87944a9919d5fdaf15e5d, type: 3}
+  - {fileID: 6600549299054067282, guid: a099f9c79a2881d42991812b68b1acc0, type: 3}
+  - {fileID: 1058108604234219124, guid: 2b60aab1fd6b39643ab64d1a73deace6, type: 3}
+  - {fileID: 1467095048179284708, guid: df19136831ab1c942963d7bad1119490, type: 3}
+  - {fileID: 1934461953624157911, guid: ff202d77b899b2a49893c6cc9e76c267, type: 3}
+  - {fileID: 8480852912263904742, guid: 457a2ff9933b79c4ea3649192d1afba3, type: 3}
+  - {fileID: 1891939254866423225, guid: b48e9cb033c623744beebec9dee36f5a, type: 3}
+  - {fileID: 3436246923196838930, guid: 156c382b9eeb6944c88fed8b0d41cce2, type: 3}
+  - {fileID: 2714631285162856223, guid: 3a381098322a54343a5b0ad4376c5e54, type: 3}
+  - {fileID: 1947222106031988478, guid: d36a79986e028b54384d8acc055b0651, type: 3}
+  - {fileID: 3461748319582037375, guid: f0a7d879e32569e428ba2d39770be80e, type: 3}
+  - {fileID: 5947882672590715275, guid: e9835bb89200a294088aab530a85dd76, type: 3}
+  _wallTiles:
+  - {fileID: 1348229408138730, guid: e09a1b1dd1e643e4fab78edda46db369, type: 3}
+  _roadTiles:
+  - {fileID: 148576, guid: 5e6211f082131fa4eafe9ab5bdac2696, type: 3}
+  _cornerRoadTiles:
+  - {fileID: 160354, guid: 330cb4022ab025540873195715e79709, type: 3}
+  _pathTiles:
+  - {fileID: 188616, guid: 50c9388f941f55f4087e3034d4984b2d, type: 3}
+  - {fileID: 130428, guid: 4231e0dded830ca4aa3c26a4a570a9ed, type: 3}
+  - {fileID: 148860, guid: ea26b4a2030e63b4e8fa8aa7d047f279, type: 3}
+  _guardHouseTile:
+  - {fileID: 3382229112929304507, guid: 0e945d0dfcad903419ad84b22d988f76, type: 3}
+  _guardProp:
+  - {fileID: 184570, guid: 0f0741a122cf28744ab261eaf7dcca87, type: 3}
+  - {fileID: 184570, guid: 26982463c4e41d74db381e7846027ba3, type: 3}
+  - {fileID: 184570, guid: a809a2b06b89a5743a3b0e224bc69e33, type: 3}
+  - {fileID: 184570, guid: e1fb3bffa387dfe46b6e278c0f58ca08, type: 3}
+  - {fileID: 151424, guid: eb385f7d541560c4cbd9becf139aecf4, type: 3}
+  - {fileID: 170940, guid: 267085369d2912b448d6424c847bf873, type: 3}
+  - {fileID: 139470, guid: ffe2220670d3bce4f8580292c8a8d2c9, type: 3}
+  - {fileID: 174594, guid: 9f7526b58af379c4f908bc3c2781fec3, type: 3}
+  - {fileID: 194468, guid: 08bb47e5812bb5241a80441358be513c, type: 3}
+  - {fileID: 108528, guid: 79051942d0b111645962b6f5aaa9b94d, type: 3}
+  - {fileID: 143956, guid: f8cf60d678e14fb42a393c12445ce7ee, type: 3}
+  - {fileID: 155236, guid: 26ef5e421759fa34eaf54651d1bcd980, type: 3}
+  - {fileID: 152928, guid: 961e39a80cb70dd439f1daa3ffba3ef0, type: 3}
+  - {fileID: 136014, guid: e6d6d97dc212645418c3361c59a985e3, type: 3}
+  _rimTiles:
+  - {fileID: 111596, guid: 23e2e75a18d5f394189f99729a326c72, type: 3}
+  - {fileID: 111596, guid: ee83534d118f28340a32a52625dc6551, type: 3}
+  - {fileID: 188616, guid: afa2bba54d04fd34c9e0f4c7e3d24862, type: 3}
+  _towerTile: {fileID: 1814627582270838, guid: 6b3a0a8d72b6b4b4aa7b2a26fc174c1d, type: 3}
+  _gateTile: {fileID: 1409667927502884, guid: ce3cce5cc08d86d4588c41d29dcd08a4, type: 3}
+  _countHouse: 6
+  _ground: {fileID: 1603271157491852459, guid: 201dcc588d96f524080093c35374473a, type: 3}
+  _tree: {fileID: 5706357351557101793, guid: c03eb1a2450a77041979d368d20560e5, type: 3}
+  _road: {fileID: 7031140410095872705, guid: b9e37836106fc634d8d29ca696dc4111, type: 3}
+  _guardHouse: {fileID: 6619637357849733689, guid: cead1c874d34ec944ab118f16dd36459, type: 3}
+  _castel: {fileID: 8453652682280860032, guid: 0dd91ca0e3fd0b9428823ef76ac0727d, type: 3}
+  _prop: {fileID: 483532411768553509, guid: 6d866ee6e1251f141905ff14f2a7a36e, type: 3}
+  _rim: {fileID: 483532411768553509, guid: c9bd32217b013cd4098946394ec9fe8e, type: 3}
+  _hideHight: 100
+  _particlePrefab: {fileID: 6829575369760770526, guid: 2a5b8240e8523534f89401f96053dddc, type: 3}
