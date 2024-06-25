@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Id>k__BackingField: Fogos
   <Prefab>k__BackingField: {fileID: 4641366203750922659, guid: 4a938a838602c914b8954cfa91bacefb, type: 3}
-  _healthValue: 300
+  <Priority>k__BackingField: 3
+  _healthValue: 150
   <ArmorType>k__BackingField: 1
   <ArmorValue>k__BackingField: 0
-  <ArmorReduceCoefficient>k__BackingField: 0
   _damage: 55
   <AttackType>k__BackingField: 0
-  <AttackSpeed>k__BackingField: 0
-  <AttackDistance>k__BackingField: 0
+  <AttackSpeed>k__BackingField: 5
+  <AttackDistance>k__BackingField: 2

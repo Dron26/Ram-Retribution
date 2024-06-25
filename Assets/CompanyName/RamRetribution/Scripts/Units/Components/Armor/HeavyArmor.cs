@@ -8,11 +8,11 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
         private const float ReduceRangeAttack = 0.65f;
         private const float ReduceMeleeAttack = 0.45f;
         
-        public HeavyArmor(int value, int reduceCoefficient) : base(value, reduceCoefficient)
+        public HeavyArmor(int value) : base(value)
         {
         }
 
-        public override float ReduceDamage(AttackType type, float damage)
+        public override int ReduceDamage(AttackType type, float damage)
         {
             return type switch
             {

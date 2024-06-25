@@ -12,12 +12,12 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     {
         [field: SerializeField] public string Id { get; private set; }
         [field: SerializeField] public Unit Prefab { get; private set; }
+        [field: SerializeField] public PriorityTypes Priority { get; private set; }
         
         [Header("Health configuration")] 
         [SerializeField] private int _healthValue;
         [field: SerializeField] public ArmorTypes ArmorType { get; private set; }
         [field: SerializeField] public int ArmorValue { get; private set; }
-        [field: SerializeField] public int ArmorReduceCoefficient { get; private set; }
 
         [Header("Attack configuration")] 
         [SerializeField] private int _damage;

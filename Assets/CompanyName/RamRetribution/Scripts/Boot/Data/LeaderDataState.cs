@@ -4,19 +4,35 @@ using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Units;
+using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.Data
 {
     [System.Serializable]
     public class LeaderDataState : ISaveable
     {
-        public UnitConfig Config;
+        public int HealthValue;
+        public int ArmorValue;
+        public int Damage;
+        public float AttackSpeed;
+        public ArmorTypes ArmorType;
+        public AttackType AttackType;
         public List<int> Spells;
 
         public LeaderDataState()
         {
-            Config = Services.ResourceLoadService.Load<UnitConfig>($"{AssetPaths.Configs}{nameof(Leader)}");
+            var config = Services
+                .ResourceLoadService
+                .Load<ConfigsContainer>($"{AssetPaths.Configs}{nameof(ConfigsContainer)}")
+                .GetConfig($"Leader");
+            
+            HealthValue = config.HealthValue;
+            ArmorValue = config.ArmorValue;
+            Damage = config.Damage;
+            AttackSpeed = config.AttackSpeed;
+            ArmorType = ArmorTypes.Medium;
+            AttackType = AttackType.Melee;
+            
             Spells = new List<int>();
         }
         

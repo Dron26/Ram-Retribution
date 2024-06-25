@@ -14,7 +14,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
             _maxRadius = maxRadius;
         }
         
-        public Vector3 SetPosition(Vector3 origin)
+        public Vector3 SetPosition(Vector3 origin, Unit unit)
         {
             return origin.RandomPointInCircle(_minRadius, _maxRadius);
         }

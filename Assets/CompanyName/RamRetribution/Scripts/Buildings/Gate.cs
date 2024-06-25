@@ -1,19 +1,37 @@
 using System;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Buildings
 {
-    public class Gate : MonoBehaviour
+    public abstract class Gate : MonoBehaviour
     {
-        private IDamageable _damageable;
+        private bool _isFirstAttack;
+        
+        public event Action FirstAttacked;
+        public IDamageable Damageable { get; private set; }
+        public abstract GateTypes Type { get; }
 
-        public IDamageable Damageable => _damageable; 
-
-        private void Awake()
+        private void OnDestroy()
         {
-            _damageable = new GateHealth(100);
+            Damageable.ValueChanged -= OnValueChanged;
+        }
+
+        public void Init(IDamageable damageable)
+        {
+            Damageable = damageable;
+            Damageable.ValueChanged += OnValueChanged;
+        }
+        
+        private void OnValueChanged(int value)
+        {
+            if (!_isFirstAttack)
+            {
+                FirstAttacked?.Invoke();
+                _isFirstAttack = true;
+            }
         }
     }
 }

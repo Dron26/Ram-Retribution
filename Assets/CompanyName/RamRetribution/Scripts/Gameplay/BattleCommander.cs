@@ -1,63 +1,85 @@
-using System;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Boot.SO;
-using CompanyName.RamRetribution.Scripts.Buildings;
+using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
+using CompanyName.RamRetribution.Scripts.FiniteStateMachine.Predicates;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.LevelStates;
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Units;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
 {
-    [RequireComponent(typeof(EnemyConfigsHolder))]
     public class BattleCommander : MonoBehaviour
     {
-        private UnitSpawner _unitSpawner;
-        private List<UnitConfig> _enemiesConfigs;
-        private StateMachine _levelStateMachine;
-        //private LevelBuilder _levelBuilder;
+        private const int TimeToCreateEnemies = 10;
 
-        private Gate _gate;
+        [SerializeField] private Transform _ramsStartPoint;
         
-        private Squad _ramsSquad;
-        private Squad _enimiesSquad;
+        private UnitSpawner _unitSpawner;
+        private StateMachine _levelStateMachine;
+        private LevelBuilder _levelBuilder;
 
-        private void Awake()
-        {
-            _gate = FindObjectOfType<Gate>();
-            
-            var configsHolder = GetComponent<EnemyConfigsHolder>();
-            _enemiesConfigs = configsHolder.Get();
-
-            _levelStateMachine = new StateMachine();
-        }
-
+        private CooldownTimer _countDownTimer;
+        
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                _unitSpawner.Spawn(_enemiesConfigs[Random.Range(0, _enemiesConfigs.Count)].Id);
-            }
-
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                _ramsSquad.Heal(10);
-            }
+            _levelStateMachine?.Update(Time.deltaTime);
+            _countDownTimer?.Tick(Time.deltaTime);
         }
 
-        public void Init(UnitSpawner spawner)
+        private void OnDestroy()
+        {
+            _levelBuilder.GateAttackedFirst -= OnGateAttackedFirst;
+        }
+
+        public void Init(UnitSpawner spawner, LevelBuilder levelBuilder)
         {
             _unitSpawner = spawner;
-            _ramsSquad = _unitSpawner.RamsSquad;
+            _levelBuilder = levelBuilder;
             
-            var preBattleState = new PreBattleState(_ramsSquad, _gate);
-            Any(preBattleState,null);
+            _unitSpawner.CreateRamsSquad();
             
-            _levelStateMachine.SetState<PreBattleState>();
+            _levelBuilder.GateAttackedFirst += OnGateAttackedFirst;
+            
+            _levelStateMachine = new StateMachine();
+        
+            var buildState = new BuildLevelState(_levelBuilder, _unitSpawner, _ramsStartPoint);
+            var gateBattleState = new GateBattleState(_levelBuilder, _unitSpawner.Squads);
+            var squadBattleState = new SquadBattleState(_unitSpawner.Squads);
+        
+            At(buildState,gateBattleState, new FuncPredicate(() => _levelBuilder.IsBuild));
+            At(gateBattleState, squadBattleState, new FuncPredicate(() => _unitSpawner.Squads.HasEnemies));
+            At(squadBattleState, gateBattleState, new FuncPredicate(() => !_unitSpawner.Squads.HasEnemies));
+            Any(buildState, new FuncPredicate(() => _levelBuilder.IsCurrentGateDestroyed));
+            
+            _levelStateMachine.SetState<BuildLevelState>();
         }
 
+        private void OnGateAttackedFirst()
+        {
+            _countDownTimer = new CooldownTimer(TimeToCreateEnemies);
+            _countDownTimer.Start();
+            _countDownTimer.OnTimerStop += SpawnEnemiesByTime;
+        }
+
+        private void SpawnEnemiesByTime()
+        {
+            _unitSpawner.SetSpawnPoints(_levelBuilder.EnemySpots);
+            
+            var enemiesId = new List<string>()
+            {
+                "LightEnemy",
+                "LightEnemy",
+                "LightEnemy",
+                "LightEnemy",
+                "LightEnemy",
+            };
+            
+            _unitSpawner.Spawn(enemiesId);
+            
+            _countDownTimer.Reset();
+            _countDownTimer.Start();
+        }
+        
         private void At(IState fromState, IState toState, IPredicate condition)
             => _levelStateMachine.AddTransition(fromState, toState, condition);
 

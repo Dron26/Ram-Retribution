@@ -10,25 +10,25 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
         private readonly Dictionary<Type, StateNode> _nodes = new Dictionary<Type, StateNode>();
         private readonly HashSet<ITransition> _anyTransitions = new HashSet<ITransition>();
         private StateNode _currentNode;
-        
+
         public void SetState<TState>()
-        where TState : IState
+            where TState : IState
         {
             var type = typeof(TState);
-            
+
             _currentNode?.State.Exit();
             _currentNode = _nodes[type];
             _currentNode.State.Enter();
         }
-        
-        public void Update()
+
+        public void Update(float deltaTime)
         {
             ITransition transition = GetTransition();
 
             if (transition != null)
                 ChangeState(transition.ToState);
 
-            _currentNode.State?.Update();
+            _currentNode.State?.Update(deltaTime);
         }
 
         public void AddTransition(IState from, IState to, IPredicate condition)
@@ -36,7 +36,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
 
         public void AddAnyTransition(IState to, IPredicate condition)
             => _anyTransitions.Add(new Transition(GetOrAddNode(to).State, condition));
-        
+
         private StateNode GetOrAddNode(IState state)
         {
             StateNode stateNode = _nodes.GetValueOrDefault(state.GetType());
@@ -64,13 +64,15 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
 
         private ITransition GetTransition()
         {
-            foreach (ITransition transition in _anyTransitions)
-                if (transition.Condition.Evaluate())
-                    return transition;
+            foreach (var transition in _anyTransitions)
+                if (transition.Condition != null)
+                    if (transition.Condition.Evaluate())
+                        return transition;
 
-            foreach (ITransition transition in _currentNode.Transitions)
-                if (transition.Condition.Evaluate())
-                    return transition;
+            foreach (var transition in _currentNode.Transitions)
+                if (transition.Condition != null)
+                    if (transition.Condition.Evaluate())
+                        return transition;
 
             return null;
         }

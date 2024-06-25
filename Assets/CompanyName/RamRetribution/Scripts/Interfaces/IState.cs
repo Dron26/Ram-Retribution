@@ -4,6 +4,6 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
     {
         public void Enter();
         public void Exit();
-        public void Update();
+        public void Update(float deltaTime);
     }
 }

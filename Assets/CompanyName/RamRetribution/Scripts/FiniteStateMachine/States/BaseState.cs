@@ -12,7 +12,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States
         {
         }
 
-        public virtual void Update()
+        public virtual void Update(float deltaTime)
         {
         }
     }

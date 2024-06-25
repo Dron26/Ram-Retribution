@@ -1,12 +1,9 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Boot.SO;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Common.Visitors;
-using CompanyName.RamRetribution.Scripts.Units;
-using CompanyName.RamRetribution.Scripts.Units.Components;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
 {
@@ -16,74 +13,72 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         [SerializeField] private Transform _ramsContainer;
         [SerializeField] private Transform _enemiesContainer;
         
-        private Vector3 _enemiesSpawnPoint = Vector3.zero;
-        private Leader _leader;
-        private Squad _ramsSquad;
-        private Squad _enemiesSquad;
+        private const int MaxRamUnits = 6;
+        private const int MaxEnemyUnits = 9;
 
-        private ConfigsContainer _configsContainer;
-        private Dictionary<UnitTypes, IPlacementStrategy> _placementStrategies;
-        private SetPositionVisitor _setPositionVisitor;
-        private int _maxUnits;
-
+        private LeaderDataState _leaderData;
+        private List<string> _selectedRamsId;
+        private List<Transform> _enemySpots;
         private IUnitFactory _factory;
 
-        public Squad RamsSquad => _ramsSquad;
-        public Squad EnemiesSquad => _enemiesSquad;
+        private WaitForSeconds _waitFor;
+        
+        public SquadsHolder Squads { get; private set; }
 
-        public void Init(IUnitFactory factory, ConfigsContainer configsContainer)
+        public void Init(IUnitFactory factory, LeaderDataState leaderDataState,List<string> selectedRamsId,int enemySquadsCount = 2)
         {
             _factory = factory;
-            _configsContainer = configsContainer;
-            _ramsSquad = new Squad();
-            _enemiesSquad = new Squad();
+            _leaderData = leaderDataState;
+            _selectedRamsId = selectedRamsId;
+            Squads = new SquadsHolder(MaxRamUnits, MaxEnemyUnits, enemySquadsCount);
         }
 
-        public void Spawn(string id)
+        public void SetSpawnPoints(List<Transform> enemySpots)
         {
-            var config = _configsContainer.GetConfig(id);
-            var unit = _factory.Create(config);
+            _enemySpots = enemySpots;
+        }
 
-            switch (unit.Type)
+        public void Spawn(List<string> configsId)
+        {
+            var currentSpawn = _enemySpots[Random.Range(0, _enemySpots.Count)];
+
+            StartCoroutine(SpawnWithDelay(configsId, currentSpawn));
+        }
+        
+        public void CreateRamsSquad()
+        {
+            SpawnLeader();
+
+            if (_selectedRamsId.Count <= 0) return;
+            
+            foreach (var t in _selectedRamsId)
             {
-                case UnitTypes.Ram:
-                    _ramsSquad.Add(unit);
-                    unit.transform.SetParent(_ramsContainer);
-                    SetPosition(unit);
-                    break;
-                case UnitTypes.Enemy:
-                    _enemiesSquad.Add(unit);
-                    unit.transform.SetParent(_enemiesContainer);
-                    SetPosition(unit);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                var ram = _factory.Create(t, _ramsSpawnPoint.position);
+                ram.transform.SetParent(_ramsContainer);
+                Squads.Add(ram);
             }
         }
-
-        public void SetFactory(IUnitFactory factory)
+        
+        private void SpawnLeader()
         {
-            _factory = factory;
+            var leader = _factory.CreateLeader(_leaderData, _ramsSpawnPoint.position);
+            leader.transform.SetParent(_ramsContainer);
+            
+            Squads.Add(leader);
         }
 
-        public void AddPlacementStrategy<TStrategy>(UnitTypes forType, TStrategy placementStrategy)
-            where TStrategy : IPlacementStrategy
+        private IEnumerator SpawnWithDelay(List<string> configsId, Transform currentSpawn, float delay = 0.5f)
         {
-            _placementStrategies ??= new Dictionary<UnitTypes, IPlacementStrategy>();
+            _waitFor ??= new WaitForSeconds(delay);
             
-            if (!_placementStrategies.TryAdd(forType, placementStrategy))
-                _placementStrategies[forType] = placementStrategy;
-        }
-
-        private void SetPosition(Unit unit)
-        {
-            _setPositionVisitor ??= new SetPositionVisitor(
-                _placementStrategies[UnitTypes.Ram], 
-                _placementStrategies[UnitTypes.Enemy],
-                _ramsSpawnPoint.position,
-                _enemiesSpawnPoint);
-            
-            _setPositionVisitor.Visit(unit);
+            foreach (var config in configsId)
+            {
+                var unit = _factory.Create(config, currentSpawn.position);
+                unit.transform.SetParent(_enemiesContainer);
+                Squads.Add(unit);
+                
+                yield return _waitFor;
+            }
         }
     }
 }

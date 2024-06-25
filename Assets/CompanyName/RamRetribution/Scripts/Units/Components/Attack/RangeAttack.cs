@@ -1,21 +1,23 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 
-namespace CompanyName.RamRetribution.Scripts.Units.Components
+namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
 {
     public class RangeAttack : IAttackComponent
     {
-        private float _damage;
-        private float _attackSpeed;
-        private float _distance;
+        private readonly int _damage;
+        private readonly float _distance;
 
-        public RangeAttack(float damage, float attackSpeed, float distance)
+        public RangeAttack(int damage, float attackSpeed, float distance)
         {
             _damage = damage;
-            _attackSpeed = attackSpeed;
+            AttackSpeed = attackSpeed;
             _distance = distance;
         }
         
+        public float AttackSpeed { get; }
+        public int Damage => _damage;
+        public float Distance => _distance;
         public AttackType AttackType => AttackType.Range;
         
         public void Attack(IDamageable damageable)

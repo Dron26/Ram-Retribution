@@ -1,8 +1,6 @@
 using System;
+using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine.Predicates;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.AIStates;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using UnityEngine;
@@ -17,60 +15,90 @@ namespace CompanyName.RamRetribution.Scripts.Units
         private IAttackComponent _attackComponent;
         private AIMovement _aiMovement;
         private Animator _animator;
-        private StateMachine _stateMachine;
-
-        public abstract UnitTypes Type { get; }   
+        private Transform _selfTransform;
         
-        // private void Update()
-        // {
-        //     _stateMachine.Update();
-        // }
-
-        public void Init(IDamageable health, IAttackComponent attackComponent)
+        private CooldownTimer _attackTimer;
+        
+        public event Action<Unit> Fleeing;
+        public IDamageable Damageable => _health;
+        public int Damage => _attackComponent.Damage;
+        public abstract UnitTypes Type { get; }
+        public int Priority { get; private set; }
+        public bool IsActive { get; private set; }
+        
+        private void Update()
         {
+            _attackTimer?.Tick(Time.deltaTime);
+        }
+        
+        public void Init(IDamageable health, IAttackComponent attackComponent, int priority)
+        {
+            _aiMovement = GetComponent<AIMovement>();
+            _animator = GetComponentInChildren<Animator>();
+            _selfTransform = transform;
+            
             _health = health;
             _attackComponent = attackComponent;
             
-            _aiMovement = GetComponent<AIMovement>();
-            _animator = GetComponentInChildren<Animator>();
+            IsActive = false;
+            Priority = priority;
             
-            // _stateMachine = new StateMachine();
-            //
-            // var chaseState = new ChaseState(_animator, _aiMovement);
-            // var attackState = new AttackState(_animator);
-            //
-            // At(chaseState,attackState, new FuncPredicate(IsCloseToTarget));
-            // At(attackState, chaseState, new FuncPredicate(IsFarFromTarget));
-            //
-            // _stateMachine.SetState<ChaseState>();
+            _attackTimer = new CooldownTimer(_attackComponent.AttackSpeed);
+
+            _health.HealthEnded += OnHealthEnded;
         }
 
-        public virtual void Move(Vector3 destination, Action callback = null)
+        #region BattleActions
+        
+        public void MoveToPoint(Vector3 destination, Action callback = null)
         {
-            _aiMovement.Move(destination).OnComplete(callback);
+            _aiMovement.Move(destination, callback);
         }
 
-        public virtual void Attack(IDamageable damageable)
+        public void MoveTowards(Transform target, Action callback = null)
         {
-            _attackComponent.Attack(damageable);
+            _aiMovement.MoveTowards(target).OnComplete(callback);
         }
         
-        public virtual void TakeDamage(AttackType type, int amount)
+        public void Attack(IDamageable damageable)
         {
-            _health.TakeDamage(type, amount);
+            if(_attackTimer.IsRunning)
+                return;
+            
+            _attackTimer.Start();
+            _attackComponent.Attack(damageable);
+            _animator.SetTrigger(AIAnimatorParams.Attack);
         }
 
         public virtual void Heal(int amount)
         {
-            _health.Heal(amount);
+            _health.Restore(amount);
+        }
+
+        #endregion
+        
+        public bool CanAttack(Transform target)
+        {
+            return (target.transform.position - _selfTransform.position).sqrMagnitude <= _attackComponent.Distance;
+        }
+
+        public void ActivateAgent()
+        {
+            IsActive = true;
+            _aiMovement.ActivateNavMesh();
+        }
+        
+        public void SelfDestroy()
+        {
+            Destroy(gameObject);
         }
         
         public abstract void Accept(IUnitVisitor visitor);
-        
-        private void At(IState fromState, IState toState, IPredicate condition)
-            => _stateMachine.AddTransition(fromState, toState, condition);
-        
-        private void Any(IState toState, IPredicate condition)
-            => _stateMachine.AddAnyTransition(toState, condition);
+
+        private void OnHealthEnded()
+        {
+            _health.HealthEnded -= OnHealthEnded;
+            Fleeing?.Invoke(this);
+        }
     }
 }

@@ -1,29 +1,23 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Components
 {
     public abstract class BaseArmor : IArmor
     {
         private readonly float _value;
-        private readonly int _reduceCoefficient;
 
-        protected BaseArmor(int value, int reduceCoefficient)
+        protected BaseArmor(int value)
         {
             _value = value;
-            _reduceCoefficient = reduceCoefficient;
         }
 
-        public virtual float ReduceDamage(AttackType type, float damage)
+        public virtual int ReduceDamage(AttackType type, float damage)
         {
-            float reduceValue = _value / _value + _reduceCoefficient;
-            
-            damage -= reduceValue;
+            damage -= _value;
 
-            if (damage <= 0)
-                return 0;
-
-            return damage;
+            return damage <= 0 ? 0 : Mathf.FloorToInt(damage);
         }
     }
 }

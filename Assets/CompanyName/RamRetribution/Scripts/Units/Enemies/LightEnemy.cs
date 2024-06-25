@@ -9,7 +9,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Enemies
 
         public override void Accept(IUnitVisitor visitor)
         {
-            visitor.Visit(this as IEnemy);
+            visitor.Visit(this);
         }
     }
 }

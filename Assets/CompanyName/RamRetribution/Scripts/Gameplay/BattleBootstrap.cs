@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Common.Visitors;
 using CompanyName.RamRetribution.Scripts.Factorys;
-using CompanyName.RamRetribution.Scripts.Units.Components;
+using CompanyName.RamRetribution.Scripts.Gameplay.Level;
+using CompanyName.RamRetribution.Scripts.Units;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
@@ -18,6 +17,8 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private readonly LeaderDataState _leaderData;
 
         private UnitSpawner _unitSpawner;
+        private LevelBuilder _levelBuilder;
+        private Squad _ramsSquad;
 
         public BattleBootstrap(GameData gameData, List<string> selectedRamsId, LeaderDataState leaderData)
         {
@@ -29,16 +30,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         public void Init(BattleCommander battleCommander)
         {
             CreateSpawner();
-            CreateLeader();
-            CreateRams();
-
-            battleCommander.Init(_unitSpawner);
+            CreateLevelBuilder();
+            battleCommander.Init(_unitSpawner, _levelBuilder);
         }
 
         private void CreateSpawner()
         {
-            var unitFactory = new UnitFactory();
-
             _unitSpawner = Object.Instantiate(
                 Services
                     .ResourceLoadService
@@ -47,21 +44,20 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             var unitConfigs = Services
                 .ResourceLoadService
                 .Load<ConfigsContainer>($"{AssetPaths.Configs}{nameof(ConfigsContainer)}");
+
+            var unitFactory = new UnitFactory(unitConfigs);
+
+            _unitSpawner.Init(unitFactory, _leaderData, _selectedRamsId);
+        }
+
+        private void CreateLevelBuilder()
+        {
+            _levelBuilder = Object.Instantiate(Services
+                .ResourceLoadService
+                .Load<LevelBuilder>($"{AssetPaths.CommonPrefabs}{nameof(LevelBuilder)}"));
             
-            _unitSpawner.AddPlacementStrategy(UnitTypes.Ram, new CirclePlacementStrategy(0.25f, 0.5f));
-            _unitSpawner.AddPlacementStrategy(UnitTypes.Enemy, new CirclePlacementStrategy(0.5f, 1f));
-            _unitSpawner.Init(unitFactory, unitConfigs);
-        }
-
-        private void CreateLeader()
-        {
-            _unitSpawner.Spawn(_leaderData.Config.Id);
-        }
-
-        private void CreateRams()
-        {
-            foreach (var config in _selectedRamsId)
-                _unitSpawner.Spawn(config);
+            _levelBuilder.Init();
+            _levelBuilder.SetLevelConfiguration(new LevelConfigurator());
         }
     }
 }

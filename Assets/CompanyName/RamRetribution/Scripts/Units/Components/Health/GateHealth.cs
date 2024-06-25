@@ -17,26 +17,28 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
             _value = value;
         }
 
-        public int Value => _value;
+        public event Action<int> ValueChanged;
+        public event Action HealthEnded;
+        public int Health => _value;
         
         public void TakeDamage(AttackType type, int damage)
         {
-            switch (type)
+            _value -= type switch
             {
-                case AttackType.Melee:
-                    _value -= Mathf.FloorToInt(damage * MeleeReduceCoefficient);
-                    break;
-                case AttackType.Range:
-                    _value -= Mathf.FloorToInt(damage * RangeReduceCoefficient);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+                AttackType.Melee => Mathf.FloorToInt(damage * MeleeReduceCoefficient),
+                AttackType.Range => Mathf.FloorToInt(damage * RangeReduceCoefficient),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+
+            ValueChanged?.Invoke(_value);
             
-            Debug.Log($"Gate value: {Value}");
+            if(_value <= 0)
+                HealthEnded?.Invoke();
+            
+            Debug.Log($"Gate health {_value}");
         }
 
-        public void Heal(int amount)
+        public void Restore(int amount)
         {
             throw new System.NotImplementedException();
         }

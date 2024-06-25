@@ -7,25 +7,26 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.AIStates
 {
     public class ChaseState : BaseState
     {
-        //private readonly Transform _target;
+        private readonly Transform _target;
         private readonly Animator _animator;
         private readonly AIMovement _aiMovement;
 
-        public ChaseState(Animator animator, AIMovement aiMovement)
+        public ChaseState(Animator animator, AIMovement aiMovement, Transform target)
         {
-            //_target = target;
+            _target = target;
             _animator = animator;
             _aiMovement = aiMovement;
         }
 
         public override void Enter()
         {
+            Debug.Log($"Entered Chase");
             _animator.CrossFade(AIAnimatorParams.Run, 0.3f);
         }
 
-        public override void Update()
+        public override void Update(float deltaTime)
         {
-            //_aiMovement.Move(_target.transform.position);
+            _aiMovement.MoveTowards(_target.transform);
         }
     }
 }

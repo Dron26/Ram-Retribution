@@ -55,13 +55,21 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
             var hudPrefab = Services.ResourceLoadService.Load<LobbyHUD>(
                 $"{AssetPaths.CommonPrefabs}{nameof(LobbyHUD)}");
 
-            Object.Instantiate(hudPrefab).GetComponent<LobbyHUD>().Init(_stateMachine, _wallet);
+            var hud = Object.Instantiate(hudPrefab);
+            hud.Init(_wallet);
+            hud.PlayClicked += OnPlayClicked;
         }
 
         private void InitShop()
         {
             var shopBootstrap = new ShopBootstrap(_instance.Shop);
             shopBootstrap.Init(_wallet);
+        }
+
+        private void OnPlayClicked(LobbyHUD hud)
+        {
+            hud.PlayClicked -= OnPlayClicked;
+            _stateMachine.SetState<GameBootstrapState>();
         }
     }
 }

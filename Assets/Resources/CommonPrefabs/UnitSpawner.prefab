@@ -30,8 +30,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7841857812596141722}
-  - {fileID: 1315396763875297359}
+  - {fileID: 329891957022167861}
+  - {fileID: 6906499486863194437}
   - {fileID: 95568471683963781}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47,11 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eae3df87c5874720b8ddfc16aeb87e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _configsContainer: {fileID: 11400000, guid: 5c4d6d3a7cbbd454ca03844e857b7b8b, type: 2}
   _ramsSpawnPoint: {fileID: 95568471683963781}
-  _ramsContainer: {fileID: 7841857812596141722}
-  _enemiesContainer: {fileID: 1315396763875297359}
---- !u!1 &2716534599803997318
+  _ramsContainer: {fileID: 329891957022167861}
+  _enemiesContainer: {fileID: 6906499486863194437}
+--- !u!1 &3564158536270972514
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,21 +58,21 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1315396763875297359}
+  - component: {fileID: 329891957022167861}
   m_Layer: 0
-  m_Name: Enemies
+  m_Name: Rams
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1315396763875297359
+--- !u!4 &329891957022167861
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2716534599803997318}
+  m_GameObject: {fileID: 3564158536270972514}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -82,7 +81,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6364724568434385008}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5490864017409107565
+--- !u!1 &3611489388967472833
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -90,21 +89,21 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7841857812596141722}
+  - component: {fileID: 6906499486863194437}
   m_Layer: 0
-  m_Name: Rams
+  m_Name: Enemies
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7841857812596141722
+--- !u!4 &6906499486863194437
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5490864017409107565}
+  m_GameObject: {fileID: 3611489388967472833}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -138,7 +137,7 @@ Transform:
   m_GameObject: {fileID: 7052608163426945706}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.25, z: -6.1330004}
+  m_LocalPosition: {x: 0, y: 0, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
