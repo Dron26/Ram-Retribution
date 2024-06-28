@@ -25,7 +25,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.LevelStat
 
         public override void Update(float deltaTime)
         {
-            _squadsHolder.Rams.Attack(_gate);
+            
         }
     }
 }

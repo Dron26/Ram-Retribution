@@ -52,5 +52,15 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors
         {
             lightEnemy.MoveToPoint(_placementStrategy.SetPosition(_origin,lightEnemy), lightEnemy.ActivateAgent);
         }
+
+        public void Visit(MediumEnemy mediumEnemy)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Visit(HeavyEnemy heavyEnemy)
+        {
+            heavyEnemy.MoveToPoint(_placementStrategy.SetPosition(_origin, heavyEnemy), heavyEnemy.ActivateAgent);
+        }
     }
 }

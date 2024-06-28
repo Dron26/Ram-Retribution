@@ -43,7 +43,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
                     throw new ArgumentOutOfRangeException();
             }
 
-            leader.Init(healthComponent, attackComponent, 0);
+            leader.Init(healthComponent, attackComponent, PriorityTypes.Leader);
             return leader;
         }
         
@@ -56,7 +56,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
             var healthComponent = GetHealth(config);
             var attackComponent = GetAttack(config);
             
-            unitComponent.Init(healthComponent, attackComponent, (int)config.Priority);
+            unitComponent.Init(healthComponent, attackComponent, config.Priority);
             
             return unitComponent;
         }

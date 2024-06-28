@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Units;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -20,12 +22,18 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private List<string> _selectedRamsId;
         private List<Transform> _enemySpots;
         private IUnitFactory _factory;
-
-        private WaitForSeconds _waitFor;
         
+        private WaitForSeconds _waitFor;
+
+        public event Action<Unit> RamCreated; 
+        public event Action<List<Unit>> EnemiesCreated; 
         public SquadsHolder Squads { get; private set; }
 
-        public void Init(IUnitFactory factory, LeaderDataState leaderDataState,List<string> selectedRamsId,int enemySquadsCount = 2)
+        public void Init(
+            IUnitFactory factory, 
+            LeaderDataState leaderDataState,
+            List<string> selectedRamsId,
+            int enemySquadsCount = 2)
         {
             _factory = factory;
             _leaderData = leaderDataState;
@@ -33,12 +41,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             Squads = new SquadsHolder(MaxRamUnits, MaxEnemyUnits, enemySquadsCount);
         }
 
-        public void SetSpawnPoints(List<Transform> enemySpots)
+        public void SetEnemiesSpawnPoints(List<Transform> enemySpots)
         {
             _enemySpots = enemySpots;
         }
 
-        public void Spawn(List<string> configsId)
+        public void SpawnEnemies(List<string> configsId)
         {
             var currentSpawn = _enemySpots[Random.Range(0, _enemySpots.Count)];
 
@@ -51,10 +59,11 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
             if (_selectedRamsId.Count <= 0) return;
             
-            foreach (var t in _selectedRamsId)
+            foreach (var id in _selectedRamsId)
             {
-                var ram = _factory.Create(t, _ramsSpawnPoint.position);
+                var ram = _factory.Create(id, _ramsSpawnPoint.position);
                 ram.transform.SetParent(_ramsContainer);
+                RamCreated?.Invoke(ram);
                 Squads.Add(ram);
             }
         }
@@ -63,6 +72,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         {
             var leader = _factory.CreateLeader(_leaderData, _ramsSpawnPoint.position);
             leader.transform.SetParent(_ramsContainer);
+            RamCreated?.Invoke(leader);
             
             Squads.Add(leader);
         }
@@ -70,15 +80,23 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private IEnumerator SpawnWithDelay(List<string> configsId, Transform currentSpawn, float delay = 0.5f)
         {
             _waitFor ??= new WaitForSeconds(delay);
+            List<Unit> enemiesToAttack = new List<Unit>();
             
             foreach (var config in configsId)
             {
-                var unit = _factory.Create(config, currentSpawn.position);
-                unit.transform.SetParent(_enemiesContainer);
-                Squads.Add(unit);
+                var enemy = _factory.Create(config, currentSpawn.position);
+                enemy.transform.SetParent(_enemiesContainer);
+                enemiesToAttack.Add(enemy);
                 
                 yield return _waitFor;
             }
+
+            foreach (var unit in enemiesToAttack)
+            {
+                unit.ActivateAgent();
+            }
+            
+            EnemiesCreated?.Invoke(enemiesToAttack);
         }
     }
 }

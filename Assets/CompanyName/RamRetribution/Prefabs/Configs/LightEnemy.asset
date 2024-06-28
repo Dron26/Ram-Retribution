@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Id>k__BackingField: LightEnemy
   <Prefab>k__BackingField: {fileID: 2660553551696656945, guid: 0f653dac67bef484299c63d83abee855, type: 3}
-  <Priority>k__BackingField: 1
+  <Priority>k__BackingField: 3
   _healthValue: 100
   <ArmorType>k__BackingField: 0
   <ArmorValue>k__BackingField: 0

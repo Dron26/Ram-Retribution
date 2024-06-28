@@ -13,30 +13,31 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
         private NavMeshAgent _agent;
         private Animator _animator;
         private Action _completeAction;
-        
+        private Coroutine _moveTowardsCoroutine;
+
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
-            
-            _agent.enabled = false;
+
+            //_agent.enabled = false;
             enabled = false;
         }
 
         private void Update()
         {
             _animator.SetBool(AIAnimatorParams.Run, true);
-            
+
             if (_agent.remainingDistance < _agent.stoppingDistance + float.Epsilon)
             {
                 _completeAction?.Invoke();
                 _completeAction = null;
-                
-                _animator.SetBool(AIAnimatorParams.Run,false);
+
+                _animator.SetBool(AIAnimatorParams.Run, false);
                 enabled = false;
             }
         }
-        
+
         public void Move(Vector3 destination, Action callback = null)
         {
             StartCoroutine(MoveToPoint(destination, callback));
@@ -44,13 +45,16 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
 
         public AIMovement MoveTowards(Transform target)
         {
+            if (_moveTowardsCoroutine != null)
+                StopCoroutine(_moveTowardsCoroutine);
+
             _agent.ResetPath();
             enabled = true;
-            StartCoroutine(MoveTowardsMovingTarget(target));
-            
+            _moveTowardsCoroutine = StartCoroutine(MoveTowardsMovingTarget(target));
+
             return this;
         }
-        
+
         public void OnComplete(Action callback)
         {
             _completeAction = callback;
@@ -60,20 +64,19 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
         {
             _agent.enabled = true;
         }
-        
+
         private IEnumerator MoveTowardsMovingTarget(Transform target)
         {
             while (enabled)
             {
-                if (target == null)
+                if (!target.gameObject.activeSelf && target == null)
                 {
                     yield break;
                 }
-                
+
                 var destination = target.position;
                 _agent.SetDestination(destination);
-                LookTo(destination);
-                
+
                 yield return null;
             }
         }
@@ -89,13 +92,6 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
 
             transform.position = destination;
             callback?.Invoke();
-        }
-        
-        private void LookTo(Vector3 target)
-        {
-            var lookDirection = (target - transform.position).normalized;
-            var lookRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
-            transform.rotation = lookRotation;
         }
     }
 }

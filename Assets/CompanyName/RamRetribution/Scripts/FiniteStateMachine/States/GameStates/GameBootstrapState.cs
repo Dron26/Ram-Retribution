@@ -47,12 +47,8 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
         private void InitBattle()
         {
-            var battleCommander = Object.Instantiate(Services
-                .ResourceLoadService
-                .Load<BattleCommander>($"{AssetPaths.CommonPrefabs}{nameof(BattleCommander)}"));
-
             var battleBootstrap = new BattleBootstrap(_gameData, _shopDataState.SelectedRams, _leaderData);
-            battleBootstrap.Init(battleCommander);
+            battleBootstrap.Init();
         }
     }
 }

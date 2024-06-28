@@ -1,6 +1,7 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
 {
@@ -19,7 +20,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
         public event Action HealthEnded;
         public int Health => _value;
         
-        public void TakeDamage(AttackType type ,int damage)
+        public void TakeDamage(AttackType type, int damage)
         {
             if (damage < 0)
                 throw new ArgumentException("Damage can`t be less than 0");
@@ -32,6 +33,8 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
             _value -= reducedDamage;
             
             ValueChanged?.Invoke(_value);
+            
+            Debug.Log($"Health: {_value}");
             
             if(_value <= 0)
                 HealthEnded?.Invoke();

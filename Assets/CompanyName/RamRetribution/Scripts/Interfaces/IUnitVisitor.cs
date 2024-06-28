@@ -13,5 +13,7 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
         public void Visit(Demolisher demolisher);
         public void Visit(Support support);
         public void Visit(LightEnemy lightEnemy);
+        public void Visit(MediumEnemy mediumEnemy);
+        public void Visit(HeavyEnemy heavyEnemy);
     }
 }

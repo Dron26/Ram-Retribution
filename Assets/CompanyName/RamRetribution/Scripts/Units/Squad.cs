@@ -18,6 +18,8 @@ namespace CompanyName.RamRetribution.Scripts.Units
         private readonly UsiCalculator _usiCalculator;
         
         private List<Unit> _units;
+        private Dictionary<int, List<Unit>> _unitsDict = new();
+
         private Transform _origin;
         private UnitsPlacementVisitor _placementVisitor;
         
@@ -34,6 +36,11 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _placementStrategy = placementStrategy;
             _units = new List<Unit>();
             _usiCalculator = new UsiCalculator();
+            
+            _unitsDict.Add(0, new List<Unit>());
+            _unitsDict.Add(1, new List<Unit>());
+            _unitsDict.Add(2, new List<Unit>());
+            _unitsDict.Add(3, new List<Unit>());
         }
 
         #region AddRemove
@@ -42,12 +49,13 @@ namespace CompanyName.RamRetribution.Scripts.Units
         {
             Validate(unit);
 
-            _units.Add(unit);
+            //_units.Add(unit);
+            _unitsDict[(int)unit.Priority].Add(unit);
             _units = _units.OrderByDescending(member => member.Priority).ToList();
             unit.Fleeing += OnUnitFleeing;
             TotalUsi += _usiCalculator.ConvertTo(unit);
         }
-
+        
         private void Remove(Unit unit)
         {
             if (_units != null && _units.Count > 0)
@@ -82,32 +90,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
             }
         }
 
-        public void Attack(Squad enemySquad)
-        {
-            var target = enemySquad.Units[0];
-            
-            foreach (var ally in _units)
-            {
-                if (ally.CanAttack(target.transform))
-                    ally.Attack(target.Damageable);
-                else
-                {
-                    ally.MoveTowards(target.transform);
-                }
-            }
-        }
-
-        public void Attack(Gate gate)
-        {
-            foreach (var unit in _units)
-            {
-                if (unit.CanAttack(gate.transform))
-                    unit.Attack(gate.Damageable);
-                else
-                    unit.MoveTowards(gate.transform);
-            }
-        }
-
         public void Heal(int amount)
         {
             foreach (var unit in _units)
@@ -126,10 +108,22 @@ namespace CompanyName.RamRetribution.Scripts.Units
             foreach (var unit in _units)
                 _placementVisitor.Visit(unit);
         }
+
+        public Dictionary<int, List<Unit>> GetTargets()
+        {
+            foreach (var unit in _units)
+            {
+                int priority = (int)unit.Priority;
+                _unitsDict[priority].Add(unit);
+            }
+
+            return _unitsDict;
+        }
         
         private void OnUnitFleeing(Unit unit)
         {
             unit.Fleeing -= OnUnitFleeing;
+            _unitsDict[(int)unit.Priority].Remove(unit);
             Remove(unit);
             unit.SelfDestroy();
         }

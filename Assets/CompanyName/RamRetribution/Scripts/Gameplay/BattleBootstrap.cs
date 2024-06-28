@@ -27,11 +27,21 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             _leaderData = leaderData;
         }
 
-        public void Init(BattleCommander battleCommander)
+        public void Init()
         {
             CreateSpawner();
             CreateLevelBuilder();
-            battleCommander.Init(_unitSpawner, _levelBuilder);
+            CreateBattleMediator();
+            
+            _unitSpawner.CreateRamsSquad();
+            _unitSpawner.SetEnemiesSpawnPoints(_levelBuilder.EnemySpots);
+            _unitSpawner.SpawnEnemies(new List<string>()
+            {
+                "LightEnemy",
+                "LightEnemy",
+                "LightEnemy",
+                "LightEnemy",
+            });
         }
 
         private void CreateSpawner()
@@ -46,7 +56,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 .Load<ConfigsContainer>($"{AssetPaths.Configs}{nameof(ConfigsContainer)}");
 
             var unitFactory = new UnitFactory(unitConfigs);
-
+            
             _unitSpawner.Init(unitFactory, _leaderData, _selectedRamsId);
         }
 
@@ -58,6 +68,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             
             _levelBuilder.Init();
             _levelBuilder.SetLevelConfiguration(new LevelConfigurator());
+        }
+
+        private void CreateBattleMediator()
+        {
+            var battleMediator = new BattleMediator();
+            battleMediator.RegisterSpawner(_unitSpawner);
         }
     }
 }
