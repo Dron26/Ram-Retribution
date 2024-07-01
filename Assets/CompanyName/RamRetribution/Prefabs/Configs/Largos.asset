@@ -15,7 +15,7 @@ MonoBehaviour:
   <Id>k__BackingField: Largos
   <Prefab>k__BackingField: {fileID: 4385708500594909719, guid: c36e34ab44983eb4a99e81ceb8390935, type: 3}
   <Priority>k__BackingField: 1
-  _healthValue: 100
+  _healthValue: 1000
   <ArmorType>k__BackingField: 0
   <ArmorValue>k__BackingField: 0
   _damage: 15

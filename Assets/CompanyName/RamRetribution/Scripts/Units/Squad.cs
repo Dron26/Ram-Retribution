@@ -49,10 +49,9 @@ namespace CompanyName.RamRetribution.Scripts.Units
         {
             Validate(unit);
 
-            //_units.Add(unit);
+            _units.Add(unit);
             _unitsDict[(int)unit.Priority].Add(unit);
             _units = _units.OrderByDescending(member => member.Priority).ToList();
-            unit.Fleeing += OnUnitFleeing;
             TotalUsi += _usiCalculator.ConvertTo(unit);
         }
         
@@ -107,25 +106,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
             foreach (var unit in _units)
                 _placementVisitor.Visit(unit);
-        }
-
-        public Dictionary<int, List<Unit>> GetTargets()
-        {
-            foreach (var unit in _units)
-            {
-                int priority = (int)unit.Priority;
-                _unitsDict[priority].Add(unit);
-            }
-
-            return _unitsDict;
-        }
-        
-        private void OnUnitFleeing(Unit unit)
-        {
-            unit.Fleeing -= OnUnitFleeing;
-            _unitsDict[(int)unit.Priority].Remove(unit);
-            Remove(unit);
-            unit.SelfDestroy();
         }
 
         private void Validate(Unit unit)

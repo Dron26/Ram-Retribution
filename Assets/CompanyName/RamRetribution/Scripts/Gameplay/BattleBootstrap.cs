@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts._TestScripts;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
@@ -32,16 +33,8 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             CreateSpawner();
             CreateLevelBuilder();
             CreateBattleMediator();
-            
-            _unitSpawner.CreateRamsSquad();
-            _unitSpawner.SetEnemiesSpawnPoints(_levelBuilder.EnemySpots);
-            _unitSpawner.SpawnEnemies(new List<string>()
-            {
-                "LightEnemy",
-                "LightEnemy",
-                "LightEnemy",
-                "LightEnemy",
-            });
+
+            CreateTestCombat();
         }
 
         private void CreateSpawner()
@@ -74,6 +67,15 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         {
             var battleMediator = new BattleMediator();
             battleMediator.RegisterSpawner(_unitSpawner);
+        }
+
+        private void CreateTestCombat()
+        {
+            TestCombat testCombatPrefab = Services
+                .ResourceLoadService
+                .Load<TestCombat>($"{AssetPaths.CommonPrefabs}{nameof(TestCombat)}");
+
+            Object.Instantiate(testCombatPrefab).Init(_levelBuilder, _unitSpawner);
         }
     }
 }

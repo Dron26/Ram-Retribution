@@ -25,7 +25,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         
         private WaitForSeconds _waitFor;
 
-        public event Action<Unit> RamCreated; 
+        public event Action<List<Unit>> RamsCreated; 
         public event Action<List<Unit>> EnemiesCreated; 
         public SquadsHolder Squads { get; private set; }
 
@@ -55,26 +55,38 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         
         public void CreateRamsSquad()
         {
-            SpawnLeader();
+            var rams = new List<Unit>();
+            var leader = SpawnLeader();
+            
+            rams.Add(leader);
 
-            if (_selectedRamsId.Count <= 0) return;
+            if (_selectedRamsId.Count <= 0)
+            {
+                RamsCreated?.Invoke(rams);
+                return;
+            }
             
             foreach (var id in _selectedRamsId)
             {
                 var ram = _factory.Create(id, _ramsSpawnPoint.position);
                 ram.transform.SetParent(_ramsContainer);
-                RamCreated?.Invoke(ram);
-                Squads.Add(ram);
+                rams.Add(ram);
             }
+
+            foreach (var ram in rams)
+            {
+                ram.ActivateAgent();
+            }
+            
+            RamsCreated?.Invoke(rams);
         }
         
-        private void SpawnLeader()
+        private Unit SpawnLeader()
         {
             var leader = _factory.CreateLeader(_leaderData, _ramsSpawnPoint.position);
             leader.transform.SetParent(_ramsContainer);
-            RamCreated?.Invoke(leader);
             
-            Squads.Add(leader);
+            return leader;
         }
 
         private IEnumerator SpawnWithDelay(List<string> configsId, Transform currentSpawn, float delay = 0.5f)

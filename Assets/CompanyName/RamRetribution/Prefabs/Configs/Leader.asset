@@ -15,7 +15,7 @@ MonoBehaviour:
   <Id>k__BackingField: Leader
   <Prefab>k__BackingField: {fileID: -1012835492418766968, guid: 5b79cbd9fab9f5347bddcade417e2145, type: 3}
   <Priority>k__BackingField: 0
-  _healthValue: 150
+  _healthValue: 1000
   <ArmorType>k__BackingField: 1
   <ArmorValue>k__BackingField: 0
   _damage: 100

@@ -15,7 +15,7 @@ MonoBehaviour:
   <Id>k__BackingField: Trankos
   <Prefab>k__BackingField: {fileID: 6946624918866920278, guid: 74c070f16b23b284faac8f30121b3acf, type: 3}
   <Priority>k__BackingField: 4
-  _healthValue: 50
+  _healthValue: 1000
   <ArmorType>k__BackingField: 2
   <ArmorValue>k__BackingField: 0
   _damage: 25

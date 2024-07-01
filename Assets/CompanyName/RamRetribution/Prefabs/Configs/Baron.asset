@@ -15,7 +15,7 @@ MonoBehaviour:
   <Id>k__BackingField: Baron
   <Prefab>k__BackingField: {fileID: -9168025355511388634, guid: 0fe7dc3360914494c8379c84faf7a620, type: 3}
   <Priority>k__BackingField: 2
-  _healthValue: 100
+  _healthValue: 1000
   <ArmorType>k__BackingField: 0
   <ArmorValue>k__BackingField: 0
   _damage: 55

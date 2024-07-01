@@ -23,7 +23,7 @@ public class GridDataEditor : Editor
     {
         base.OnInspectorGUI();
         var gridData = (GridData)target;
-
+        
         for (int i = 0; i < gridData.Grids.GetLength(1); i++)
         {
             EditorGUILayout.BeginHorizontal();

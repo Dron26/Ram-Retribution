@@ -2,35 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using CompanyName.RamRetribution.Scripts.Buildings;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace CompanyName.RamRetribution.Scripts.Units
 {
     [SelectionBase]
     [RequireComponent(typeof(AIMovement))]
-    public abstract class Unit : MonoBehaviour
+    public abstract class Unit : MonoBehaviour, IAttackable
     {
-        public List<Unit> CurrentEnemies = new();
+        public readonly List<Unit> CurrentEnemies = new();
 
-        private IDamageable _health;
         private IAttackComponent _attackComponent;
         private AIMovement _aiMovement;
         private Animator _animator;
-        private Transform _selfTransform;
         private CancellationTokenSource _cancellationToken;
 
         private PriorityTypes _currentTargetPriorityType;
-        private CooldownTimer _attackTimer;
 
         public event Action<Unit> Fleeing;
-        public event Action<List<Unit>> MyAttackerWaitingCommand;
-        public IDamageable Damageable => _health;
+        public event Action<List<Unit>> MyAttackersWaitingCommand;
+        public IDamageable Damageable { get; private set; }
+        public Transform SelfTransform { get; private set; }
         public int Damage => _attackComponent.Damage;
         public abstract UnitTypes Type { get; }
         public PriorityTypes Priority { get; private set; }
@@ -40,15 +39,15 @@ namespace CompanyName.RamRetribution.Scripts.Units
         {
             _aiMovement = GetComponent<AIMovement>();
             _animator = GetComponentInChildren<Animator>();
-            _selfTransform = transform;
+            SelfTransform = transform;
 
-            _health = health;
+            Damageable = health;
             _attackComponent = attackComponent;
 
             IsActive = false;
             Priority = priority;
 
-            _health.HealthEnded += OnHealthEnded;
+            Damageable.HealthEnded += OnHealthEnded;
             _cancellationToken = new CancellationTokenSource();
         }
 
@@ -64,43 +63,50 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement.MoveTowards(target).OnComplete(callback);
         }
 
-        private async UniTask Attack(Unit unit)
+        public void AttackGate(Gate gate)
         {
-            var target = unit;
+            _ = Attack(gate);
+        }
 
-            //пока таргет жив = атакуем. При смене таргета заверщаем цикл и вызываем Attack()
+        private async UniTask Attack(IAttackable target)
+        {
+            if(!target.IsActive)
+                Debug.Log($"target ne active");
+            
             while (target.IsActive)
             {
-                await UniTask.Delay(
-                    TimeSpan.FromSeconds(_attackComponent.AttackSpeed),
-                    DelayType.DeltaTime,
-                    PlayerLoopTiming.Update,
-                    _cancellationToken.Token);
-
-                if (CanAttack(target.transform))
+                if (CanAttack(target.SelfTransform))
                 {
                     _attackComponent.Attack(target.Damageable);
                     _animator.SetTrigger(AIAnimatorParams.Attack);
+
+                    await UniTask.Delay(
+                        TimeSpan.FromSeconds(_attackComponent.AttackSpeed),
+                        DelayType.DeltaTime,
+                        PlayerLoopTiming.Update,
+                        _cancellationToken.Token);
                 }
                 else
                 {
-                    MoveTowards(target.transform);
+                    MoveTowards(target.SelfTransform);
+
+                    await UniTask.Yield(PlayerLoopTiming.Update, _cancellationToken.Token);
                 }
             }
         }
 
         public void Heal(int amount)
         {
-            _health.Restore(amount);
+            Damageable.Restore(amount);
         }
 
         public void FindTarget(Dictionary<int, List<Unit>> targetsByPriority)
         {
-            CancelToken();
-            
+            //CancelToken();
+
             if (_currentTargetPriorityType == PriorityTypes.High)
             {
-                GetEnemyToAttack(targetsByPriority, PriorityTypes.High);
+                GetEnemyToAttack(targetsByPriority, PriorityTypes.High, PriorityTypes.Medium, PriorityTypes.Small);
                 return;
             }
 
@@ -134,7 +140,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
                     _currentTargetPriorityType = unitWithFewerAttackers.Priority;
                     Fleeing += unitWithFewerAttackers.OnAttackersFleeing;
                     unitWithFewerAttackers.CurrentEnemies.Add(this);
-                    Attack(unitWithFewerAttackers);
+                    Attack(unitWithFewerAttackers).Forget();
 
                     return;
                 }
@@ -142,11 +148,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
         }
 
         #endregion
-
-        public bool CanAttack(Transform target)
-        {
-            return (target.transform.position - _selfTransform.position).sqrMagnitude <= _attackComponent.Distance;
-        }
 
         public void ActivateAgent()
         {
@@ -161,21 +162,26 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         public abstract void Accept(IUnitVisitor visitor);
 
+        private bool CanAttack(Transform target)
+        {
+            return (target.transform.position - SelfTransform.position).sqrMagnitude <= _attackComponent.Distance;
+        }
+
         private void OnHealthEnded()
         {
-            _health.HealthEnded -= OnHealthEnded;
+            CancelToken();
+            Damageable.HealthEnded -= OnHealthEnded;
             IsActive = false;
             Fleeing?.Invoke(this);
-            CancelToken();
-            MyAttackerWaitingCommand?.Invoke(CurrentEnemies);
+            MyAttackersWaitingCommand?.Invoke(CurrentEnemies);
 
             SelfDestroy();
         }
 
         private void CancelToken()
         {
-            _cancellationToken.Cancel();
-            _cancellationToken.Dispose();
+            _cancellationToken?.Cancel();
+            _cancellationToken?.Dispose();
             _cancellationToken = new CancellationTokenSource();
         }
 

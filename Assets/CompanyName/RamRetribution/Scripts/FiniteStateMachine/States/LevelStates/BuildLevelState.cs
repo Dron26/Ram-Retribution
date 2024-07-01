@@ -6,20 +6,15 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.LevelStat
     public class BuildLevelState : BaseState
     {
         private readonly LevelBuilder _levelBuilder;
-        private readonly UnitSpawner _unitSpawner;
-        private readonly Transform _ramsStartPoint;
         
-        public BuildLevelState(LevelBuilder levelBuilder, UnitSpawner spawner, Transform ramsStartPoint)
+        public BuildLevelState(LevelBuilder levelBuilder)
         {
             _levelBuilder = levelBuilder;
-            _unitSpawner = spawner;
-            _ramsStartPoint = ramsStartPoint;
         }
         
         public override void Enter()
         {
             _levelBuilder.Build();
-            _unitSpawner.Squads.Rams.SetOrigin(_ramsStartPoint);
         }
     }
 }
