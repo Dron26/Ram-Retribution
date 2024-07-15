@@ -40,7 +40,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             _unitSpawner.EnemiesCreated -= AddEnemies;
         }
 
-        private void AddRams(List<Unit> rams)
+        private void AddRams(IReadOnlyList<Unit> rams)
         {
             foreach (var ram in rams)
             {
@@ -49,7 +49,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             }
         }
 
-        private void AddEnemies(List<Unit> enemies)
+        private void AddEnemies(IReadOnlyList<Unit> enemies)
         {
             foreach (var enemy in enemies)
             {
@@ -67,16 +67,16 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 for (var index = 0; index < rams.Count; index++)
                 {
                     var ram = rams[index];
-                    ram.FindTarget(_enemiesToAttack);
+                    ram.NotifyFindTarget(_enemiesToAttack);
                 }
         }
 
-        private void NotifyEnemies(List<Unit> enemies)
+        private void NotifyEnemies(IReadOnlyList<Unit> enemies)
         {
             for (var index = 0; index < enemies.Count; index++)
             {
                 var enemy = enemies[index];
-                enemy.FindTarget(_aliveRams);
+                enemy.NotifyFindTarget(_aliveRams);
             }
         }
 

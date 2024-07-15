@@ -31,9 +31,12 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
             };
 
             ValueChanged?.Invoke(_value);
-            
-            if(_value <= 0)
+
+            if (_value <= 0)
+            {
                 HealthEnded?.Invoke();
+                Debug.Log($"Gate health ended");
+            }
             
             Debug.Log($"Gate health {_value}");
         }

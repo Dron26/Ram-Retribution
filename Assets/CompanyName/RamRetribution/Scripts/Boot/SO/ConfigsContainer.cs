@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.SO
@@ -9,7 +10,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     {
         [SerializeField] private List<UnitConfig> _unitConfigs;
 
-        public string GetId(UnitConfig config)
+        public ConfigId GetId(UnitConfig config)
         {
             if (_unitConfigs.Contains(config))
                 return config.Id;
@@ -17,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
             throw new ArgumentException($"Cannot found configuration {config.name}");
         }
     
-        public UnitConfig GetConfig(string id)
+        public UnitConfig GetConfig(ConfigId id)
         {
             for (int i = 0; i < _unitConfigs.Count; i++)
             {

@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using CompanyName.RamRetribution.Scripts.Buildings;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using Cysharp.Threading.Tasks;
@@ -24,10 +22,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
         private Animator _animator;
         private CancellationTokenSource _cancellationToken;
 
-        private PriorityTypes _currentTargetPriorityType;
-
         public event Action<Unit> Fleeing;
-        public event Action<List<Unit>> MyAttackersWaitingCommand;
         public IDamageable Damageable { get; private set; }
         public Transform SelfTransform { get; private set; }
         public int Damage => _attackComponent.Damage;
@@ -58,21 +53,15 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement.Move(destination, callback);
         }
 
-        public void MoveTowards(Transform target, Action callback = null)
+        private async UniTask MoveTowards(Transform target, Action callback = null)
         {
-            _aiMovement.MoveTowards(target).OnComplete(callback);
-        }
-
-        public void AttackGate(Gate gate)
-        {
-            _ = Attack(gate);
-        }
-
-        private async UniTask Attack(IAttackable target)
-        {
-            if(!target.IsActive)
-                Debug.Log($"target ne active");
+            _aiMovement.OnComplete(callback);
             
+            await _aiMovement.MoveTowards(target, _cancellationToken.Token);
+        }
+
+        public async UniTask Attack(IAttackable target)
+        {
             while (target.IsActive)
             {
                 if (CanAttack(target.SelfTransform))
@@ -88,9 +77,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
                 }
                 else
                 {
-                    MoveTowards(target.SelfTransform);
-
-                    await UniTask.Yield(PlayerLoopTiming.Update, _cancellationToken.Token);
+                    await MoveTowards(target.SelfTransform);
                 }
             }
         }
@@ -100,33 +87,19 @@ namespace CompanyName.RamRetribution.Scripts.Units
             Damageable.Restore(amount);
         }
 
-        public void FindTarget(Dictionary<int, List<Unit>> targetsByPriority)
+        public void NotifyFindTarget(Dictionary<int, List<Unit>> targetsByPriority)
         {
-            //CancelToken();
+            CancelToken();
 
-            if (_currentTargetPriorityType == PriorityTypes.High)
-            {
-                GetEnemyToAttack(targetsByPriority, PriorityTypes.High, PriorityTypes.Medium, PriorityTypes.Small);
-                return;
-            }
-
-            switch (_currentTargetPriorityType)
-            {
-                case PriorityTypes.Leader:
-                    GetEnemyToAttack(targetsByPriority, PriorityTypes.High, PriorityTypes.Medium, PriorityTypes.Small);
-                    break;
-                case PriorityTypes.Small:
-                    GetEnemyToAttack(targetsByPriority, PriorityTypes.High, PriorityTypes.Medium);
-                    break;
-                case PriorityTypes.Medium:
-                    GetEnemyToAttack(targetsByPriority, PriorityTypes.High);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            FindTarget(
+                targetsByPriority,
+                PriorityTypes.High,
+                PriorityTypes.Medium,
+                PriorityTypes.Small,
+                PriorityTypes.Leader);
         }
 
-        private void GetEnemyToAttack(Dictionary<int, List<Unit>> targetsByPriority,
+        private void FindTarget(Dictionary<int, List<Unit>> targetsByPriority,
             params PriorityTypes[] priorityTypesArray)
         {
             foreach (var priority in priorityTypesArray)
@@ -137,7 +110,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
                         .OrderBy(unit => unit.CurrentEnemies.Count)
                         .First();
 
-                    _currentTargetPriorityType = unitWithFewerAttackers.Priority;
                     Fleeing += unitWithFewerAttackers.OnAttackersFleeing;
                     unitWithFewerAttackers.CurrentEnemies.Add(this);
                     Attack(unitWithFewerAttackers).Forget();
@@ -155,6 +127,12 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement.ActivateNavMesh();
         }
 
+        public void DeactivateAgent()
+        {
+            IsActive = false;
+            _aiMovement.DeactivateNavMesh();
+        }
+        
         public void SelfDestroy()
         {
             gameObject.SetActive(false);
@@ -173,7 +151,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
             Damageable.HealthEnded -= OnHealthEnded;
             IsActive = false;
             Fleeing?.Invoke(this);
-            MyAttackersWaitingCommand?.Invoke(CurrentEnemies);
 
             SelfDestroy();
         }

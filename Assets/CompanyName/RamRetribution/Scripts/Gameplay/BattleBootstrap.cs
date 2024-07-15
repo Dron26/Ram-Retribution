@@ -1,40 +1,41 @@
+using System;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts._TestScripts;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Factorys;
-using CompanyName.RamRetribution.Scripts.Gameplay.Level;
-using CompanyName.RamRetribution.Scripts.Units;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
 {
     public class BattleBootstrap
     {
+        private readonly ModulesContainer _modulesContainer;
         private readonly GameData _gameData;
-        private readonly List<string> _selectedRamsId;
+        private readonly List<ConfigId> _selectedRamsId;
         private readonly LeaderDataState _leaderData;
 
         private UnitSpawner _unitSpawner;
-        private LevelBuilder _levelBuilder;
-        private Squad _ramsSquad;
-
-        public BattleBootstrap(GameData gameData, List<string> selectedRamsId, LeaderDataState leaderData)
+        private BattleMediator _battleMediator;
+        
+        public BattleBootstrap(
+            ModulesContainer modulesContainer, 
+            GameData gameData, 
+            List<ConfigId> selectedRamsId, 
+            LeaderDataState leaderData)
         {
+            _modulesContainer = modulesContainer;
             _gameData = gameData;
             _selectedRamsId = selectedRamsId;
             _leaderData = leaderData;
         }
-
+        
         public void Init()
         {
             CreateSpawner();
-            CreateLevelBuilder();
             CreateBattleMediator();
-
-            CreateTestCombat();
         }
 
         private void CreateSpawner()
@@ -51,31 +52,13 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             var unitFactory = new UnitFactory(unitConfigs);
             
             _unitSpawner.Init(unitFactory, _leaderData, _selectedRamsId);
-        }
-
-        private void CreateLevelBuilder()
-        {
-            _levelBuilder = Object.Instantiate(Services
-                .ResourceLoadService
-                .Load<LevelBuilder>($"{AssetPaths.CommonPrefabs}{nameof(LevelBuilder)}"));
-            
-            _levelBuilder.Init();
-            _levelBuilder.SetLevelConfiguration(new LevelConfigurator());
+            _modulesContainer.Register(_unitSpawner);
         }
 
         private void CreateBattleMediator()
         {
-            var battleMediator = new BattleMediator();
-            battleMediator.RegisterSpawner(_unitSpawner);
-        }
-
-        private void CreateTestCombat()
-        {
-            TestCombat testCombatPrefab = Services
-                .ResourceLoadService
-                .Load<TestCombat>($"{AssetPaths.CommonPrefabs}{nameof(TestCombat)}");
-
-            Object.Instantiate(testCombatPrefab).Init(_levelBuilder, _unitSpawner);
+            _battleMediator = new BattleMediator();
+            _battleMediator.RegisterSpawner(_unitSpawner);
         }
     }
 }

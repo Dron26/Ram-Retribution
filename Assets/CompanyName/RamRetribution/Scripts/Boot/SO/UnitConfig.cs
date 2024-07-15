@@ -10,7 +10,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     [CreateAssetMenu(menuName = "UnitsConfig", order = 51)]
     public class UnitConfig : ScriptableObject
     {
-        [field: SerializeField] public string Id { get; private set; }
+        [field: SerializeField] public ConfigId Id { get; private set; }
         [field: SerializeField] public Unit Prefab { get; private set; }
         [field: SerializeField] public PriorityTypes Priority { get; private set; }
         

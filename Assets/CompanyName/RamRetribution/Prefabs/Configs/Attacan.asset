@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de252fd7dcc24366b77add821aa1afe4, type: 3}
   m_Name: Attacan
   m_EditorClassIdentifier: 
-  <Id>k__BackingField: Attacan
+  <Id>k__BackingField: 1
   <Prefab>k__BackingField: {fileID: -9168025355511388634, guid: 0fe7dc3360914494c8379c84faf7a620, type: 3}
   <Priority>k__BackingField: 2
   _healthValue: 100
