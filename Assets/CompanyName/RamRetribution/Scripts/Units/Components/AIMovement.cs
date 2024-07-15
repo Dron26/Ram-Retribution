@@ -1,7 +1,8 @@
 using System;
 using System.Collections;
+using System.Threading;
 using CompanyName.RamRetribution.Scripts.Common;
-using DG.Tweening;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,46 +14,51 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
         private NavMeshAgent _agent;
         private Animator _animator;
         private Action _completeAction;
-        private Coroutine _moveTowardsCoroutine;
 
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
-            _animator = GetComponentInChildren<Animator>();
 
-            //_agent.enabled = false;
+            _agent.enabled = false;
             enabled = false;
         }
 
         private void Update()
         {
-            _animator.SetBool(AIAnimatorParams.Run, true);
-
             if (_agent.remainingDistance < _agent.stoppingDistance + float.Epsilon)
             {
                 _completeAction?.Invoke();
                 _completeAction = null;
-
-                _animator.SetBool(AIAnimatorParams.Run, false);
+                
                 enabled = false;
             }
         }
 
+        public void Init(Animator animator)
+        {
+            _animator = animator;
+        }
+        
         public void Move(Vector3 destination, Action callback = null)
         {
             StartCoroutine(MoveToPoint(destination, callback));
         }
 
-        public AIMovement MoveTowards(Transform target)
+        public async UniTask MoveTowards(Transform target, CancellationToken cancellationToken)
         {
-            if (_moveTowardsCoroutine != null)
-                StopCoroutine(_moveTowardsCoroutine);
-
             _agent.ResetPath();
             enabled = true;
-            _moveTowardsCoroutine = StartCoroutine(MoveTowardsMovingTarget(target));
+            
+            while (enabled)
+            {
+                _agent.SetDestination(target.position);
 
-            return this;
+                await UniTask.Delay(
+                        TimeSpan.FromSeconds(0.5f),
+                        DelayType.DeltaTime
+                    )
+                    .WithCancellation(cancellationToken);
+            }
         }
 
         public void OnComplete(Action callback)
@@ -65,31 +71,23 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
             _agent.enabled = true;
         }
 
-        private IEnumerator MoveTowardsMovingTarget(Transform target)
+        public void DeactivateNavMesh()
         {
-            while (enabled)
-            {
-                if (!target.gameObject.activeSelf && target == null)
-                {
-                    yield break;
-                }
-
-                var destination = target.position;
-                _agent.SetDestination(destination);
-
-                yield return null;
-            }
+            _agent.enabled = false;
         }
 
         private IEnumerator MoveToPoint(Vector3 destination, Action callback = null)
         {
-            while (transform.position != destination)
+            _animator.SetBool(AIAnimatorParams.Run, true);
+
+            while ((destination - transform.position).sqrMagnitude > _agent.stoppingDistance + float.Epsilon)
             {
                 transform.position = Vector3.MoveTowards(
                     transform.position, destination, _agent.speed * Time.deltaTime);
                 yield return null;
             }
 
+            _animator.SetBool(AIAnimatorParams.Run, false);
             transform.position = destination;
             callback?.Invoke();
         }

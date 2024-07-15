@@ -22,7 +22,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
 
         public Unit CreateLeader(LeaderDataState leaderData, Vector3 at)
         {
-            var prefab = _configsContainer.GetConfig("Leader").Prefab;
+            var prefab = _configsContainer.GetConfig(ConfigId.Leader).Prefab;
             var leader = Object.Instantiate(prefab, at, Quaternion.identity);
             
             IDamageable healthComponent;
@@ -47,7 +47,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
             return leader;
         }
         
-        public Unit Create(string configId, Vector3 at)
+        public Unit Create(ConfigId configId, Vector3 at)
         {
             var config = _configsContainer.GetConfig(configId);
             var instance = Object.Instantiate(config.Prefab, at, Quaternion.identity);

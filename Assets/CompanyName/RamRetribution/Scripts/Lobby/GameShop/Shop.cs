@@ -12,13 +12,14 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
     public class Shop : MonoBehaviour
     {
         [SerializeField] private ShopView _view;
-        
+
         [Header("Buttons")] 
         [SerializeField] private CategoryButton _skinsButton;
         [SerializeField] private CategoryButton _ramsButton;
         [SerializeField] private CategoryButton _spellsButton;
         [SerializeField] private BuyButton _buyButton;
         [SerializeField] private Button _selectionButton;
+        [SerializeField] private Button _unSelectionButton;
         [SerializeField] private Image _selectedText;
 
         private Wallet _wallet;
@@ -117,11 +118,13 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
             _selectionButton.gameObject.SetActive(false);
             _selectedText.gameObject.SetActive(false);
+            _unSelectionButton.gameObject.SetActive(false);
         }
 
         private void ShowSelectionButton()
         {
             _selectionButton.gameObject.SetActive(true);
+            _unSelectionButton.gameObject.SetActive(false);
             _buyButton.gameObject.SetActive(false);
             _selectedText.gameObject.SetActive(false);
         }
@@ -129,6 +132,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         private void ShowSelectedText()
         {
             _selectedText.gameObject.SetActive(true);
+            _unSelectionButton.gameObject.SetActive(true);
             _buyButton.gameObject.SetActive(false);
             _selectionButton.gameObject.SetActive(false);
         }
@@ -196,6 +200,11 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         {
             _itemSelector.Visit(_selectedView.Item);
             _view.Select(_selectedView);
+        }
+
+        private void UnselectButton()
+        {
+            
         }
     }
 }

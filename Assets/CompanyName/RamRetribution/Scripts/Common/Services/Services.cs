@@ -10,6 +10,9 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         public static IDataService PrefsDataService { get; private set; }
         public static IResourceLoadService ResourceLoadService { get; private set; }
         public static PauseControl PauseControl { get; private set; }
+
+        //asset ref kit - посмотреть
+        //gameDev.ru - сайт с вакансиями
         
         public static void Init()
         {

@@ -12,6 +12,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors
             => _shopData = shopData;
 
         public bool IsSelected { get; private set; }
+        public bool IsSingleSelectItem { get; private set; }
         
         public void Visit(ShopItem item)
         {
@@ -21,15 +22,18 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors
         public void Visit(SkinItem item)
         {
             IsSelected = _shopData.SelectedSkin == item.SkinType;
+            IsSingleSelectItem = true;
         }
 
         public void Visit(SpellItem item)
         {
+            IsSingleSelectItem = false;
         }
 
         public void Visit(RamItem item)
         {
             IsSelected = _shopData.SelectedRams.Contains(item.ConfigId);
+            IsSingleSelectItem = false;
         }
     }
 }

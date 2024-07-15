@@ -1931,7 +1931,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playButton: {fileID: 4829976838392804337}
-  walletView: {fileID: 1577211144529064757}
+  _walletView: {fileID: 1577211144529064757}
   _addMoneyButton: {fileID: 1062833653885766611}
   _deleteGameData: {fileID: 5054707018594042046}
   _deleteShopData: {fileID: 1451596101369590885}

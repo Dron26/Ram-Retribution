@@ -5,6 +5,7 @@ using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using StateMachine = CompanyName.RamRetribution.Scripts.FiniteStateMachine.StateMachine;
 
@@ -13,7 +14,7 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
     public class LobbyHUD : MonoBehaviour
     {
         [SerializeField] private PlayButton _playButton;
-        [SerializeField] private WalletView walletView;
+        [SerializeField] private WalletView _walletView;
         
         [Header("For Tests buttons")]
         [SerializeField] private Button _addMoneyButton;
@@ -44,7 +45,7 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
         {
             _wallet = wallet;
             
-            walletView.Init(_wallet);
+            _walletView.Init(_wallet);
             _wallet.UpdateText();
         }
         

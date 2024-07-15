@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Buildings
 {
-    public abstract class Gate : MonoBehaviour, IAttackable
+    public abstract class Gate : MonoBehaviour, IAttackble
     {
         private bool _isFirstAttack;
         

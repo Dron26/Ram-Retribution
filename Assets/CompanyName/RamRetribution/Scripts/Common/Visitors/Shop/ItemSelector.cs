@@ -2,11 +2,11 @@ using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 
-namespace CompanyName.RamRetribution.Scripts.Common.Visitors
+namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 {
     public class ItemSelector : IShopItemVisitor
     {
-        private ShopDataState _shopData;
+        private readonly ShopDataState _shopData;
 
         public ItemSelector(ShopDataState shopData) 
             => _shopData = shopData;

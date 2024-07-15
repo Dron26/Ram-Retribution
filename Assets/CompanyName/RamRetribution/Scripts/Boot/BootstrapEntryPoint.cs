@@ -2,7 +2,6 @@ using System.Collections;
 using Agava.YandexGames;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
 using UnityEngine;
 

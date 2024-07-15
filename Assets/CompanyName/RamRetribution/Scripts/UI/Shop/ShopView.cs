@@ -32,9 +32,9 @@ namespace CompanyName.RamRetribution.Scripts.UI.Shop
         {
             Clear();
 
-            for (int i = 0; i < items.Count; i++)
+            foreach (var item in items)
             {
-                var view = _itemsFactory.Create(items[i],_container);
+                var view = _itemsFactory.Create(item,_container);
                 view.Clicked += OnShopItemClicked;
                 
                 view.Unselect();
@@ -48,9 +48,14 @@ namespace CompanyName.RamRetribution.Scripts.UI.Shop
 
                     if (_selectedItemChecker.IsSelected)
                     {
+                        if (_selectedItemChecker.IsSingleSelectItem)
+                        {
+                            view.Select();
+                            view.Highlight();
+                            ItemViewClicked?.Invoke(view);
+                        }
+                        
                         view.Select();
-                        view.Highlight();
-                        ItemViewClicked?.Invoke(view);
                     }
                     
                     view.Unlock();
@@ -70,14 +75,14 @@ namespace CompanyName.RamRetribution.Scripts.UI.Shop
         {
             if (view.Item is RamItem)
             {
-                foreach (var itemVieww in _itemViews)
+                foreach (var itemView in _itemViews)
                 {
-                    _selectedItemChecker.Visit(itemVieww.Item);
+                    _selectedItemChecker.Visit(itemView.Item);
                     
                     if(_selectedItemChecker.IsSelected)
-                        itemVieww.Select();
+                        itemView.Select();
                     else
-                        itemVieww.Unselect();
+                        itemView.Unselect();
                 }
                 
                 return;
