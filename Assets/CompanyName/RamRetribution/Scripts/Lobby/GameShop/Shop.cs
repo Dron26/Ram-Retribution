@@ -2,6 +2,7 @@ using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Common.Visitors;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,11 +13,13 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
     {
         [SerializeField] private ShopView _view;
 
-        [Header("Buttons")] [SerializeField] private CategoryButton _skinsButton;
+        [Header("Buttons")] 
+        [SerializeField] private CategoryButton _skinsButton;
         [SerializeField] private CategoryButton _ramsButton;
         [SerializeField] private CategoryButton _spellsButton;
         [SerializeField] private BuyButton _buyButton;
         [SerializeField] private Button _selectionButton;
+        [SerializeField] private Button _unSelectionButton;
         [SerializeField] private Image _selectedText;
 
         private Wallet _wallet;
@@ -24,7 +27,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         private ShopItemView _selectedView;
 
         private ShopDataState _shopDataState;
-        private SkinSelector _skinSelector;
+        private ItemSelector _itemSelector;
         private ItemUnlocker _itemUnlocker;
         private OpenItemChecker _openItemChecker;
         private SelectedItemChecker _selectedItemChecker;
@@ -56,7 +59,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
             Wallet wallet,
             ShopDataState shopDataState,
             ShopContent content,
-            SkinSelector skinSelector,
+            ItemSelector itemSelector,
             ItemUnlocker itemUnlocker,
             OpenItemChecker openItemChecker,
             SelectedItemChecker selectedItemChecker)
@@ -64,7 +67,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
             _wallet = wallet;
             _shopDataState = shopDataState;
             _content = content;
-            _skinSelector = skinSelector;
+            _itemSelector = itemSelector;
             _itemUnlocker = itemUnlocker;
             _openItemChecker = openItemChecker;
             _selectedItemChecker = selectedItemChecker;
@@ -115,11 +118,13 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
             _selectionButton.gameObject.SetActive(false);
             _selectedText.gameObject.SetActive(false);
+            _unSelectionButton.gameObject.SetActive(false);
         }
 
         private void ShowSelectionButton()
         {
             _selectionButton.gameObject.SetActive(true);
+            _unSelectionButton.gameObject.SetActive(false);
             _buyButton.gameObject.SetActive(false);
             _selectedText.gameObject.SetActive(false);
         }
@@ -127,6 +132,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         private void ShowSelectedText()
         {
             _selectedText.gameObject.SetActive(true);
+            _unSelectionButton.gameObject.SetActive(true);
             _buyButton.gameObject.SetActive(false);
             _selectionButton.gameObject.SetActive(false);
         }
@@ -143,7 +149,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
                 _itemUnlocker.Visit(_selectedView.Item);
 
-                SelectSkin();
+                SelectItem();
 
                 _selectedView.Unlock();
 
@@ -155,7 +161,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
         private void OnSelectionButtonClicked()
         {
-            SelectSkin();
+            SelectItem();
             Services.PrefsDataService.Save(_shopDataState);
 
             OnItemViewClicked(_selectedView);
@@ -190,10 +196,15 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
         #endregion
 
-        private void SelectSkin()
+        private void SelectItem()
         {
-            _skinSelector.Visit(_selectedView.Item);
+            _itemSelector.Visit(_selectedView.Item);
             _view.Select(_selectedView);
+        }
+
+        private void UnselectButton()
+        {
+            
         }
     }
 }

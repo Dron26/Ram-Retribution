@@ -1,7 +1,9 @@
+using System;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Common.Visitors;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 
 namespace CompanyName.RamRetribution.Scripts.Boot
@@ -14,7 +16,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot
         private LeaderDataState _leaderData;
         private ShopDataState _shopData;
 
-        private SkinSelector _skinSelector;
+        private ItemSelector _itemSelector;
         private ItemUnlocker _itemUnlocker;
         private OpenItemChecker _openItemChecker;
         private SelectedItemChecker _selectedItemChecker;
@@ -24,14 +26,12 @@ namespace CompanyName.RamRetribution.Scripts.Boot
 
         public void Init(Wallet wallet)
         {
-            LoadData();
+            LoadData().OnComplete(CreateVisitors);
 
-            CreateVisitors();
-
-            _shop.Init(wallet, _shopData, _content, _skinSelector, _itemUnlocker, _openItemChecker, _selectedItemChecker);
+            _shop.Init(wallet, _shopData, _content, _itemSelector, _itemUnlocker, _openItemChecker, _selectedItemChecker);
         }
 
-        private void LoadData()
+        private ShopBootstrap LoadData()
         {
             _content = new ShopContent();
             _content.LoadAllAssets();
@@ -41,14 +41,21 @@ namespace CompanyName.RamRetribution.Scripts.Boot
 
             _shopData = Services.PrefsDataService.Load<ShopDataState>(
                 DataNames.ShopDataState.ToString());
+
+            return this;
         }
 
         private void CreateVisitors()
         {
-            _skinSelector = new SkinSelector(_shopData);
+            _itemSelector = new ItemSelector(_shopData);
             _itemUnlocker = new ItemUnlocker(_shopData);
             _openItemChecker = new OpenItemChecker(_shopData);
             _selectedItemChecker = new SelectedItemChecker(_shopData);
+        }
+
+        private void OnComplete(Action callback)
+        {
+            callback?.Invoke();
         }
     }
 }

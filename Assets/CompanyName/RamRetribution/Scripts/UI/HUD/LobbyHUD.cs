@@ -1,27 +1,30 @@
+using System;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States;
+using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
+using StateMachine = CompanyName.RamRetribution.Scripts.FiniteStateMachine.StateMachine;
 
 namespace CompanyName.RamRetribution.Scripts.UI.HUD
 {
     public class LobbyHUD : MonoBehaviour
     {
         [SerializeField] private PlayButton _playButton;
-        [SerializeField] private WalletView walletView;
+        [SerializeField] private WalletView _walletView;
         
         [Header("For Tests buttons")]
         [SerializeField] private Button _addMoneyButton;
         [SerializeField] private Button _deleteGameData;
         [SerializeField] private Button _deleteShopData;
         
-        private StateMachine _stateMachine;
         private Wallet _wallet;
-        
+
+        public event Action<LobbyHUD> PlayClicked;
+
         private void OnEnable()
         {
              _playButton.Clicked += OnPlayClicked;
@@ -38,18 +41,17 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
             _deleteShopData.onClick.RemoveListener(DeleteShopData);
         } 
         
-        public void Init(StateMachine stateMachine, Wallet wallet)
+        public void Init(Wallet wallet)
         {
-            _stateMachine = stateMachine;
             _wallet = wallet;
             
-            walletView.Init(_wallet);
+            _walletView.Init(_wallet);
             _wallet.UpdateText();
         }
         
         private void OnPlayClicked()
         {
-            _stateMachine.SetState<GameBootstrapState>();
+            PlayClicked?.Invoke(this);
         }
         
         private void OnAddMoneyClicked()

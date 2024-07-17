@@ -7,11 +7,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
 {
     public class ResourceLoaderService : IResourceLoadService
     {
-        public ResourceLoaderService()
-        {
-            Debug.Log($"Resource load service created");
-        }
-        
         public T Load<T>(string path) 
             where T : Object
         {

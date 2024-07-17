@@ -72,7 +72,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
         public void UpdateText()
         {
-            CurrencyChanged?.Invoke(CurrencyTypes.Money,Money);
+            CurrencyChanged?.Invoke(CurrencyTypes.Money, Money);
             CurrencyChanged?.Invoke(CurrencyTypes.Horns, Horns);
         }
     }
