@@ -30,6 +30,11 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
                 asyncOperation.completed += _ => PrepareScene();
         }
 
+        public override void Exit()
+        {
+            
+        }
+
         private void PrepareScene()
         {
             GameData gameData = Services.PrefsDataService.Load<GameData>(
