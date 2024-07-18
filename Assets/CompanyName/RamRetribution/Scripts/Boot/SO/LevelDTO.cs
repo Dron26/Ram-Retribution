@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Buildings;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Gameplay.Level;
+using Generator.Scripts.Level;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.SO

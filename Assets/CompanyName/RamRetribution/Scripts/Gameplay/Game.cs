@@ -7,6 +7,7 @@ using CompanyName.RamRetribution.Scripts.UI;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using Cysharp.Threading.Tasks;
+using Generator.Scripts;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
@@ -30,7 +31,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
         public void Start()
         {
-            _levelBuilder = _modulesContainer.Get<LevelBuilder>();
+            _levelBuilder = _modulesContainer.Get<LevelBuilder>(); 
             _levelBuilder.Build();
             _levelBuilder.GateDestroyed += OnGateDestroyed;
 
@@ -147,8 +148,10 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         {
             _levelBuilder.GateDestroyed -= OnGateDestroyed;
             CancelToken();
-            
+            await _levelBuilder.Build();
             await MoveRamsToStartPosition(_levelBuilder.RamsStartPosition);
+            
+           // await MoveRamsToStartPosition(_levelBuilder.RamsStartPosition);
         }
         
         private void CancelToken()

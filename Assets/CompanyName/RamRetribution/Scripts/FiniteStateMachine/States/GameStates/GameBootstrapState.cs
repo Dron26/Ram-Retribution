@@ -4,6 +4,7 @@ using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay;
 using CompanyName.RamRetribution.Scripts.UI;
+using Generator.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
