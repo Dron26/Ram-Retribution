@@ -124,6 +124,11 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         #endregion
 
+        public void Flee()
+        {
+            gameObject.SetActive(false);
+        }
+        
         public void ActivateAgent()
         {
             IsActive = true;

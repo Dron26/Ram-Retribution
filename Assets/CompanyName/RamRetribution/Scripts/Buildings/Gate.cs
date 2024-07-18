@@ -9,7 +9,7 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
     public abstract class Gate : MonoBehaviour, IAttackble
     {
         private bool _isFirstAttack;
-        
+
         public event Action FirstAttacked;
         public IDamageable Damageable { get; private set; }
         public Transform SelfTransform { get; private set; }
@@ -18,6 +18,9 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
 
         private void OnDestroy()
         {
+            if (SelfTransform == null)
+                return;
+
             Damageable.ValueChanged -= OnValueChanged;
             Damageable.HealthEnded -= OnHealthEnded;
         }
@@ -30,10 +33,10 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
 
             IsActive = true;
             SelfTransform = transform;
-            
+
             gameObject.SetActive(IsActive);
         }
-        
+
         private void OnValueChanged(int value)
         {
             if (!_isFirstAttack)

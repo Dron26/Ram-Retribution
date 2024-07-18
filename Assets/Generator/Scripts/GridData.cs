@@ -8,6 +8,7 @@ namespace Generator.Scripts
     {
         private const int _gridSizeX = Constant.SizeX;
         private const int _gridSizeY= Constant.SizeY;
+        
         public TileType[] Tiles = new TileType[_gridSizeX* _gridSizeY];
     }
 }

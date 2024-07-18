@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using CompanyName.RamRetribution.Scripts.Buildings;
+using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using Cysharp.Threading.Tasks;
 using Generator.Scripts.Common.Enum;
 using Generator.Scripts.Common.Enums;
@@ -14,9 +17,8 @@ namespace Generator.Scripts.Level
     [RequireComponent(typeof(TileFactory))]
     public class LevelConfigurator : MonoBehaviour
     {
-        public Gate GetGate() => _gate;
-
-        public async UniTask GenerateGridAsync() => await PlaceTilesAsync();
+        public async UniTask GenerateGridAsync(CancellationTokenSource tokenSource = null) 
+            => await PlaceTilesAsync().WithCancellation(tokenSource.Token);
 
         public Vector3 RamsStartPosition => _ramsStartPosition;
         public List<Transform> EnemySpawnPoint => _enemySpawnPoint;
@@ -25,22 +27,20 @@ namespace Generator.Scripts.Level
         public int GridId => _gridId;
 
         [SerializeField] private int fallSpeed = 8;
-        
+
         private PoolTile _poolTile;
         private TileFactory _tileFactory;
-        private ResourceLoaderService _loaderService;
         private List<Transform> _enemySpawnPoint = new List<Transform>();
         private Vector3 _ramsStartPosition;
         private Transform _gatePoint;
         private WaitForSeconds _fallDelay;
-        private HashSet<TileType> _tileType = new HashSet<TileType>();
+        private HashSet<TileType> _tileTypes = new HashSet<TileType>();
         private TileType[,] _tiles;
         private GridType _gridType;
         private Gate _gate;
-        private readonly string _path = "GridData/";
         private int _gridId;
-        private int _gridSizeX;
-        private int _gridSizeY;
+        private int _gridSizeX = Constant.SizeX;
+        private int _gridSizeY = Constant.SizeY;
         private int _hightUp = 30;
         private int _gateX;
         private int _gateY;
@@ -51,12 +51,11 @@ namespace Generator.Scripts.Level
         private bool _isHide = false;
         private int _offset = 0;
 
-        public void Init()
+        private void Awake()
         {
             _poolTile = GetComponent<PoolTile>();
             _tileFactory = GetComponent<TileFactory>();
-            _loaderService = new ResourceLoaderService();
-            _poolTile.Initialize(_tileFactory, _loaderService);
+            _poolTile.Initialize(_tileFactory);
             SetType();
         }
 
@@ -68,26 +67,27 @@ namespace Generator.Scripts.Level
 
             LoadGridData();
             AdjustPosition();
+            
             _poolTile.CreatePool(_tiles.Length, transform);
             _enemySpawnPoint.Clear();
         }
-        
+
         private void LoadGridData()
         {
-            string path = _path + _gridType + "/" + _gridId;
-            GridData loadedData = _loaderService.Load<GridData>(path);
-            _gridSizeX = Constant.SizeX;
-            _gridSizeY = Constant.SizeY;
-            _tiles = GetTiles2D(loadedData.Tiles);
+            var path = $"{AssetPaths.GridData}" + _gridType + "/" + _gridId;
+            var data = Services.ResourceLoadService.Load<GridData>(path);
+            
+            _tiles = ConvertGridTo2D(data.Tiles);
         }
+
         private void AdjustPosition()
         {
             _offset = _gridId * _gridSizeX;
-            Vector3 position = transform.position;
-            transform.position = new Vector3(position.x, _hightUp, position.z + _offset);
+            var position = transform.position;
+            position = Vector3.one.With(x: position.x, y: _hightUp, z: position.z + _offset);
         }
 
-        private TileType[,] GetTiles2D(TileType[] tiles)
+        private TileType[,] ConvertGridTo2D(TileType[] tiles)
         {
             TileType[,] tiles2D = new TileType[_gridSizeY, _gridSizeX + 1];
 
@@ -104,11 +104,11 @@ namespace Generator.Scripts.Level
 
         private void SetType()
         {
-            _tileType.Add(TileType.Road);
-            _tileType.Add(TileType.Gate);
-            _tileType.Add(TileType.GuardHouse);
+            _tileTypes.Add(TileType.Road);
+            _tileTypes.Add(TileType.Gate);
+            _tileTypes.Add(TileType.GuardHouse);
         }
-        
+
         private async UniTask PlaceTilesAsync()
         {
             int width = _tiles.GetLength(0);
@@ -116,17 +116,14 @@ namespace Generator.Scripts.Level
             List<UniTask> tasks = new List<UniTask>();
 
             for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    tasks.Add(SetTileAsync(_tiles[x, y], x, y + _offset));
-                }
-            }
+            for (int x = 0; x < width; x++)
+                tasks.Add(SetTileAsync(_tiles[x, y], x, y + _offset));
 
             await UniTask.WhenAll(tasks);
         }
 
-        private async UniTask SetTileAsync(TileType type, float x, float y, float height = 0, Vector3 rotation = new Vector3())
+        private async UniTask SetTileAsync(TileType type, float x, float y, float height = 0,
+            Vector3 rotation = new Vector3())
         {
             Tile tempTile = _poolTile.GetTile();
             Transform tempTransform = tempTile.transform;
@@ -135,7 +132,7 @@ namespace Generator.Scripts.Level
             tempTransform.rotation = Quaternion.Euler(rotation);
             Vector3 position = new Vector3(x * 2, height, y * 2);
 
-            if (_tileType.Contains(type))
+            if (_tileTypes.Contains(type))
             {
                 SetPoints(tempTile);
             }
@@ -148,33 +145,33 @@ namespace Generator.Scripts.Level
             }
         }
 
-        private void SetPoints(Tile tile = null)
+        private void SetPoints(Tile tile)
         {
-                if (tile.TileType == TileType.Road && !_isRamsStartPointSet)
-                {
-                    Vector3 tempPosition = tile.transform.localPosition;
-                    _ramsStartPosition =new Vector3(tempPosition.x,tempPosition.y-tempPosition.y,tempPosition.z);
-                    _isRamsStartPointSet = true;
-                }
+            if (tile.TileType == TileType.Road && !_isRamsStartPointSet)
+            {
+                var localPosition = tile.transform.localPosition;
+                _ramsStartPosition = new Vector3(localPosition.x, localPosition.y - localPosition.y, localPosition.z);
+                _isRamsStartPointSet = true;
+            }
 
-                if (tile.TileType == TileType.GuardHouse)
-                {
-                    _enemySpawnPoint.Add(tile.transform);
-                }
-                if(tile.TileType == TileType.Gate && _isGatePointSet)
-                {
-                    tile.transform.rotation=new Quaternion(0,180,0,0);
-                }
-                
-                if (tile.TileType == TileType.Gate && !_isGatePointSet)
-                {
-                    _gatePoint = tile.transform;
-                    _gate = tile.GetComponentInChildren<Gate>(includeInactive: false);
-                    _isGatePointSet = true;
-                }
-                
+            if (tile.TileType == TileType.GuardHouse)
+            {
+                _enemySpawnPoint.Add(tile.transform);
+            }
+
+            if (tile.TileType == TileType.Gate && _isGatePointSet)
+            {
+                tile.transform.rotation = new Quaternion(0, 180, 0, 0);
+            }
+
+            if (tile.TileType == TileType.Gate && !_isGatePointSet)
+            {
+                _gatePoint = tile.transform;
+                _gate = tile.GetComponentInChildren<Gate>(includeInactive: false);
+                _isGatePointSet = true;
+            }
         }
-        
+
         private async UniTask FallWithDelayAsync(Transform tileTransform, float delay, Vector3 targetPosition)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(delay));
@@ -186,15 +183,13 @@ namespace Generator.Scripts.Level
                 await UniTask.Yield();
             }
         }
-        
+
         public void ShowTiles()
         {
             List<Tile> allTiles = _poolTile.GetAllTiles();
 
             foreach (var tile in allTiles)
-            {
                 tile.gameObject.SetActive(true);
-            }
         }
     }
 }

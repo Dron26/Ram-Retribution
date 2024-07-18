@@ -7,7 +7,7 @@ namespace Generator.Scripts
     [CustomEditor(typeof(LevelConfigurator))]
     public class GeneratorButton : Editor
     {
-        public override void OnInspectorGUI()
+        /*public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
             LevelConfigurator generator = (LevelConfigurator)target;
@@ -24,6 +24,6 @@ namespace Generator.Scripts
                 for (int i = generator.transform.childCount - 1; i >= 0; i--)
                     DestroyImmediate(generator.transform.GetChild(i).gameObject);
             }
-        }
+        }*/
     }
 }

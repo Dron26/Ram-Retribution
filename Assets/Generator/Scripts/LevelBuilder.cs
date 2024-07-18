@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using CompanyName.RamRetribution.Scripts.Buildings;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
 using Cysharp.Threading.Tasks;
@@ -12,82 +13,71 @@ namespace Generator.Scripts
 {
     public class LevelBuilder : MonoBehaviour
     {
-        public Vector3 RamsStartPosition => _currentLevelConfigurator.RamsStartPosition;
-        public List<Transform> EnemySpawnPoint => _currentLevelConfigurator.EnemySpawnPoint;
-        public bool IsCurrentGateAttackedFirst=>_isCurrentGateAttackedFirst;
-        public bool _isCurrentGateAttackedFirst;
-
-        public Gate CurrentGate { get; private set; }
-        public bool IsBuild { get; private set; }
-        public bool IsCurrentGateDestroyed { get; private set; }
-        public List<Transform> EnemySpots => _enemySpots;
-        public event Action OnLevelBuildComplete;
-        public event Action GateDestroyed;
-        
-        [SerializeField] private List<Transform> _enemySpots;
         [SerializeField] private LevelConfigurator _nextLevelConfigurator;
         [SerializeField] private LevelConfigurator _currentLevelConfigurator;
         [SerializeField] private NavMeshSurface _surface;
 
+        public Vector3 RamsStartPosition => _currentLevelConfigurator.RamsStartPosition;
+        public Gate CurrentGate { get; private set; }
+        public bool IsBuild { get; private set; }
+        public bool IsCurrentGateAttackedFirst { get; private set; }
+        public bool IsCurrentGateDestroyed { get; private set; }
+        public List<Transform> EnemySpots => _currentLevelConfigurator.EnemySpawnPoint;
+        public event Action GateDestroyed;
+
         private LevelConfigurator _configuration;
         private Gate _currentGate;
         private UniTask _buildTask;
-        private bool _isStartedLocationsSet;
-        
+        private bool _isStartedLocationsSetted;
+        private CancellationTokenSource _tokenSource;
+
         public void Init()
         {
-            IsCurrentGateDestroyed = false;
-            IsBuild = false;
-
-            GridType gridType = GridType.Forest;
-            int gridId = 0;
-            InitializeConfigurator(_currentLevelConfigurator, gridType, gridId, false);
-            InitializeConfigurator(_nextLevelConfigurator, gridType, gridId + 1, true);
+            Reset();
+            
+            var gridType = GridType.Forest; // = Config.GetGridType
+            var gridId = 0;
+            
+            _currentLevelConfigurator.SetData(gridType, gridId, false);
+            _nextLevelConfigurator.SetData(gridType, gridId++, true);
         }
 
-        private void InitializeConfigurator(LevelConfigurator configurator, GridType gridType, int gridId, bool isHideTiles)
+        public async UniTask Build(CancellationTokenSource tokenSource)
         {
-            configurator.Init();
-            configurator.SetData(gridType, gridId, isHideTiles);
-        }
-        
-        public async UniTask Build()
-        {
-            if (!_isStartedLocationsSet)
+            _tokenSource = tokenSource;
+            
+            if (!_isStartedLocationsSetted)
             {
-                await BuildLevel(_currentLevelConfigurator);
-                _buildTask = BuildLevel(_nextLevelConfigurator);
-                SetGateParameters(_currentLevelConfigurator.GetGate());
-                _isStartedLocationsSet = true;
+                await BuildLevel(_currentLevelConfigurator).WithCancellation(_tokenSource.Token);
+                
+                SetGateParameters(_currentLevelConfigurator.Gate);
+                _isStartedLocationsSetted = true;
             }
             else
             {
                 TransitionToNextLevel();
-                _buildTask = BuildLevel(_nextLevelConfigurator);  
             }
-
-            OnLevelBuildComplete?.Invoke();
-            await _buildTask;
+            
+            _buildTask = BuildLevel(_nextLevelConfigurator);
+            
+            await _buildTask.WithCancellation(_tokenSource.Token);
         }
-
         
-        private void SetSurface()
+        private void BuildNavMesh()
         {
             _surface.RemoveData();
             _surface.BuildNavMesh();
         }
 
-        private void CreateStartedLocations(GridType gridType, int gridId)
-        {
-            _currentLevelConfigurator.SetData(gridType, gridId, false);
-            _nextLevelConfigurator.SetData(gridType, gridId + 1, true);
-        }
-        
         private async UniTask BuildLevel(LevelConfigurator configurator)
         {
-            await configurator.GenerateGridAsync();
-            await UniTask.Delay(TimeSpan.FromSeconds(1));
-            SetSurface();
+            await configurator.GenerateGridAsync(_tokenSource);
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(1f), DelayType.Realtime)
+                .WithCancellation(_tokenSource.Token);
+            
+            BuildNavMesh();
+            
             IsCurrentGateDestroyed = false;
             IsBuild = true;
         }
@@ -95,7 +85,7 @@ namespace Generator.Scripts
         private void SetGateParameters(Gate gate)
         {
             CurrentGate = gate;
-            CurrentGate.Init(new GateHealth(100));
+            CurrentGate.Init(new GateHealth(1000));
             CurrentGate.FirstAttacked += OnGateFirstAttacked;
             CurrentGate.Damageable.HealthEnded += OnGateDestroyed;
         }
@@ -111,17 +101,22 @@ namespace Generator.Scripts
         private void OnGateFirstAttacked()
         {
             CurrentGate.FirstAttacked -= OnGateFirstAttacked;
-            _isCurrentGateAttackedFirst=true;
+            IsCurrentGateAttackedFirst = true;
         }
-        
+
         private void TransitionToNextLevel()
         {
             (_currentLevelConfigurator, _nextLevelConfigurator) = (_nextLevelConfigurator, _currentLevelConfigurator);
             SetGateParameters(_currentLevelConfigurator.Gate);
             _currentLevelConfigurator.ShowTiles();
-            int nextGridId = _currentLevelConfigurator.GridId + 1;
+            var nextGridId = _currentLevelConfigurator.GridId + 1;
             _nextLevelConfigurator.SetData(GridType.Forest, nextGridId, true);
         }
 
+        private void Reset()
+        {
+            IsCurrentGateDestroyed = false;
+            IsBuild = false;
+        }
     }
 }

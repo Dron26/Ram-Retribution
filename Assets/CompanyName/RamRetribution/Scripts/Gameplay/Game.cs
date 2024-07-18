@@ -18,7 +18,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private readonly ModulesContainer _modulesContainer;
         private LevelBuilder _levelBuilder;
         private UnitSpawner _unitSpawner;
-        private CancellationTokenSource _tokenSource;
+        
+        private CancellationTokenSource _battleCancellationTokenSource;
+        private CancellationTokenSource _builderCancellationTokenSource;
 
         private List<Unit> _rams;
         private List<Unit> _enemies = new List<Unit>();
@@ -29,17 +31,19 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private bool RamsAlive => _rams.Count > 0;
         private bool HasEnemies => _enemies.Count > 0;
 
-        public void Start()
+        public async UniTask Start()
         {
-            _levelBuilder = _modulesContainer.Get<LevelBuilder>(); 
-            _levelBuilder.Build();
+            _battleCancellationTokenSource = new CancellationTokenSource();
+            _builderCancellationTokenSource = new CancellationTokenSource();
+            
+            _levelBuilder = _modulesContainer.Get<LevelBuilder>();
             _levelBuilder.GateDestroyed += OnGateDestroyed;
-
+            
+            await _levelBuilder.Build(_builderCancellationTokenSource);
+            
             _unitSpawner = _modulesContainer.Get<UnitSpawner>();
             _unitSpawner.RamsCreated += OnRamsCreated;
             _unitSpawner.EnemiesCreated += OnEnemiesCreated;
-
-            _tokenSource = new CancellationTokenSource();
 
             _unitSpawner.CreateRams();
         }
@@ -54,12 +58,14 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             while (RamsAlive)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(DelayForSpawn), DelayType.Realtime)
-                    .WithCancellation(_tokenSource.Token);
+                    .WithCancellation(_battleCancellationTokenSource.Token);
 
-                await SpawnEnemies();
+                await SpawnEnemies()
+                    .WithCancellation(_battleCancellationTokenSource.Token);
 
-                await UniTask.WaitUntil(() => !HasEnemies).WithCancellation(_tokenSource.Token);
-                
+                await UniTask.WaitUntil(() => !HasEnemies)
+                    .WithCancellation(_battleCancellationTokenSource.Token);
+
                 NotifyRamsAttackGate();
             }
         }
@@ -93,17 +99,17 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                     ConfigId.LightEnemy,
                     ConfigId.LightEnemy
                 },
-                _tokenSource).Forget();
+                _battleCancellationTokenSource).Forget();
 
             await UniTask.WaitUntil(() => HasEnemies);
-        } 
-        
+        }
+
         private void NotifyRamsAttackGate()
         {
             foreach (var ram in _rams)
                 ram.Attack(_levelBuilder.CurrentGate).Forget();
         }
-        
+
         private async void OnRamsCreated(IReadOnlyList<Unit> rams)
         {
             _unitSpawner.RamsCreated -= OnRamsCreated;
@@ -121,7 +127,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private void OnEnemiesCreated(IReadOnlyList<Unit> enemies)
         {
             _enemies = enemies as List<Unit>;
-            
+
             foreach (var enemy in _enemies)
                 enemy.Fleeing += OnEnemyFleeing;
         }
@@ -133,7 +139,8 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
             if (_rams.Count == 0)
             {
-                CancelToken();
+                CancelToken(_battleCancellationTokenSource);
+                CancelToken(_builderCancellationTokenSource);
                 _modulesContainer.Get<GameUI>().ShowLoseScreen();
             }
         }
@@ -147,18 +154,20 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private async void OnGateDestroyed()
         {
             _levelBuilder.GateDestroyed -= OnGateDestroyed;
-            CancelToken();
-            await _levelBuilder.Build();
-            await MoveRamsToStartPosition(_levelBuilder.RamsStartPosition);
+            CancelToken(_battleCancellationTokenSource);
+
+            foreach (var unit in _enemies)
+                unit.Flee();
             
-           // await MoveRamsToStartPosition(_levelBuilder.RamsStartPosition);
+            await _levelBuilder.Build(_builderCancellationTokenSource);
+            await MoveRamsToStartPosition(_levelBuilder.RamsStartPosition);
         }
-        
-        private void CancelToken()
+
+        private void CancelToken(CancellationTokenSource tokenSource)
         {
-            _tokenSource.Cancel();
-            _tokenSource.Dispose();
-            _tokenSource = new CancellationTokenSource();
+            tokenSource.Cancel();
+            tokenSource.Dispose();
+            tokenSource = new CancellationTokenSource();
         }
     }
 }

@@ -8,5 +8,7 @@ namespace CompanyName.RamRetribution.Scripts.Common
         public static readonly string ShopSpellPrefabs = "ShopPrefabs/SpellItems";
         public static readonly string ShopSkinPrefabs = "ShopPrefabs/SkinItems";
         public static readonly string Configs = "Configs/";
+        public static readonly string Builder = "Builder/";
+        public static readonly string GridData = "GridData/";
     }
 }

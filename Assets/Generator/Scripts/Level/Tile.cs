@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Generator.Scripts.Common.Enums;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Generator.Scripts.Level
 {
@@ -59,17 +61,13 @@ namespace Generator.Scripts.Level
 
         public void SetType(TileType type)
         {
+            if (!_typeSetters.ContainsKey(type))
+                throw new ArgumentException($"No setter defined for TileType {type}");
+            
             _type = type;
 
-            if (_typeSetters.ContainsKey(type))
-            {
-                int i = Random.Range(0, _typeSetters[type].Count);
-                _typeSetters[type][i].gameObject.SetActive(true);
-            }
-            else
-            {
-                Debug.LogWarning($"No setter defined for TileType {type}");
-            }
+            var i = Random.Range(0, _typeSetters[type].Count);
+            _typeSetters[type][i].gameObject.SetActive(true);
         }
     }
 }

@@ -4,6 +4,7 @@ using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay;
 using CompanyName.RamRetribution.Scripts.UI;
+using Cysharp.Threading.Tasks;
 using Generator.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -40,7 +41,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
             InitUI();
             
             _game = new Game(_modulesContainer);
-            _game.Start();
+            _game.Start().Forget();
         }
 
         private void LoadData()
