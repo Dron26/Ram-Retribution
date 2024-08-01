@@ -1,13 +1,17 @@
+using System;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Gameplay;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.UI;
 using Cysharp.Threading.Tasks;
-using Generator.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates
 {
@@ -34,14 +38,14 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         private void Init()
         {
             _modulesContainer = new ModulesContainer();
-            
+
             LoadData();
             InitLevelBuilder();
             InitBattle();
             InitUI();
-            
+
             _game = new Game(_modulesContainer);
-            _game.Start().Forget();
+            _game.Start(LoadLevel(1)).Forget();
         }
 
         private void LoadData()
@@ -58,18 +62,17 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
         private void InitBattle()
         {
-            var battleBootstrap = new BattleBootstrap(_modulesContainer,_gameData, _shopDataState.SelectedRams, _leaderData);
+            var battleBootstrap =
+                new BattleBootstrap(_modulesContainer, _gameData, _shopDataState.SelectedRams, _leaderData);
+
             battleBootstrap.Init();
         }
 
         private void InitLevelBuilder()
         {
-            var levelBuilder = Object.Instantiate(Services
-                .ResourceLoadService
-                .Load<LevelBuilder>($"{AssetPaths.CommonPrefabs}{nameof(LevelBuilder)}"));
-            
-            levelBuilder.Init();
-            
+            IFactory<Tile> tileFactory = new TileFactory();
+            var levelBuilder = new LevelBuilder(tileFactory);
+
             _modulesContainer.Register(levelBuilder);
         }
 
@@ -81,8 +84,20 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
             var gameUI = Object.Instantiate(uiPrefab);
             gameUI.Init(_stateMachine);
-            
+
             _modulesContainer.Register(gameUI);
+        }
+
+        private int LoadLevel(int number)
+        {
+            var level = _gameData.TryLoadLevel(number);
+
+            Debug.Log($"Level: {level.Number} start");
+            
+            if (level == null)
+                throw new Exception();
+
+            return level.Number;
         }
     }
 }

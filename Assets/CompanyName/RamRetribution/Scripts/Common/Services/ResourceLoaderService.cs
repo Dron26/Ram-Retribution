@@ -7,14 +7,14 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
 {
     public class ResourceLoaderService : IResourceLoadService
     {
-        public T Load<T>(string path) 
+        public T Load<T>(string path)
             where T : Object
         {
             var prefab = Resources.Load<T>(path);
             return prefab;
         }
 
-        public List<T> LoadAll<T>(string path) 
+        public List<T> LoadAll<T>(string path)
             where T : Object
         {
             var prefabs = Resources.LoadAll<T>(path).ToList();

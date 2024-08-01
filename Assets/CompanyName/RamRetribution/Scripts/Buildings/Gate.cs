@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Buildings
 {
-    public abstract class Gate : MonoBehaviour, IAttackble
+    public class Gate : MonoBehaviour, IAttackble
     {
         private bool _isFirstAttack;
 
@@ -14,7 +14,6 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
         public IDamageable Damageable { get; private set; }
         public Transform SelfTransform { get; private set; }
         public bool IsActive { get; private set; }
-        public abstract GateTypes Type { get; }
 
         private void OnDestroy()
         {

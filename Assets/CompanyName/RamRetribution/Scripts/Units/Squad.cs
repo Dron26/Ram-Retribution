@@ -88,15 +88,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
                 });
             }
         }
-
-        public void Heal(int amount)
-        {
-            foreach (var unit in _units)
-            {
-                unit.Heal(amount);
-            }
-        }
-
         #endregion
         
         public void SetOrigin(Transform origin)

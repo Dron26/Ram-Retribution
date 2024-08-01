@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Units.Rams;
 using UnityEngine;
 
@@ -8,7 +7,6 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
     public class RamsPlacementStrategy : IPlacementStrategy
     {
         private readonly int _spaceBetweenMembers = 2;
-        private readonly int _stepBetweenLines = 2;
         
         public Vector3 SetPosition(Vector3 origin, Unit unit)
         {
@@ -21,9 +19,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
                 case Demolisher:
                     return origin + Vector3.right * _spaceBetweenMembers;
                 case Tank:
-                    return origin + Vector3.forward * _stepBetweenLines;
+                    return origin + Vector3.forward * _spaceBetweenMembers;
                 case Support:
-                    return origin + Vector3.back * _stepBetweenLines;
+                    return origin + Vector3.back * _spaceBetweenMembers;
                 default: throw new NotImplementedException();
             }
         }

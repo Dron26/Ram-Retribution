@@ -5,6 +5,7 @@ using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using Cysharp.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private LeaderDataState _leaderData;
         private List<Unit> _rams;
         private List<ConfigId> _selectedRamsId;
-        private List<Transform> _enemySpots;
+        private IReadOnlyList<Vector3> _enemySpots;
         private IUnitFactory _factory;
         
         public event Action<IReadOnlyList<Unit>> RamsCreated;
@@ -41,7 +42,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             _selectedRamsId = selectedRamsId;
         }
 
-        public void SetEnemiesSpawnPoints(List<Transform> enemySpots)
+        public void SetEnemiesSpawnPoints(IReadOnlyList<Vector3> enemySpots)
         {
             _enemySpots = enemySpots;
         }
@@ -90,7 +91,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
         private async UniTask SpawnWithDelay(
             List<ConfigId> configsId, 
-            Transform currentSpawn, 
+            Vector3 currentSpawn, 
             CancellationTokenSource tokenSource, 
             float delay = 0.5f)
         {
@@ -99,12 +100,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
             foreach (var config in configsId)
             {
-                var enemy = _factory.Create(config, currentSpawn.position);
+                var enemy = _factory.Create(config, currentSpawn);
                 enemy.transform.SetParent(_enemiesContainer);
 
                 var atPosition = Vector3.zero.With(
-                    x: currentSpawn.position.x, 
-                    z: currentSpawn.position.z - 2f);
+                    x: currentSpawn.x, 
+                    z: currentSpawn.z - 2f);
                 
                 enemy.MoveToPoint(placementStrategy.SetPosition(atPosition, enemy), 
                     enemy.ActivateAgent);

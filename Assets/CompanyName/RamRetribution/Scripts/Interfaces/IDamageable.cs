@@ -7,7 +7,9 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
     {
         public event Action HealthEnded;
         public event Action<int> ValueChanged;
+
         public int Health { get; }
+
         public void TakeDamage(AttackType type, int damage);
         public void Restore(int amount);
     }
