@@ -2,7 +2,7 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 
-namespace CompanyName.RamRetribution.Scripts.Common.Visitors
+namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 {
     public class ShopItemViewPrefabVisitor : IShopItemVisitor
     {

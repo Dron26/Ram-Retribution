@@ -1,10 +1,9 @@
 using CompanyName.RamRetribution.Scripts.Boot.Data;
-using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Units;
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.Common.Services
+namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IUnitFactory
     {

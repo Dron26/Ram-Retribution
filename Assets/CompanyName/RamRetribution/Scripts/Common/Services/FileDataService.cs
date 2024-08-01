@@ -1,9 +1,8 @@
-using System;
 using System.IO;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.Boot
+namespace CompanyName.RamRetribution.Scripts.Common.Services
 {
     public class FileDataService : IDataService
     {

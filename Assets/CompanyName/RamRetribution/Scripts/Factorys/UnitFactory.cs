@@ -6,6 +6,7 @@ using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components;
+using CompanyName.RamRetribution.Scripts.Units.Components.Armor;
 using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
 using UnityEngine;

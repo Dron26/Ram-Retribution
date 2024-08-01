@@ -1,7 +1,7 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 
-namespace CompanyName.RamRetribution.Scripts.Units
+namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
     public class Leader : Unit, IRam
     {

@@ -2,7 +2,7 @@ using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.Units.Components
+namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
 {
     public abstract class BaseArmor : IArmor
     {

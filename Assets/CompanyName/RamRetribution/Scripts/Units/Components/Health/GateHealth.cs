@@ -38,7 +38,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
                 Debug.Log($"Gate health ended");
             }
             
-            Debug.Log($"Gate health {_value}");
+            // Debug.Log($"Gate health {_value}");
         }
 
         public void Restore(int amount)

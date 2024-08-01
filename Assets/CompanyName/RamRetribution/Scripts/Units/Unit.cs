@@ -85,11 +85,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
             }
         }
 
-        public void Heal(int amount)
-        {
-            Damageable.Restore(amount);
-        }
-
         public void NotifyFindTarget(Dictionary<int, List<Unit>> targetsByPriority)
         {
             CancelToken();
@@ -124,6 +119,12 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         #endregion
 
+        public void Flee(Vector3 to)
+        {
+            DeactivateAgent();
+            MoveToPoint(to, () => gameObject.SetActive(false));
+        }
+        
         public void ActivateAgent()
         {
             IsActive = true;
@@ -149,8 +150,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
             Damageable.HealthEnded -= OnHealthEnded;
             IsActive = false;
             Fleeing?.Invoke(this);
-
-            gameObject.SetActive(false);
         }
 
         private void CancelToken()

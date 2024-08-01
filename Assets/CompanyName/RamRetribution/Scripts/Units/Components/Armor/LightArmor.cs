@@ -1,7 +1,7 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 
-namespace CompanyName.RamRetribution.Scripts.Units.Components
+namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
 {
     public class LightArmor : BaseArmor
     {

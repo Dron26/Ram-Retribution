@@ -3,7 +3,7 @@ using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using TMPro;
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.UI.Shop
+namespace CompanyName.RamRetribution.Scripts.UI.HUD
 {
     public class WalletView : MonoBehaviour
     {
