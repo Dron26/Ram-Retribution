@@ -7,8 +7,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
         public event Action<T> OnValueChange;
 
         private T _value;
-
-
+        
         public T Value
         {
             get => _value;
@@ -19,5 +18,4 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
             }
         }
     }
-
 }

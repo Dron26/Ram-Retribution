@@ -13,6 +13,8 @@ namespace CompanyName.RamRetribution.Scripts.Common
         public static readonly string ForestGridData = "GridData/Forest/";
         public static readonly string SandGridData = "GridData/Sand/";
         public static readonly string SnowGridData = "GridData/Snow/";
+        public static readonly string GameDataBase = "BattleData/";
+        public static readonly string RandomSpellSprite = "ShopPrefabs/SpriteSpells/";
         public static readonly string Resources = "Assets/Resources/";
     }
 }

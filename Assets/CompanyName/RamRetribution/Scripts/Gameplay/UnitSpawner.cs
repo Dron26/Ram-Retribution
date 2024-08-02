@@ -28,7 +28,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private List<ConfigId> _selectedRamsId;
         private IReadOnlyList<Vector3> _enemySpots;
         private IUnitFactory _factory;
-        
+
         public event Action<IReadOnlyList<Unit>> RamsCreated;
         public event Action<IReadOnlyList<Unit>> EnemiesCreated;
 
@@ -59,10 +59,11 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             if (_rams != null)
                 throw new InvalidOperationException(
                     $"Recreating the {nameof(_rams)} list is not allowed as it has already been initialized.");
-            
+
             _rams = new List<Unit>();
             var leader = SpawnLeader();
-
+            Services.RegisterLeader(leader.transform);
+            
             _rams.Add(leader);
 
             if (_selectedRamsId.Count <= 0)
@@ -90,9 +91,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         }
 
         private async UniTask SpawnWithDelay(
-            List<ConfigId> configsId, 
-            Vector3 currentSpawn, 
-            CancellationTokenSource tokenSource, 
+            List<ConfigId> configsId,
+            Vector3 currentSpawn,
+            CancellationTokenSource tokenSource,
             float delay = 0.5f)
         {
             IPlacementStrategy placementStrategy = new CirclePlacementStrategy(2f, 3.5f);
@@ -104,12 +105,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 enemy.transform.SetParent(_enemiesContainer);
 
                 var atPosition = Vector3.zero.With(
-                    x: currentSpawn.x, 
+                    x: currentSpawn.x,
                     z: currentSpawn.z - 2f);
-                
-                enemy.MoveToPoint(placementStrategy.SetPosition(atPosition, enemy), 
+
+                enemy.MoveToPoint(placementStrategy.SetPosition(atPosition, enemy),
                     enemy.ActivateAgent);
-                
+
                 enemiesToAttack.Add(enemy);
 
                 await UniTask.Delay(
@@ -129,7 +130,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
                 return true;
             });
-            
+
             EnemiesCreated?.Invoke(enemiesToAttack);
         }
     }

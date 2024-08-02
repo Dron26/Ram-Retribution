@@ -1,5 +1,6 @@
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using System;
+using CompanyName.RamRetribution.Scripts.Common.Services;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
@@ -7,16 +8,15 @@ namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
     public abstract class View : MonoBehaviour
     {
         protected VIewModel _viewModel;
-
-
-        public virtual void Init(VIewModel viewModel)
+        
+        public void Start()
         {
-            _viewModel = viewModel;
-
-            _viewModel.ViewModelSkillsContainer.OnValueChange += PrintActiveSkills;
+            _viewModel = Services.VIewModel;
+            
+            //_viewModel.ViewModelSkillsContainer.OnValueChange += ShowSkills;
+            ShowSkills(_viewModel.ViewModelSkillsContainer.Value);
         }
 
-        protected abstract void PrintActiveSkills(ISkill[] skills);
-
+        protected abstract void ShowSkills(ISkill[] skills);
     }
 }

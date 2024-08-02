@@ -4,7 +4,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Intefaces
 {
     public interface ISkill
     {
-        Sprite SkillImage { get; }
-        void ActivateSkill();
+        public Sprite SkillImage { get; }
+        public void ActivateSkill();
     }
 }

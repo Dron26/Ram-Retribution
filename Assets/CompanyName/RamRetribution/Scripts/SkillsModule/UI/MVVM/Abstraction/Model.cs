@@ -8,7 +8,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
 {
     public abstract class Model
     {
-        private ISkill[] ActiveSkills;
+        public ReactiveProperty<ISkill[]> ModelSkillsContainer = new ReactiveProperty<ISkill[]>();
 
         /// <summary>
         /// Skills  that player choosed in Shop
@@ -16,11 +16,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
         /// <param name="skills"></param>
         public void SetSkills(ISkill[] skills)
         {
-
-            ActiveSkills = skills;
             ModelSkillsContainer.Value = skills;
         }
-
-        public ReactiveProperty<ISkill[]> ModelSkillsContainer = new ReactiveProperty<ISkill[]>();
     }
 }

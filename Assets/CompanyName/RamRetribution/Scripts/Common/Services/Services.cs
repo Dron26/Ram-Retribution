@@ -3,6 +3,7 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.MVVM;
 using CompanyName.RamRetribution.Scripts.Skills.UI;
+using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Common.Services
 {
@@ -16,16 +17,25 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         public static Model UiModel { get; private set; }
         public static UiDataBinding UiDataBinding { get; private set; }
         public static VIewModel VIewModel { get; private set; }
-
+        public static Transform LeaderTransform { get; private set; }
 
         public static void Init()
         {
             RegisterDataService();
             RegisterResourceLoadService();
             RegisterPauseControl();
+            RegisterGameDataBase();
             RegisterLvlCombinator();
+            RegisterUiModel();
+            RegisterUiViewModel();
+            RegisterUiDataBinding();
         }
 
+        public static void RegisterLeader(Transform leaderTransform)
+        {
+            LeaderTransform = leaderTransform;
+        }
+        
         private static void RegisterDataService()
             => PrefsDataService = new PrefsDataService(new JsonSerializer());
 
@@ -35,7 +45,8 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         private static void RegisterPauseControl()
             => PauseControl = new PauseControl();
         private static void RegisterGameDataBase()
-            => GameDataBase = new GameDataBase();
+            => GameDataBase = ResourceLoadService
+                .Load<GameDataBase>($"{AssetPaths.GameDataBase}{nameof(GameDataBase)}");
 
         private static void RegisterLvlCombinator()
             => LvlCombinator = new LvlCombinator(GameDataBase);

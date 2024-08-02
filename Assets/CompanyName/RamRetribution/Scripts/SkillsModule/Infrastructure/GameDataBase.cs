@@ -3,9 +3,8 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
 {
-
-    //[CreateAssetMenu(fileName = "GameDataBase", menuName = "MainData")]
-    public class GameDataBase /*: ScriptableObject*/
+    [CreateAssetMenu(fileName = "GameDataBase", menuName = "MainData")]
+    public class GameDataBase : ScriptableObject
     {
         [Range(0, 10000)] public float DamageKooficient = 1;
 
@@ -15,5 +14,4 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
             throw new NotImplementedException();
         }
     }
-
 }
