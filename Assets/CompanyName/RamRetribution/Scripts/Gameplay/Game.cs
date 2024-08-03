@@ -26,8 +26,6 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private List<Unit> _enemies = new List<Unit>();
         private Level _currentLevel;
 
-        //CurrentLevel с текущей Grid в LevelBuilder. Здесь работаем с CurrentLevel
-
         public Game(ModulesContainer container)
             => _modulesContainer = container;
 

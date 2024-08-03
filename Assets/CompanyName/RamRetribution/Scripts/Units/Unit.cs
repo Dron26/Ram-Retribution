@@ -22,7 +22,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
         private AIMovement _aiMovement;
         private Animator _animator;
         private CancellationTokenSource _cancellationToken;
-
+        
         public event Action<Unit> Fleeing;
         public IDamageable Damageable { get; private set; }
         public Transform SelfTransform { get; private set; }
@@ -38,7 +38,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement.Init(_animator);
             
             SelfTransform = transform;
-
+            
             Damageable = health;
             _attackComponent = attackComponent;
 

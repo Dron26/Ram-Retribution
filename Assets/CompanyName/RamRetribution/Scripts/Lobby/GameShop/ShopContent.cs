@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 
 namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 {
@@ -20,11 +19,6 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
             _skinItems = Services.ResourceLoadService.LoadAll<SkinItem>(AssetPaths.ShopSkinPrefabs);
             _spellItems = Services.ResourceLoadService.LoadAll<SpellItem>(AssetPaths.ShopSpellPrefabs);
             _ramItems = Services.ResourceLoadService.LoadAll<RamItem>(AssetPaths.ShopRamPrefabs);
-
-            var lvlCombinator = Services.LvlCombinator;
-            
-            ISkill skill = new RageWave(_spellItems[0].Sprite,lvlCombinator);
-            Services.UiDataBinding.SetNewDataForGame(skill);
         }
     }
 }

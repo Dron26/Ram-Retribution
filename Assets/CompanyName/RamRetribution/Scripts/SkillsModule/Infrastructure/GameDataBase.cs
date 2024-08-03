@@ -7,11 +7,5 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
     public class GameDataBase : ScriptableObject
     {
         [Range(0, 10000)] public float DamageKooficient = 1;
-
-        public Transform GetLiderRamTransform()
-        {
-            //return liderRamTransform
-            throw new NotImplementedException();
-        }
     }
 }

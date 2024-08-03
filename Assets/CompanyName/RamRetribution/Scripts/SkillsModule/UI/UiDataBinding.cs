@@ -15,7 +15,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.UI
             _uiModel = uiModel;
         }
         
-        public void SetNewDataForGame(params ISkill[] skills)
+        public void SetNewDataForGame(params ISpell[] skills)
         {
             _uiModel.SetSkills(skills);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Buildings;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Armor;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
 using UnityEngine;
 
@@ -44,7 +45,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             {
                 case TileType.WoodGate:
                 {
-                    IDamageable woodGateHealth = new GateHealth(1000);
+                    IDamageable woodGateHealth = new Health(1000, new MediumArmor(50));
                     var component = tile.GetComponentInChildren<Gate>();
                     component.Init(woodGateHealth);
                     CurrentGate = component;
@@ -52,7 +53,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
                 }
                 case TileType.RockGate:
                 {
-                    IDamageable rockGateHealth = new GateHealth(2000);
+                    IDamageable rockGateHealth = new Health(3000, new HeavyArmor(45));
                     var component = tile.GetComponentInChildren<Gate>();
                     component.Init(rockGateHealth);
                     CurrentGate = component;
@@ -77,19 +78,6 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
         {
             CurrentGate.Damageable.HealthEnded -= OnGateDestroyed;
             GateDestroyed?.Invoke();
-        }
-
-        public void DebugCheckCollections()
-        {
-            foreach (Vector3 entryTilesPosition in _entryTilesPositions)
-            {
-                Debug.Log($"entryTilesPosition {entryTilesPosition}");
-            }
-            
-            foreach (Vector3 tilesPosition in _enemySpots)
-            {
-                Debug.Log($"enemySpots: {tilesPosition}");
-            }
         }
     }
 }

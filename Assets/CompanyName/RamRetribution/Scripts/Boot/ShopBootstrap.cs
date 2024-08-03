@@ -2,7 +2,6 @@ using System;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Common.Visitors;
 using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 
@@ -24,11 +23,19 @@ namespace CompanyName.RamRetribution.Scripts.Boot
         public ShopBootstrap(Shop shop)
             => _shop = shop;
 
-        public void Init(Wallet wallet)
+        public void Init(Wallet wallet, ShopDataState shopData)
         {
+            _shopData = shopData;
             LoadData().OnComplete(CreateVisitors);
 
-            _shop.Init(wallet, _shopData, _content, _itemSelector, _itemUnlocker, _openItemChecker, _selectedItemChecker);
+            _shop.Init(
+                wallet, 
+                _shopData, 
+                _content, 
+                _itemSelector, 
+                _itemUnlocker, 
+                _openItemChecker, 
+                _selectedItemChecker);
         }
 
         private ShopBootstrap LoadData()
@@ -38,9 +45,6 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             
             _leaderData = Services.PrefsDataService.Load<LeaderDataState>(
                 DataNames.LeaderDataState.ToString());
-
-            _shopData = Services.PrefsDataService.Load<ShopDataState>(
-                DataNames.ShopDataState.ToString());
 
             return this;
         }

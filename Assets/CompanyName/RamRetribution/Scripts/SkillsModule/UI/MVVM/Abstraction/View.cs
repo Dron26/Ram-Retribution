@@ -16,6 +16,6 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
             ShowSkills(ViewModel.ViewModelSkillsContainer.Value);
         }
 
-        protected abstract void ShowSkills(ISkill[] skills);
+        protected abstract void ShowSkills(ISpell[] skills);
     }
 }

@@ -12,12 +12,12 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM
         [SerializeField] GameObject _skillPrefab; 
         [SerializeField] Transform _skillsContainerParent;
 
-        protected override void ShowSkills(ISkill[] skills)
+        protected override void ShowSkills(ISpell[] skills)
         {
             PrintActiveSkills(skills).Forget();
         }
 
-        private async UniTaskVoid PrintActiveSkills(ISkill[] skills)
+        private async UniTaskVoid PrintActiveSkills(ISpell[] skills)
         {
             await UniTask.WaitUntil(() => Services.LeaderTransform == null);
 

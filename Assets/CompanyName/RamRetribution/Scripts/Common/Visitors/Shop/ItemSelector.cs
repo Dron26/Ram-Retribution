@@ -23,6 +23,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 
         public void Visit(SpellItem item)
         {
+            _shopData.SelectSpell(item.SpellsId);
         }
 
         public void Visit(RamItem item)

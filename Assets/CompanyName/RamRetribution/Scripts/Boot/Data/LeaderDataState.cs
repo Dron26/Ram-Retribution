@@ -24,7 +24,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
             var config = Services
                 .ResourceLoadService
                 .Load<ConfigsContainer>($"{AssetPaths.Configs}{nameof(ConfigsContainer)}")
-                .GetConfig(ConfigId.Leader);
+                .Get(ConfigId.Leader);
             
             HealthValue = config.HealthValue;
             ArmorValue = config.ArmorValue;

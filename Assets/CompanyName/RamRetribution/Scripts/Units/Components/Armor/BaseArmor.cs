@@ -13,6 +13,8 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
             _value = value;
         }
 
+        public float Value => _value;
+        
         public virtual int ReduceDamage(AttackType type, float damage)
         {
             damage -= _value;

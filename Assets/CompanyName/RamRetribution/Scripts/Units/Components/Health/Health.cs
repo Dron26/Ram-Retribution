@@ -1,16 +1,15 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
 {
-    public class AIHealth : IDamageable
+    public class Health : IDamageable
     {
         private int _value;
         private readonly IArmor _armor;
         
-        public AIHealth(int value, IArmor armor)
+        public Health(int value, IArmor armor)
         {
             _value = value;
             _armor = armor;
@@ -18,7 +17,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
 
         public event Action<int> ValueChanged;
         public event Action HealthEnded;
-        public int Health => _value;
+        
+        public int Value => _value;
+        public float ArmorValue => _armor.Value;
         
         public void TakeDamage(AttackType type, int damage)
         {
@@ -27,14 +28,12 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
 
             var reducedDamage = _armor.ReduceDamage(type, damage);
 
-            if(reducedDamage == 0)
-                return;
+            if (reducedDamage == 0)
+                reducedDamage = 1;
             
             _value -= reducedDamage;
             
             ValueChanged?.Invoke(_value);
-            
-            Debug.Log($"Health: {_value}");
             
             if(_value <= 0)
                 HealthEnded?.Invoke();

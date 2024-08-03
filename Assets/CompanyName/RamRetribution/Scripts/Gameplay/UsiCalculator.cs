@@ -16,7 +16,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         
         public int ConvertTo(Unit unit)
         {
-            var healthUsi = unit.Damageable.Health / HealthCost;
+            var healthUsi = unit.Damageable.Value / HealthCost;
             var damageUsi = unit.Damage / DamageCost;
 
             return healthUsi + damageUsi;

@@ -5,7 +5,7 @@ using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using UnityEngine;
 
-public class RageWave : ISkill
+public class RageWave : ISpell
 {
     private const int EnemyLayerMask = 7; // Add constants.cs for layers
 
@@ -24,8 +24,9 @@ public class RageWave : ISkill
         Debug.Log("SpellActivated");
         var leaderTransform = Services.LeaderTransform;
         var results = new Collider[9];
-        var size = Physics.OverlapSphereNonAlloc(leaderTransform.position, 10, results, 1 << EnemyLayerMask);
+        Physics.OverlapSphereNonAlloc(leaderTransform.position, 10, results, 1 << EnemyLayerMask);
         //Add particles and sound
+        
         foreach (var enemy in results)
         {
             if (enemy.TryGetComponent(out IAttackble attackble))

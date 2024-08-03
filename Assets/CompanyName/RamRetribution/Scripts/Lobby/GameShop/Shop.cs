@@ -162,7 +162,6 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         private void OnSelectionButtonClicked()
         {
             SelectItem();
-            Services.PrefsDataService.Save(_shopDataState);
 
             OnItemViewClicked(_selectedView);
         }

@@ -294,5 +294,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7200d0809b04d64e93d969fbfe55837, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _skillsPrefab: {fileID: 1294418972663073858, guid: 1dbc3538da43e9249b50b62ecfce3b96, type: 3}
-  _skillsContainerParentTransform: {fileID: 6654564039151384968}
+  _skillPrefab: {fileID: 1294418972663073858, guid: 1dbc3538da43e9249b50b62ecfce3b96, type: 3}
+  _skillsContainerParent: {fileID: 6654564039151384968}

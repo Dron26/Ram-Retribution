@@ -9,16 +9,8 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     public class ConfigsContainer : ScriptableObject
     {
         [SerializeField] private List<UnitConfig> _unitConfigs;
-
-        public ConfigId GetId(UnitConfig config)
-        {
-            if (_unitConfigs.Contains(config))
-                return config.Id;
-
-            throw new ArgumentException($"Cannot found configuration {config.name}");
-        }
     
-        public UnitConfig GetConfig(ConfigId id)
+        public UnitConfig Get(ConfigId id)
         {
             for (int i = 0; i < _unitConfigs.Count; i++)
             {

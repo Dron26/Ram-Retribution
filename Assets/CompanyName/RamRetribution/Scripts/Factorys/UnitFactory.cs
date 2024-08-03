@@ -2,10 +2,8 @@ using System;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units;
-using CompanyName.RamRetribution.Scripts.Units.Components;
 using CompanyName.RamRetribution.Scripts.Units.Components.Armor;
 using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
@@ -23,7 +21,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
 
         public Unit CreateLeader(LeaderDataState leaderData, Vector3 at)
         {
-            var prefab = _configsContainer.GetConfig(ConfigId.Leader).Prefab;
+            var prefab = _configsContainer.Get(ConfigId.Leader).Prefab;
             var leader = Object.Instantiate(prefab, at, Quaternion.identity);
             
             IDamageable healthComponent;
@@ -32,13 +30,13 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
             switch (leaderData.ArmorType)
             {
                 case ArmorTypes.Light:
-                    healthComponent = new AIHealth(leaderData.HealthValue, new LightArmor(leaderData.ArmorValue));
+                    healthComponent = new Health(leaderData.HealthValue, new LightArmor(leaderData.ArmorValue));
                     break;
                 case ArmorTypes.Medium:
-                    healthComponent = new AIHealth(leaderData.HealthValue, new MediumArmor(leaderData.ArmorValue));
+                    healthComponent = new Health(leaderData.HealthValue, new MediumArmor(leaderData.ArmorValue));
                     break;
                 case ArmorTypes.Heavy:
-                    healthComponent = new AIHealth(leaderData.HealthValue, new HeavyArmor(leaderData.ArmorValue));
+                    healthComponent = new Health(leaderData.HealthValue, new HeavyArmor(leaderData.ArmorValue));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -50,7 +48,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         
         public Unit Create(ConfigId configId, Vector3 at)
         {
-            var config = _configsContainer.GetConfig(configId);
+            var config = _configsContainer.Get(configId);
             var instance = Object.Instantiate(config.Prefab, at, Quaternion.identity);
             var unitComponent = instance.GetComponent<Unit>();
 
@@ -81,7 +79,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
                     throw new ArgumentOutOfRangeException(nameof(config.ArmorType), config.ArmorType, null);
             }
 
-            return new AIHealth(config.HealthValue, armor);
+            return new Health(config.HealthValue, armor);
         }
         
         private static IAttackComponent GetAttack(UnitConfig config)

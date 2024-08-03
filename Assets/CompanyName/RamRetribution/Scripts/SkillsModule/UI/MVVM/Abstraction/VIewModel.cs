@@ -7,7 +7,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
 {
     public abstract class VIewModel
     {
-        public readonly ReactiveProperty<ISkill[]> ViewModelSkillsContainer = new ReactiveProperty<ISkill[]>();
+        public readonly ReactiveProperty<ISpell[]> ViewModelSkillsContainer = new ReactiveProperty<ISpell[]>();
 
         private Model _model;
 
@@ -18,14 +18,14 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
             _model.ModelSkillsContainer.OnValueChange += OnModelSkillsContainerChanged;
         }
 
-        private void OnModelSkillsContainerChanged(ISkill[] skills)
+        private void OnModelSkillsContainerChanged(ISpell[] skills)
         {
             ViewModelSkillsContainer.Value = skills;
         }
 
-        public void OnActiveSpellButtonClicked(ISkill skill)
+        public void OnActiveSpellButtonClicked(ISpell spell)
         { 
-            skill.ActivateSkill();
+            spell.ActivateSkill();
         }
     }
 }

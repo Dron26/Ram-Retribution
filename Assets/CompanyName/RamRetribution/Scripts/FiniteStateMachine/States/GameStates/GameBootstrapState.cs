@@ -35,6 +35,11 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
                 asyncOperation.completed += _ => Init();
         }
 
+        public override void Exit()
+        {
+            _modulesContainer.Get<BattleMediator>().UnRegisterSpawner();
+        }
+        
         private void Init()
         {
             _modulesContainer = new ModulesContainer();
@@ -63,7 +68,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         private void InitBattle()
         {
             var battleBootstrap =
-                new BattleBootstrap(_modulesContainer, _gameData, _shopDataState.SelectedRams, _leaderData);
+                new BattleBootstrap(_modulesContainer, _shopDataState.SelectedRams, _leaderData);
 
             battleBootstrap.Init();
         }

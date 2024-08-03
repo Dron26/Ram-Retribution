@@ -6,7 +6,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 {
     public class ItemUnlocker : IShopItemVisitor
     {
-        private ShopDataState _shopData;
+        private readonly ShopDataState _shopData;
 
         public ItemUnlocker(ShopDataState shopData)
             => _shopData = shopData;
@@ -23,7 +23,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 
         public void Visit(SpellItem item)
         {
-            
+            _shopData.OpenSpell(item.SpellsId);
         }
 
         public void Visit(RamItem item)

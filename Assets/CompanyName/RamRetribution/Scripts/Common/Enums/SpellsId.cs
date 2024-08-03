@@ -5,6 +5,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Enums
         Fire,
         Stomp,
         Defence,
-        Heal
+        Heal,
+        RageWave
     }
 }

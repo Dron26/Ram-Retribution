@@ -7,7 +7,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
     {
         private const float AttackDistance = 5f;
         private readonly int _damage;
-
+        
         public MeleeAttack(int damage, float attackSpeed)
         {
             _damage = damage;
