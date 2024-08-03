@@ -20,8 +20,10 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
             _skinItems = Services.ResourceLoadService.LoadAll<SkinItem>(AssetPaths.ShopSkinPrefabs);
             _spellItems = Services.ResourceLoadService.LoadAll<SpellItem>(AssetPaths.ShopSpellPrefabs);
             _ramItems = Services.ResourceLoadService.LoadAll<RamItem>(AssetPaths.ShopRamPrefabs);
+
+            var lvlCombinator = Services.LvlCombinator;
             
-            ISkill skill = new RageWaveDamage();
+            ISkill skill = new RageWave(_spellItems[0].Sprite,lvlCombinator);
             Services.UiDataBinding.SetNewDataForGame(skill);
         }
     }

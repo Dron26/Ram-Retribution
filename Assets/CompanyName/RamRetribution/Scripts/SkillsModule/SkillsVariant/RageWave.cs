@@ -1,4 +1,3 @@
-using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Interfaces;
@@ -6,17 +5,18 @@ using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using UnityEngine;
 
-public class RageWaveDamage : ISkill
+public class RageWave : ISkill
 {
     private const int EnemyLayerMask = 7; // Add constants.cs for layers
     private Sprite _rageWaveSprite;
 
-    private LvlCombinator _lvlCombinator;
+    private readonly LvlCombinator _lvlCombinator;
 
-    public RageWaveDamage()
+    public RageWave(Sprite sprite, LvlCombinator combinator)
     {
-        _rageWaveSprite = Services.ResourceLoadService.Load<Sprite>($"{AssetPaths.RandomSpellSprite}{0}");
-        _lvlCombinator = Services.LvlCombinator;
+        _rageWaveSprite = sprite;
+        _lvlCombinator = combinator;
+        //Загрузка спрайтов + подписка кнопки проверить
     }
 
     public Sprite SkillImage
@@ -30,9 +30,9 @@ public class RageWaveDamage : ISkill
         //Add particles and sound
         foreach (var enemy in enemysColliders)
         {
-            if (enemy.TryGetComponent(out IAttackble damageableComponnent))
+            if (enemy.TryGetComponent(out IAttackble attackble))
             {
-                damageableComponnent.Damageable.TakeDamage(AttackType.Range, _lvlCombinator.GetCurrentLvlSpellDamage());
+                attackble.Damageable.TakeDamage(AttackType.Range, _lvlCombinator.GetCurrentLvlSpellDamage());
             }
         }
     }

@@ -11,7 +11,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
 
         private Model _model;
 
-        public virtual void InitViewModel(Model model)
+        public void InitViewModel(Model model)
         {
             _model = model;
 
@@ -23,7 +23,10 @@ namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
             ViewModelSkillsContainer.Value = skills;
         }
 
-        public void OnActiveSpellButt0oneClicked(ISkill skill)
-            => skill.ActivateSkill();
+        public void OnActiveSpellButtonClicked(ISkill skill)
+        { 
+            Debug.Log($"Button clicked");
+            skill.ActivateSkill();
+        }
     }
 }

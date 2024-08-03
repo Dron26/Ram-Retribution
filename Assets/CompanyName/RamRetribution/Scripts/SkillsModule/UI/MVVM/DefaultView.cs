@@ -1,11 +1,11 @@
-using System;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.Skills.MVVM;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM
 {
     public class DefaultView : View
     {
@@ -24,12 +24,12 @@ namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
             foreach (var skill in skills)
             {
                 GameObject skillObject = Instantiate(_skillsPrefab, _skillsContainerParentTransform);
+
+                if (skillObject.TryGetComponent(out Image image))
+                    image.sprite = skill.SkillImage;
                 
-                skillObject.GetComponentInChildren<Image>().sprite = skill.SkillImage;
-                
-                skillObject.GetComponentInChildren<Button>()
-                    .onClick
-                    .AddListener(() => _viewModel.OnActiveSpellButt0oneClicked(skill));
+                if(skillObject.TryGetComponent(out Button button))
+                    button.onClick.AddListener(() => _viewModel.OnActiveSpellButtonClicked(skill));
             }
         }
     }

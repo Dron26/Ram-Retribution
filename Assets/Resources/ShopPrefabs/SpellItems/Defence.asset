@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f17c61b9f59d473998992b38cf0ea524, type: 3}
   m_Name: Defence
   m_EditorClassIdentifier: 
-  <Name>k__BackingField: Defence
-  <Sprite>k__BackingField: {fileID: 21300000, guid: 2cef2b1b2fa14884b92faa0d75858b9d, type: 3}
+  <Name>k__BackingField: Rage Wave
+  <Sprite>k__BackingField: {fileID: 21300000, guid: aa1f7efa481b1724081fd49e42e7a0f7, type: 3}
   <CurrencyType>k__BackingField: 0
   <Cost>k__BackingField: 2323
   <SpellTypes>k__BackingField: 2
