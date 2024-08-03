@@ -1,17 +1,17 @@
 using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.Skills.MVVM;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
 {
     public abstract class VIewModel
     {
-        public ReactiveProperty<ISkill[]> ViewModelSkillsContainer = new ReactiveProperty<ISkill[]>();
+        public readonly ReactiveProperty<ISkill[]> ViewModelSkillsContainer = new ReactiveProperty<ISkill[]>();
 
         private Model _model;
 
-        public void InitViewModel(Model model)
+        protected void InitViewModel(Model model)
         {
             _model = model;
 
@@ -25,7 +25,6 @@ namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
 
         public void OnActiveSpellButtonClicked(ISkill skill)
         { 
-            Debug.Log($"Button clicked");
             skill.ActivateSkill();
         }
     }

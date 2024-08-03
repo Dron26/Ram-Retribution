@@ -21,7 +21,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 
         public void Visit(SkinItem item)
         {
-            IsSelected = _shopData.SelectedSkin == item.SkinType;
+            IsSelected = _shopData.SelectedSkin == item.SkinsId;
             IsSingleSelectItem = true;
         }
 

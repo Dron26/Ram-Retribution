@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 
         public void Visit(SkinItem item)
         {
-            _shopData.OpenSkin(item.SkinType);
+            _shopData.OpenSkin(item.SkinsId);
         }
 
         public void Visit(SpellItem item)

@@ -20,7 +20,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 
         public void Visit(SkinItem item)
         {
-            IsOpen = _shopData.OpenedSkins.Contains(item.SkinType);
+            IsOpen = _shopData.OpenedSkins.Contains(item.SkinsId);
         }
 
         public void Visit(SpellItem item)

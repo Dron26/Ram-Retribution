@@ -1,20 +1,19 @@
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using System;
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
 {
     public abstract class View : MonoBehaviour
     {
-        protected VIewModel _viewModel;
+        protected VIewModel ViewModel;
         
         public void Start()
         {
-            _viewModel = Services.VIewModel;
+            ViewModel = Services.ViewModel;
             
             //_viewModel.ViewModelSkillsContainer.OnValueChange += ShowSkills;
-            ShowSkills(_viewModel.ViewModelSkillsContainer.Value);
+            ShowSkills(ViewModel.ViewModelSkillsContainer.Value);
         }
 
         protected abstract void ShowSkills(ISkill[] skills);

@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop
 
         public void Visit(SkinItem item)
         {
-            _shopData.SelectedSkin = item.SkinType;
+            _shopData.SelectedSkin = item.SkinsId;
         }
 
         public void Visit(SpellItem item)

@@ -7,7 +7,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
     [CreateAssetMenu(menuName = "ShopItems/Spell")]
     public class SpellItem : ShopItem
     {
-        [field: SerializeField] public SpellTypes SpellTypes { get; private set; }
+        [field: SerializeField] public SpellsId SpellsId { get; private set; }
         
         public override void Accept(IShopItemVisitor visitor)
             => visitor.Visit(this);

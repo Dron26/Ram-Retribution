@@ -1,6 +1,6 @@
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using CompanyName.RamRetribution.Scripts.Skills.MVVM;
+using CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,8 +9,8 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM
 {
     public class DefaultView : View
     {
-        [SerializeField] GameObject _skillsPrefab; // prefab ����� = ��� ������ ���� Image � Buttone �����������
-        [SerializeField] Transform _skillsContainerParentTransform; //� ������ laoutGroup ���������� �����
+        [SerializeField] GameObject _skillPrefab; 
+        [SerializeField] Transform _skillsContainerParent;
 
         protected override void ShowSkills(ISkill[] skills)
         {
@@ -23,13 +23,13 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM
 
             foreach (var skill in skills)
             {
-                GameObject skillObject = Instantiate(_skillsPrefab, _skillsContainerParentTransform);
+                var instance = Instantiate(_skillPrefab, _skillsContainerParent);
 
-                if (skillObject.TryGetComponent(out Image image))
-                    image.sprite = skill.SkillImage;
+                if (instance.TryGetComponent(out Image image))
+                    image.sprite = skill.Image;
                 
-                if(skillObject.TryGetComponent(out Button button))
-                    button.onClick.AddListener(() => _viewModel.OnActiveSpellButtonClicked(skill));
+                if(instance.TryGetComponent(out Button button))
+                    button.onClick.AddListener(() => ViewModel.OnActiveSpellButtonClicked(skill));
             }
         }
     }

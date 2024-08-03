@@ -1,6 +1,6 @@
 namespace CompanyName.RamRetribution.Scripts.Common.Enums
 {
-    public enum SkinTypes
+    public enum SkinsId
     {
         Default,
         Red,

@@ -12,22 +12,22 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
         
         //List<ISpell> OpenedSpells;
         //List<ISpell> SelectedSpells;
-        public List<SkinTypes> OpenedSkins;
-        public SkinTypes SelectedSkin;
+        public List<SkinsId> OpenedSkins;
+        public SkinsId SelectedSkin;
         public List<ConfigId> OpenedRams;
         public List<ConfigId> SelectedRams;
         
         public ShopDataState()
         {
-            SelectedSkin = SkinTypes.Default;
-            OpenedSkins = new List<SkinTypes>();
+            SelectedSkin = SkinsId.Default;
+            OpenedSkins = new List<SkinsId>();
             OpenedRams = new List<ConfigId>();
             SelectedRams = new List<ConfigId>();
         }
         
         public DataNames Name => DataNames.ShopDataState;
 
-        public void OpenSkin(SkinTypes type)
+        public void OpenSkin(SkinsId type)
         {
             if (OpenedSkins.Contains(type))
                 throw new ArgumentException($"Skin {type} is already open");

@@ -3,6 +3,8 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.MVVM;
 using CompanyName.RamRetribution.Scripts.Skills.UI;
+using CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM;
+using CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Common.Services
@@ -16,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         public static GameDataBase GameDataBase { get; private set; }
         public static Model UiModel { get; private set; }
         public static UiDataBinding UiDataBinding { get; private set; }
-        public static VIewModel VIewModel { get; private set; }
+        public static VIewModel ViewModel { get; private set; }
         public static Transform LeaderTransform { get; private set; }
 
         public static void Init()
@@ -44,17 +46,21 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
 
         private static void RegisterPauseControl()
             => PauseControl = new PauseControl();
+        
         private static void RegisterGameDataBase()
             => GameDataBase = ResourceLoadService
                 .Load<GameDataBase>($"{AssetPaths.GameDataBase}{nameof(GameDataBase)}");
-
+        
         private static void RegisterLvlCombinator()
             => LvlCombinator = new LvlCombinator(GameDataBase);
+        
         private static void RegisterUiModel()
             => UiModel = new DeafaultUIModel();
+        
         private static void RegisterUiDataBinding()
             => UiDataBinding = new UiDataBinding(UiModel);
+        
         private static void RegisterUiViewModel()
-            => VIewModel = new DefaultViewModel(UiModel);
+            => ViewModel = new DefaultViewModel(UiModel);
     }
 }

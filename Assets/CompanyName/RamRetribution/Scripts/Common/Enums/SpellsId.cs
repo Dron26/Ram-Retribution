@@ -1,6 +1,6 @@
 namespace CompanyName.RamRetribution.Scripts.Common.Enums
 {
-    public enum SpellTypes
+    public enum SpellsId
     {
         Fire,
         Stomp,
