@@ -4,21 +4,22 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 {
-    public class MidasHand : ISpell
+    public class RageIncrease : ISpell
     {
         private readonly LvlCombinator _lvlCombinator;
-
-        public MidasHand(LvlCombinator lvlCombinator, Sprite sprite)
+    
+        public RageIncrease(LvlCombinator lvlCombinator, Sprite sprite)
         {
+            Image = sprite; 
             _lvlCombinator = lvlCombinator;
-            Image = sprite;
         }
+        
         public Sprite Image { get; }
 
         public void ActivateSkill()
         {
-            Debug.Log("MidasHand spell activated");
-            _lvlCombinator.AddGoldFromSpell();
+            Debug.Log("RageIncreaseSpell Activated");
+            _lvlCombinator.IncreaseRageValueAccumulation(); //Увеличивает на время увеличение накопления ярости
         }
     }
 }

@@ -1,8 +1,8 @@
 using CompanyName.RamRetribution.Scripts.Boot;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
-using CompanyName.RamRetribution.Scripts.Skills.MVVM;
-using CompanyName.RamRetribution.Scripts.Skills.UI;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
+using CompanyName.RamRetribution.Scripts.SkillsModule.UI;
 using CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM;
 using CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction;
 using UnityEngine;
@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         public static GameDataBase GameDataBase { get; private set; }
         public static Model UiModel { get; private set; }
         public static UiDataBinding UiDataBinding { get; private set; }
-        public static VIewModel ViewModel { get; private set; }
+        public static ViewModel ViewModel { get; private set; }
         public static Transform LeaderTransform { get; private set; }
 
         public static void Init()
@@ -55,7 +55,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
             => LvlCombinator = new LvlCombinator(GameDataBase);
         
         private static void RegisterUiModel()
-            => UiModel = new DeafaultUIModel();
+            => UiModel = new DefaultUIModel();
         
         private static void RegisterUiDataBinding()
             => UiDataBinding = new UiDataBinding(UiModel);

@@ -1,14 +1,14 @@
+using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 using UnityEngine;
 
 public class RageWave : ISpell
 {
-    private const int EnemyLayerMask = 7; // Add constants.cs for layers
-
     private readonly LvlCombinator _lvlCombinator;
 
     public RageWave(Sprite sprite, LvlCombinator combinator)
@@ -24,7 +24,7 @@ public class RageWave : ISpell
         Debug.Log("SpellActivated");
         var leaderTransform = Services.LeaderTransform;
         var results = new Collider[9];
-        Physics.OverlapSphereNonAlloc(leaderTransform.position, 10, results, 1 << EnemyLayerMask);
+        Physics.OverlapSphereNonAlloc(leaderTransform.position, 10, results, 1 << GameConstants.EnemyLayerMask);
         //Add particles and sound
         
         foreach (var enemy in results)

@@ -43,5 +43,10 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
         {
             
         }
+
+        public void Improve(int bonusValue)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

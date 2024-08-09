@@ -1,7 +1,8 @@
 using System;
+using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure
 {
     public class LvlCombinator
     {
@@ -12,8 +13,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
         {
             _gameDataBase = gameDataBase;
         }
-
-        //Damage amplify compute
+        
         public int GetCurrentLvlSpellDamage()
         {
             return Mathf.FloorToInt(_lvlNumber * _gameDataBase.DamageKooficient);
@@ -29,7 +29,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
             _gameDataBase.Gold += _gameDataBase.GoldSpellValue;
         }
 
-        internal int GetIncreseDamageKooficient()
+        internal int GetIncreaseDamageCoeficient()
         {
             throw new NotImplementedException();
         }
@@ -39,7 +39,7 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
             throw new NotImplementedException();
         }
 
-        internal void IncresetRageValueAccumulation()
+        internal void IncreaseRageValueAccumulation()
         {
             _gameDataBase.RageAccumulationKooficient *= 2;
             //UnitTask.Delay(TimeSpam.FromSeconds(10));

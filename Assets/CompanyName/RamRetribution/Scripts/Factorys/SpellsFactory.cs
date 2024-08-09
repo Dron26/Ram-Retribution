@@ -20,16 +20,22 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
             
             switch (spellData.Id)
             {
-                case SpellsId.Fire:
+                case SpellsId.DecreaseDamage:
                     break;
-                case SpellsId.Stomp:
+                case SpellsId.GateDemolish:
                     break;
-                case SpellsId.Defence:
+                case SpellsId.HealWave:
                     break;
-                case SpellsId.Heal:
+                case SpellsId.IncreaseDamage:
                     break;
-                case SpellsId.RageWave: 
+                case SpellsId.RageWave:
                     spell = new RageWave(spellData.Image, Services.LvlCombinator);
+                    break;
+                case SpellsId.MidasHand:
+                    break;
+                case SpellsId.RageIncrease:
+                    break;
+                case SpellsId.RamSpawnSkill:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

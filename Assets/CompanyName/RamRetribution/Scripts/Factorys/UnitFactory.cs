@@ -23,24 +23,16 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         {
             var prefab = _configsContainer.Get(ConfigId.Leader).Prefab;
             var leader = Object.Instantiate(prefab, at, Quaternion.identity);
-            
-            IDamageable healthComponent;
+
             IAttackComponent attackComponent = new MeleeAttack(leaderData.Damage, leaderData.AttackSpeed);
-            
-            switch (leaderData.ArmorType)
+
+            IDamageable healthComponent = leaderData.ArmorType switch
             {
-                case ArmorTypes.Light:
-                    healthComponent = new Health(leaderData.HealthValue, new LightArmor(leaderData.ArmorValue));
-                    break;
-                case ArmorTypes.Medium:
-                    healthComponent = new Health(leaderData.HealthValue, new MediumArmor(leaderData.ArmorValue));
-                    break;
-                case ArmorTypes.Heavy:
-                    healthComponent = new Health(leaderData.HealthValue, new HeavyArmor(leaderData.ArmorValue));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ArmorTypes.Light => new Health(leaderData.HealthValue, new LightArmor(leaderData.ArmorValue)),
+                ArmorTypes.Medium => new Health(leaderData.HealthValue, new MediumArmor(leaderData.ArmorValue)),
+                ArmorTypes.Heavy => new Health(leaderData.HealthValue, new HeavyArmor(leaderData.ArmorValue)),
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
             leader.Init(healthComponent, attackComponent, PriorityTypes.Leader);
             return leader;
@@ -50,34 +42,24 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         {
             var config = _configsContainer.Get(configId);
             var instance = Object.Instantiate(config.Prefab, at, Quaternion.identity);
-            var unitComponent = instance.GetComponent<Unit>();
 
             var healthComponent = GetHealth(config);
             var attackComponent = GetAttack(config);
             
-            unitComponent.Init(healthComponent, attackComponent, config.Priority);
+            instance.Init(healthComponent, attackComponent, config.Priority);
             
-            return unitComponent;
+            return instance;
         }
         
         private static IDamageable GetHealth(UnitConfig config)
         {
-            IArmor armor = null;
-
-            switch (config.ArmorType)
+            IArmor armor = config.ArmorType switch
             {
-                case ArmorTypes.Light:
-                    armor = new LightArmor(config.ArmorValue);
-                    break;
-                case ArmorTypes.Medium:
-                    armor = new MediumArmor(config.ArmorValue);
-                    break;
-                case ArmorTypes.Heavy:
-                    armor = new HeavyArmor(config.ArmorValue);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(config.ArmorType), config.ArmorType, null);
-            }
+                ArmorTypes.Light => new LightArmor(config.ArmorValue),
+                ArmorTypes.Medium => new MediumArmor(config.ArmorValue),
+                ArmorTypes.Heavy => new HeavyArmor(config.ArmorValue),
+                _ => throw new ArgumentOutOfRangeException(nameof(config.ArmorType), config.ArmorType, null)
+            };
 
             return new Health(config.HealthValue, armor);
         }

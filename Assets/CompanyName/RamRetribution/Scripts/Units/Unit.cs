@@ -6,6 +6,7 @@ using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
+using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -18,15 +19,14 @@ namespace CompanyName.RamRetribution.Scripts.Units
     {
         public readonly List<Unit> CurrentEnemies = new();
 
-        private IAttackComponent _attackComponent;
         private AIMovement _aiMovement;
         private Animator _animator;
         private CancellationTokenSource _cancellationToken;
         
         public event Action<Unit> Fleeing;
+        public IAttackComponent AttackComponent { get; private set; }
         public IDamageable Damageable { get; private set; }
         public Transform SelfTransform { get; private set; }
-        public int Damage => _attackComponent.Damage;
         public abstract UnitTypes Type { get; }
         public PriorityTypes Priority { get; private set; }
         public bool IsActive { get; private set; }
@@ -40,7 +40,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
             SelfTransform = transform;
             
             Damageable = health;
-            _attackComponent = attackComponent;
+            AttackComponent = attackComponent;
 
             IsActive = false;
             Priority = priority;
@@ -69,11 +69,11 @@ namespace CompanyName.RamRetribution.Scripts.Units
             {
                 if (CanAttack(target.SelfTransform))
                 {
-                    _attackComponent.Attack(target.Damageable);
+                    AttackComponent.Attack(target.Damageable);
                     _animator.SetInteger(AIAnimatorParams.Attack, Random.Range(1,3));
 
                     await UniTask.Delay(
-                        TimeSpan.FromSeconds(_attackComponent.AttackSpeed),
+                        TimeSpan.FromSeconds(AttackComponent.AttackSpeed),
                         DelayType.DeltaTime,
                         PlayerLoopTiming.Update,
                         _cancellationToken.Token);
@@ -136,12 +136,12 @@ namespace CompanyName.RamRetribution.Scripts.Units
             IsActive = false;
             _aiMovement.DeactivateNavMesh();
         }
-
+        
         public abstract void Accept(IUnitVisitor visitor);
 
         private bool CanAttack(Transform target)
         {
-            return (target.transform.position - SelfTransform.position).sqrMagnitude <= _attackComponent.Distance;
+            return (target.transform.position - SelfTransform.position).sqrMagnitude <= AttackComponent.Distance;
         }
 
         private void OnHealthEnded()

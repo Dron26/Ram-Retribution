@@ -1,9 +1,10 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
-    public interface IDamageable
+    public interface IDamageable : IImprovable
     {
         public event Action HealthEnded;
         public event Action<int> ValueChanged;
