@@ -20,9 +20,6 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         [SerializeField] private Transform _ramsContainer;
         [SerializeField] private Transform _enemiesContainer;
 
-        private const int MaxRamUnits = 6;
-        private const int MaxEnemyUnits = 9;
-
         private LeaderDataState _leaderData;
         private List<Unit> _rams;
         private List<ConfigId> _selectedRamsId;

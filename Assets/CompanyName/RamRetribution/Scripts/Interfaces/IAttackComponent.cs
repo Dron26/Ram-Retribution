@@ -1,8 +1,9 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
-    public interface IAttackComponent
+    public interface IAttackComponent : IImprovable
     {
         public AttackType AttackType { get; }
         public float AttackSpeed { get; }

@@ -2,6 +2,7 @@ using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 using UnityEngine;
 
 public class IncreseDamage : ISpell
@@ -15,7 +16,7 @@ public class IncreseDamage : ISpell
     {
         _lvlCombinator = lvlCombinator;
         Image = image;
-        _baseIncreseDamageValue *= _lvlCombinator.GetIncreseDamageKooficient();
+        _baseIncreseDamageValue *= _lvlCombinator.GetIncreaseDamageCoeficient();
 
     }
     public Sprite Image { get; }
@@ -32,7 +33,7 @@ public class IncreseDamage : ISpell
         {
             if (enemy.TryGetComponent(out IRam ram))
             {
-                //ram.IncreseDamageValue; (Надо найти интерфейс или класс, через который можно на время увеличить урон Unit(Баранам)
+                //ram.IncreseDamageValue; (РќР°РґРѕ РЅР°Р№С‚Рё РёРЅС‚РµСЂС„РµР№СЃ РёР»Рё РєР»Р°СЃСЃ, С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Р№ РјРѕР¶РЅРѕ РЅР° РІСЂРµРјСЏ СѓРІРµР»РёС‡РёС‚СЊ СѓСЂРѕРЅ Unit(Р‘Р°СЂР°РЅР°Рј)
             }
         }
     }

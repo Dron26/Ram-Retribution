@@ -1,11 +1,9 @@
-using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using CompanyName.RamRetribution.Scripts.Skills.MVVM;
-using UnityEngine;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
 {
-    public abstract class VIewModel
+    public abstract class ViewModel
     {
         public readonly ReactiveProperty<ISpell[]> ViewModelSkillsContainer = new ReactiveProperty<ISpell[]>();
 
@@ -14,7 +12,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
         protected void InitViewModel(Model model)
         {
             _model = model;
-
+            
             _model.ModelSkillsContainer.OnValueChange += OnModelSkillsContainerChanged;
         }
 

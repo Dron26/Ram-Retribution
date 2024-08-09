@@ -24,5 +24,10 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         {
             
         }
+
+        public void Improve(int bonusValue)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

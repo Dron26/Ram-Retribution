@@ -6,6 +6,8 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components.Armor;
 using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
+using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Variants;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -15,79 +17,61 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
     public class UnitFactory : IUnitFactory
     {
         private readonly ConfigsContainer _configsContainer;
-        
-        public UnitFactory(ConfigsContainer configsContainer) 
+
+        public UnitFactory(ConfigsContainer configsContainer)
             => _configsContainer = configsContainer;
 
         public Unit CreateLeader(LeaderDataState leaderData, Vector3 at)
         {
             var prefab = _configsContainer.Get(ConfigId.Leader).Prefab;
             var leader = Object.Instantiate(prefab, at, Quaternion.identity);
-            
-            IDamageable healthComponent;
+
             IAttackComponent attackComponent = new MeleeAttack(leaderData.Damage, leaderData.AttackSpeed);
-            
-            switch (leaderData.ArmorType)
+
+            IDamageable healthComponent = leaderData.ArmorType switch
             {
-                case ArmorTypes.Light:
-                    healthComponent = new Health(leaderData.HealthValue, new LightArmor(leaderData.ArmorValue));
-                    break;
-                case ArmorTypes.Medium:
-                    healthComponent = new Health(leaderData.HealthValue, new MediumArmor(leaderData.ArmorValue));
-                    break;
-                case ArmorTypes.Heavy:
-                    healthComponent = new Health(leaderData.HealthValue, new HeavyArmor(leaderData.ArmorValue));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ArmorTypes.Light => new Health(leaderData.HealthValue, new LightArmor(leaderData.ArmorValue)),
+                ArmorTypes.Medium => new Health(leaderData.HealthValue, new MediumArmor(leaderData.ArmorValue)),
+                ArmorTypes.Heavy => new Health(leaderData.HealthValue, new HeavyArmor(leaderData.ArmorValue)),
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
             leader.Init(healthComponent, attackComponent, PriorityTypes.Leader);
             return leader;
         }
-        
+
         public Unit Create(ConfigId configId, Vector3 at)
         {
             var config = _configsContainer.Get(configId);
             var instance = Object.Instantiate(config.Prefab, at, Quaternion.identity);
-            var unitComponent = instance.GetComponent<Unit>();
 
             var healthComponent = GetHealth(config);
             var attackComponent = GetAttack(config);
-            
-            unitComponent.Init(healthComponent, attackComponent, config.Priority);
-            
-            return unitComponent;
+
+            instance.Init(healthComponent, attackComponent, config.Priority);
+
+            return instance;
         }
-        
+
         private static IDamageable GetHealth(UnitConfig config)
         {
-            IArmor armor = null;
-
-            switch (config.ArmorType)
+            IArmor armor = config.ArmorType switch
             {
-                case ArmorTypes.Light:
-                    armor = new LightArmor(config.ArmorValue);
-                    break;
-                case ArmorTypes.Medium:
-                    armor = new MediumArmor(config.ArmorValue);
-                    break;
-                case ArmorTypes.Heavy:
-                    armor = new HeavyArmor(config.ArmorValue);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(config.ArmorType), config.ArmorType, null);
-            }
+                ArmorTypes.Light => new LightArmor(config.ArmorValue),
+                ArmorTypes.Medium => new MediumArmor(config.ArmorValue),
+                ArmorTypes.Heavy => new HeavyArmor(config.ArmorValue),
+                _ => throw new ArgumentOutOfRangeException(nameof(config.ArmorType), config.ArmorType, null)
+            };
 
             return new Health(config.HealthValue, armor);
         }
-        
+
         private static IAttackComponent GetAttack(UnitConfig config)
         {
             return config.AttackType switch
             {
                 AttackType.Melee => new MeleeAttack(config.Damage, config.AttackSpeed),
-                AttackType.Range => new RangeAttack(config.Damage,config.AttackSpeed,config.AttackDistance),
+                AttackType.Range => new RangeAttack(config.Damage, config.AttackSpeed, config.AttackDistance),
                 _ => throw new ArgumentOutOfRangeException(nameof(config.AttackType), config.AttackType, null)
             };
         }

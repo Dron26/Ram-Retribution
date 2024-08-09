@@ -23,5 +23,10 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         {
             damageable.TakeDamage(AttackType, _damage);
         }
+
+        public void Improve(int bonusValue)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

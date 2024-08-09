@@ -1,15 +1,16 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using System.Collections;
+using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts.Common;
+using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
-    public class Tank : Unit, IRam
+    public class Tank : Unit, IRam, IImprover
     {
-        private WaitForSeconds _coroutineDelay = new WaitForSeconds(2);
-        private Coroutine _cachedCoroutine;
-        private int _friendlyLayerMask = 8;
+        private IBuff<IDamageable> _buff;
 
         public override UnitTypes Type => UnitTypes.Ram;
 
@@ -26,7 +27,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
             {
                 Debug.Log(" Add Armor started");
                 var results = new Collider[9];
-                Physics.OverlapSphereNonAlloc(transform.position, 10, results, 1 << _friendlyLayerMask);
+                Physics.OverlapSphereNonAlloc(transform.position, 10, results, 1 << GameConstants.FriendlyLayerMask);
                 IAttackComponent[] attackComponents = new IAttackComponent[9];
                 int index = 0;
                 foreach (var friens in results)
@@ -34,32 +35,29 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
                     if (friens.TryGetComponent(out IRam ram))
                     {
                         ram.GameObject.TryGetComponent(out IAttackComponent attackComponnent);
-                        //attackComponnent.Armor += 1; Он доступен только для чтения. Надо его както менять так чтобы тебя не наругали
+                        //attackComponnent.Armor += 1; пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                         attackComponents[index] = attackComponnent;
                         index++;
                     }
                 }
-                yield return _coroutineDelay;
+                yield return null;
                 for (int i = 0; i < index; i++)
                 {
-                    //attackComponents[i].Armor -= 1; Он доступен только для чтения.Надо его както менять так чтобы тебя не наругали
+                    //attackComponents[i].Armor -= 1; пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 }
             }
         }
 
-        public void ActivatePassiveSkill()
+        public void AddBuff(List<Unit> units)
         {
-            _cachedCoroutine = StartCoroutine(CheckRamsNearByForIncreaseAttackCoroutine());
+            foreach (var unit in units)
+                _buff.Apply(unit.Damageable);
         }
 
-        public void DeactivatePassiveSkill()
+        public void RemoveBuff(List<Unit> units)
         {
-            StopCoroutine(_cachedCoroutine);
-        }
-
-        private void OnDisable()
-        {
-            DeactivatePassiveSkill();
+            foreach (var unit in units)
+                _buff.Apply(unit.Damageable);
         }
     }
 }

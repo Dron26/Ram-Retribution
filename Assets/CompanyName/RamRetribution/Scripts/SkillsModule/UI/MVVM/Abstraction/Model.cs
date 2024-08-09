@@ -1,19 +1,12 @@
-using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 
-namespace CompanyName.RamRetribution.Scripts.Skills.MVVM
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
 {
     public abstract class Model
     {
-        public ReactiveProperty<ISpell[]> ModelSkillsContainer = new ReactiveProperty<ISpell[]>();
-
-        /// <summary>
-        /// Skills  that player choosed in Shop
-        /// </summary>
-        /// <param name="skills"></param>
+        public readonly ReactiveProperty<ISpell[]> ModelSkillsContainer = new ReactiveProperty<ISpell[]>();
+        
         public void SetSkills(ISpell[] skills)
         {
             ModelSkillsContainer.Value = skills;

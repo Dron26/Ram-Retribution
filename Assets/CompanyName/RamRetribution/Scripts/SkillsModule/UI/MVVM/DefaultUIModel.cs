@@ -2,11 +2,7 @@ using CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM
 {
-    public class DefaultViewModel : ViewModel
+    public class DefaultUIModel : Model
     {
-        public DefaultViewModel(Model model)
-        {
-            InitViewModel(model);
-        }
     }
 }

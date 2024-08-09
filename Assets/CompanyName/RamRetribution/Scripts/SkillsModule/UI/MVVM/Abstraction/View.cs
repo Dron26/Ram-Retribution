@@ -6,7 +6,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
 {
     public abstract class View : MonoBehaviour
     {
-        protected VIewModel ViewModel;
+        protected ViewModel ViewModel;
         
         public void Start()
         {

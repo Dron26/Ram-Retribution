@@ -2,10 +2,13 @@ namespace CompanyName.RamRetribution.Scripts.Common.Enums
 {
     public enum SpellsId
     {
-        Fire,
-        Stomp,
-        Defence,
-        Heal,
-        RageWave
+        DecreaseDamage,
+        GateDemolish,
+        HealWave,
+        IncreaseDamage,
+        MidasHand,
+        RageIncrease,
+        RamSpawnSkill,
+        RageWave,
     }
 }

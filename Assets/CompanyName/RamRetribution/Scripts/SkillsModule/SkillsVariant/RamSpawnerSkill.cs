@@ -1,24 +1,28 @@
 using CompanyName.RamRetribution.Scripts.Gameplay;
-using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 using UnityEngine;
 
-public class RamSpawnerSkill : ISpell
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 {
-    private LvlCombinator _lvlCombinator;
-    private UnitSpawner _spawner;
-
-    public RamSpawnerSkill(LvlCombinator lvlCombinator, UnitSpawner unitSpawner, Sprite SpellImage)
+    public class RamSpawnerSkill : ISpell
     {
-        _lvlCombinator = lvlCombinator;
-        _spawner = unitSpawner;
-        Image = SpellImage;
-    }
-    public Sprite Image { get; }
+        private readonly LvlCombinator _lvlCombinator;
+        private readonly UnitSpawner _spawner;
 
-    public void ActivateSkill()
-    {
-        int spawnRamsCount = _lvlCombinator.GetSpawnRamsCountValue();
-       // _spawner.SpawnEnemies();   НАдо заспавнить новых баранов при активации скила.Я посмотрел UnitSpawner отдельно 1 барана не может так сделать
+        public RamSpawnerSkill(LvlCombinator lvlCombinator, UnitSpawner unitSpawner, Sprite spellImage)
+        {
+            _lvlCombinator = lvlCombinator;
+            _spawner = unitSpawner;
+            Image = spellImage;
+        }
+    
+        public Sprite Image { get; }
+
+        public void ActivateSkill()
+        {
+            var spawnRamsCount = _lvlCombinator.GetSpawnRamsCountValue();
+            // _spawner.SpawnEnemies();   РќР°РґРѕ Р·Р°СЃРїР°РІРЅРёС‚СЊ РЅРѕРІС‹С… Р±Р°СЂР°РЅРѕРІ РїСЂРё Р°РєС‚РёРІР°С†РёРё СЃРєРёР»Р°.РЇ РїРѕСЃРјРѕС‚СЂРµР» UnitSpawner РѕС‚РґРµР»СЊРЅРѕ 1 Р±Р°СЂР°РЅР° РЅРµ РјРѕР¶РµС‚ С‚Р°Рє СЃРґРµР»Р°С‚СЊ
+        }
     }
 }
