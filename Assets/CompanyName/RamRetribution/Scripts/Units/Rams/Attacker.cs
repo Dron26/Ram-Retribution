@@ -3,7 +3,6 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using System.Collections;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Data;
 using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
 using UnityEngine;
 

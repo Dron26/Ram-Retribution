@@ -9,7 +9,8 @@ namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
         [Range(0, 10000)] public float DamageKooficient = 1;
         internal int HealingKooficient;
 
-
+        public KooficientStructure KooficientStructureForHealth;
+        public KooficientStructure KooficientStructureForDamage;
 
         //GoldSpell
         public int GoldSpellLvl = 0;

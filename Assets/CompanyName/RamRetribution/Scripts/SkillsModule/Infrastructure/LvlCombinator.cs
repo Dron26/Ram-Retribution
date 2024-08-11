@@ -8,12 +8,23 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure
     {
         private readonly GameDataBase _gameDataBase;
         private int _lvlNumber;
+        private int _maxLvlNumber = 520;
 
         public LvlCombinator(GameDataBase gameDataBase)
         {
             _gameDataBase = gameDataBase;
         }
-        
+        public float GetCurrenntLvlHealth(int baseHealth)
+        {
+            return baseHealth + (baseHealth * _gameDataBase.KooficientStructureForHealth.IndexI.Evaluate(_lvlNumber / _maxLvlNumber)
+                * (baseHealth * _gameDataBase.KooficientStructureForHealth.IndexK.Evaluate(_lvlNumber / _maxLvlNumber)));
+        }
+        public float GetCurrenntLvlDamage(int baseDamage)
+        {
+            return baseDamage + (baseDamage * _gameDataBase.KooficientStructureForDamage.IndexI.Evaluate(_lvlNumber / _maxLvlNumber)
+                * (baseDamage * _gameDataBase.KooficientStructureForDamage.IndexK.Evaluate(_lvlNumber / _maxLvlNumber)));
+        }
+
         public int GetCurrentLvlSpellDamage()
         {
             return Mathf.FloorToInt(_lvlNumber * _gameDataBase.DamageKooficient);
