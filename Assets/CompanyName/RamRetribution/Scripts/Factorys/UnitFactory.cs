@@ -6,8 +6,6 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components.Armor;
 using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
-using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
-using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Variants;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -44,6 +42,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         {
             var config = _configsContainer.Get(configId);
             var instance = Object.Instantiate(config.Prefab, at, Quaternion.identity);
+            var unitComponent = instance.GetComponent<Unit>();
 
             var healthComponent = GetHealth(config);
             var attackComponent = GetAttack(config);
