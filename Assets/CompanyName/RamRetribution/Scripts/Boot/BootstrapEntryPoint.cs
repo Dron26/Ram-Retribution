@@ -3,12 +3,14 @@ using Agava.YandexGames;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
+using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Boot
 {
     public class BootstrapEntryPoint : MonoBehaviour
     {
+        public KooficientStructure HealthKooficient;
         private void Awake()
         {
             YandexGamesSdk.CallbackLogging = true;
@@ -27,7 +29,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot
             gameStateMachine.AddAnyTransition(new GameBootstrapState(gameStateMachine), null);
 
             gameStateMachine.SetState<LobbyBootstrapState>();
-            
+
             yield break;
         }
 
