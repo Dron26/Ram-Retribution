@@ -23,16 +23,17 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
 
         public int Number { get; }
         public bool IsGateAttackedFirst { get; private set; }
-        public Gate CurrentGate { get; private set; }
+        public Gate Gates { get; private set; }
         public IReadOnlyList<Vector3> EnemySpots => _enemySpots;
         public IReadOnlyList<Vector3> EntryTilesPositions => _entryTilesPositions;
+        public IReadOnlyList<Transform> GateAttackPoints => Gates.PointsForAttack;
 
         public void Init(Tile tile)
         {
             if(tile.Type == TileType.Entry)
                 _entryTilesPositions.Add(tile.transform.position);
 
-            if (CurrentGate == null && tile.Type is TileType.WoodGate or TileType.RockGate)
+            if (Gates == null && tile.Type is TileType.WoodGate or TileType.RockGate)
                 ConfigureGate(tile);
             
             if(tile.Type == TileType.EnemiesSpawnPoint)
@@ -48,7 +49,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
                     IDamageable woodGateHealth = new Health(1000, new MediumArmor(50));
                     var component = tile.GetComponentInChildren<Gate>();
                     component.Init(woodGateHealth);
-                    CurrentGate = component;
+                    Gates = component;
                     break;
                 }
                 case TileType.RockGate:
@@ -56,7 +57,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
                     IDamageable rockGateHealth = new Health(3000, new HeavyArmor(45));
                     var component = tile.GetComponentInChildren<Gate>();
                     component.Init(rockGateHealth);
-                    CurrentGate = component;
+                    Gates = component;
                     break;
                 }
                 default:
@@ -64,19 +65,19 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             }
 
             IsGateAttackedFirst = false;
-            CurrentGate.Damageable.HealthEnded += OnGateDestroyed;
-            CurrentGate.FirstAttacked += OnGateAttackedFirst;
+            Gates.Damageable.HealthEnded += OnGateDestroyed;
+            Gates.FirstAttacked += OnGateAttackedFirst;
         }
 
         private void OnGateAttackedFirst()
         {
-            CurrentGate.FirstAttacked -= OnGateAttackedFirst;
+            Gates.FirstAttacked -= OnGateAttackedFirst;
             IsGateAttackedFirst = true;
         }
 
         private void OnGateDestroyed()
         {
-            CurrentGate.Damageable.HealthEnded -= OnGateDestroyed;
+            Gates.Damageable.HealthEnded -= OnGateDestroyed;
             GateDestroyed?.Invoke();
         }
     }

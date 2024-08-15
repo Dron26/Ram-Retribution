@@ -22,7 +22,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
             foreach (var unit in units)
             {
                 if(unit.AttackComponent is IImprovable improvable)
-                    improvable.Improve(Services.GameDataBase.DamageBonus, ref unit.AttackComponent.Damage); 
+                    improvable.Improve(
+                        Services.GameDataBase.DamageBonus, 
+                        ref unit.AttackComponent.Damage); 
             }
         }
 
@@ -31,7 +33,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
             foreach (var unit in units)
             {
                 if(unit.AttackComponent is IImprovable improvable)
-                    improvable.UnImprove(Services.GameDataBase.DamageBonus, ref unit.AttackComponent.Damage);
+                    improvable.UnImprove(
+                        Services.GameDataBase.DamageBonus, 
+                        ref unit.AttackComponent.Damage);
             }
         }
     }

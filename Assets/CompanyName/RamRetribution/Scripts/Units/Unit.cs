@@ -54,13 +54,8 @@ namespace CompanyName.RamRetribution.Scripts.Units
         {
             _aiMovement.Move(destination, callback);
         }
-
-        private async UniTask MoveTowardsAsync(Transform target)
-        {
-            await _aiMovement.MoveTowards(target, _cancellationToken.Token);
-        }
-
-        public async UniTask Attack(IAttackble target)
+        
+        public async UniTask Attack(IAttackble target, Transform pointForAttack = null)
         {
             while (target.IsActive)
             {
@@ -84,7 +79,11 @@ namespace CompanyName.RamRetribution.Scripts.Units
                 }
                 else
                 {
-                    await MoveTowardsAsync(target.SelfTransform);
+                    var targetToMove = pointForAttack == null
+                        ? target.SelfTransform
+                        : pointForAttack;
+
+                    await MoveTowardsAsync(targetToMove);
                 }
             }
         }
@@ -148,6 +147,11 @@ namespace CompanyName.RamRetribution.Scripts.Units
             return (target.transform.position - SelfTransform.position).sqrMagnitude <= AttackComponent.Distance;
         }
 
+        private async UniTask MoveTowardsAsync(Transform target)
+        {
+            await _aiMovement.MoveTowards(target, _cancellationToken.Token);
+        }
+        
         private void OnHealthEnded()
         {
             CancelToken();

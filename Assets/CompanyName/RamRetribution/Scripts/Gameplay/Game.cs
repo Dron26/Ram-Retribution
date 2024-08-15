@@ -41,7 +41,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             _currentLevel.GateDestroyed += OnGateDestroyed;
             
             _unitSpawner = _modulesContainer.Get<UnitSpawner>();
-            _unitSpawner.RamsCreated += OnRamsCreated;
+            _unitSpawner.RamsCreated += OnRamsCreatedAsync;
             _unitSpawner.EnemiesCreated += OnEnemiesCreated;
 
             _unitSpawner.CreateRams();
@@ -50,7 +50,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private async UniTaskVoid HandleBattle()
         {
             _unitSpawner.SetEnemiesSpawnPoints(_currentLevel.EnemySpots);
-            NotifyRamsAttackGate();
+            NotifyRamsAttackGateAsync();
 
             await UniTask.WaitUntil(() => _currentLevel.IsGateAttackedFirst);
 
@@ -65,7 +65,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 await UniTask.WaitUntil(() => !HasEnemies)
                     .WithCancellation(_tokenSource.Token);
 
-                NotifyRamsAttackGate();
+                NotifyRamsAttackGateAsync();
             }
         }
 
@@ -103,15 +103,15 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             await UniTask.WaitUntil(() => HasEnemies);
         }
 
-        private void NotifyRamsAttackGate()
+        private void NotifyRamsAttackGateAsync()
         {
-            foreach (var ram in _rams.Units)
-                ram.Attack(_currentLevel.CurrentGate).Forget();
+            for (var i = 0; i < _rams.Units.Count; i++)
+                _rams.Units[i].Attack(_currentLevel.Gates, _currentLevel.Gates.PointsForAttack[i]).Forget();
         }
 
-        private async void OnRamsCreated(Squad squad)
+        private async void OnRamsCreatedAsync(Squad squad)
         {
-            _unitSpawner.RamsCreated -= OnRamsCreated;
+            _unitSpawner.RamsCreated -= OnRamsCreatedAsync;
 
             foreach (var ram in squad.Units)
                 ram.Fleeing += OnRamFleeing;

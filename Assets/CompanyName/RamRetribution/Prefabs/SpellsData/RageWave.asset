@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b6aab1305e4d86954466a46ae9095f, type: 3}
   m_Name: RageWave
   m_EditorClassIdentifier: 
-  <Id>k__BackingField: 4
+  <Id>k__BackingField: 7
   <Image>k__BackingField: {fileID: 21300000, guid: aa1f7efa481b1724081fd49e42e7a0f7, type: 3}

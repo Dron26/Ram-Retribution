@@ -30,7 +30,6 @@ public class HealWave : ISpell
         {
             if (enemy.TryGetComponent(out IRam ram))
             {
-
                 //ram.Heal(_baseHealingValue);
             }
         }
