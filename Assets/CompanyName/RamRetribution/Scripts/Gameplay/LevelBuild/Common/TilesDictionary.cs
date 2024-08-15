@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using Generator.Scripts.Common.Enums;
 using SerializableDictionary;
 using UnityEngine;
 

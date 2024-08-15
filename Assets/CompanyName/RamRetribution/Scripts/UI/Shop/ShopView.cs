@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CompanyName.RamRetribution.Scripts.Common.Visitors;
 using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
 using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;

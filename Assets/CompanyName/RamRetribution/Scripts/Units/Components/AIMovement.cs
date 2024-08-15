@@ -13,7 +13,6 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
     {
         private NavMeshAgent _agent;
         private Animator _animator;
-        private Action _completeAction;
 
         private void Awake()
         {
@@ -21,17 +20,6 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
 
             _agent.enabled = false;
             enabled = false;
-        }
-
-        private void Update()
-        {
-            if (_agent.remainingDistance < _agent.stoppingDistance + float.Epsilon)
-            {
-                _completeAction?.Invoke();
-                _completeAction = null;
-                
-                enabled = false;
-            }
         }
 
         public void Init(Animator animator)
@@ -48,22 +36,19 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
         {
             _agent.ResetPath();
             enabled = true;
+            _animator.SetBool(AIAnimatorParams.Run, true);
             
-            while (enabled)
+            while (_agent.remainingDistance < _agent.stoppingDistance + float.Epsilon)
             {
                 _agent.SetDestination(target.position);
 
                 await UniTask.Delay(
                         TimeSpan.FromSeconds(0.5f),
-                        DelayType.DeltaTime
-                    )
-                    .WithCancellation(cancellationToken);
+                        DelayType.Realtime, cancellationToken: cancellationToken);
             }
-        }
-
-        public void OnComplete(Action callback)
-        {
-            _completeAction = callback;
+            
+            _animator.SetBool(AIAnimatorParams.Run, false);
+            enabled = false;
         }
 
         public void ActivateNavMesh()

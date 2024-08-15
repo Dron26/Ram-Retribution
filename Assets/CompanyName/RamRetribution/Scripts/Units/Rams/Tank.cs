@@ -3,15 +3,13 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
+using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
-    public class Tank : Unit, IRam, IImprover
+    public class Tank : Unit, IRam, IPassiveSpellHolder
     {
-        private IBuff<IDamageable> _buff;
-
         public override UnitTypes Type => UnitTypes.Ram;
 
         public override void Accept(IUnitVisitor visitor)
@@ -19,8 +17,18 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
             visitor.Visit(this);
         }
 
-        public GameObject GameObject => gameObject;
+        public Unit Instance { get; }
+        
+        public void ActivatePassiveSkill(List<Unit> units)
+        {
+            
+        }
 
+        public void DeactivatePassiveSkill(List<Unit> units)
+        {
+            
+        }
+        
         private IEnumerator CheckRamsNearByForIncreaseAttackCoroutine()
         {
             while (true)
@@ -34,7 +42,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
                 {
                     if (friens.TryGetComponent(out IRam ram))
                     {
-                        ram.GameObject.TryGetComponent(out IAttackComponent attackComponnent);
+                        ram.Instance.TryGetComponent(out IAttackComponent attackComponnent);
                         //attackComponnent.Armor += 1; �� �������� ������ ��� ������. ���� ��� ����� ������ ��� ����� ���� �� ��������
                         attackComponents[index] = attackComponnent;
                         index++;
@@ -46,18 +54,6 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
                     //attackComponents[i].Armor -= 1; �� �������� ������ ��� ������.���� ��� ����� ������ ��� ����� ���� �� ��������
                 }
             }
-        }
-
-        public void AddBuff(List<Unit> units)
-        {
-            foreach (var unit in units)
-                _buff.Apply(unit.Damageable);
-        }
-
-        public void RemoveBuff(List<Unit> units)
-        {
-            foreach (var unit in units)
-                _buff.Apply(unit.Damageable);
         }
     }
 }

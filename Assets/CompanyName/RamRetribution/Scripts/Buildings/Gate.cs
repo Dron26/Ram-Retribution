@@ -1,7 +1,5 @@
 using System;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Units.Components.Health;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Buildings
@@ -36,7 +34,7 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
             gameObject.SetActive(IsActive);
         }
 
-        private void OnValueChanged(int value)
+        private void OnValueChanged(float value)
         {
             if (!_isFirstAttack)
             {

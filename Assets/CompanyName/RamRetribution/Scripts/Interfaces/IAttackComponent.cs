@@ -1,5 +1,5 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components;
 
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
@@ -7,7 +7,7 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
     {
         public AttackType AttackType { get; }
         public float AttackSpeed { get; }
-        public int Damage { get; }
+        public ref float Damage { get; }
         public float Distance { get; }
         public void Attack(IDamageable damageable);
     }

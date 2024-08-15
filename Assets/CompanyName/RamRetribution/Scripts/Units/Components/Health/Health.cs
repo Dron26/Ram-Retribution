@@ -8,14 +8,14 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
     public class Health : IDamageable
     {
         private readonly IArmor _armor;
-        private readonly int _baseValue;
+        private readonly float _baseValue;
         
-        private int _currentValue;
-        private int _maxValue;
+        private float _currentValue;
+        private float _maxValue;
 
         private int _regeneration;
         
-        public Health(int baseValue, IArmor armor)
+        public Health(float baseValue, IArmor armor)
         {
             _baseValue = baseValue;
             _currentValue = _baseValue;
@@ -24,13 +24,13 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
             _armor = armor;
         }
 
-        public event Action<int> ValueChanged;
+        public event Action<float> ValueChanged;
         public event Action HealthEnded;
         
-        public int CurrentValue => _currentValue;
-        public float ArmorValue => _armor.Value;
+        public float CurrentValue => _currentValue;
+        public ref float ArmorValue => ref _armor.Value;
         
-        public void TakeDamage(AttackType type, int damage)
+        public void TakeDamage(AttackType type, float damage)
         {
             if (damage < 0)
                 throw new ArgumentException("Damage can`t be less than 0");
@@ -42,20 +42,15 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
             
             _currentValue -= reducedDamage;
             
-            ValueChanged?.Invoke(_baseValue);
+            ValueChanged?.Invoke(_currentValue);
             
-            if(_baseValue <= 0)
+            if(_currentValue <= 0)
                 HealthEnded?.Invoke();
         }
 
         public void Heal(int amount)
         {
             
-        }
-
-        public void Improve(int bonusValue)
-        {
-            _regeneration += bonusValue;
         }
 
         private async UniTaskVoid AutoHeal()

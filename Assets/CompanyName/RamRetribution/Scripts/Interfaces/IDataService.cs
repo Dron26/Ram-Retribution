@@ -1,6 +1,3 @@
-using CompanyName.RamRetribution.Scripts.Boot;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
-
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IDataService

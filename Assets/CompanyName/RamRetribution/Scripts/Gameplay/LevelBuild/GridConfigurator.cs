@@ -5,7 +5,6 @@ using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using Generator.Scripts;
 using Generator.Scripts.Common.Enums;
 using UnityEngine;
 using Random = UnityEngine.Random;

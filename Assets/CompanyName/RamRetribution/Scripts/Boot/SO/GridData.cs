@@ -1,6 +1,5 @@
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using Generator.Scripts.Common.Enums;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.SO

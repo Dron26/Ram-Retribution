@@ -108,7 +108,8 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             tile.SetType(tileType, gridSide);
             tile.transform.position = startPosition;
 
-            var duration = Random.Range(1.5f, 2f);
+            //var duration = Random.Range(1.5f, 2f);
+            var duration = Random.Range(1f, 1.3f);
             var elapsedTime = 0f;
 
             while (elapsedTime < duration)

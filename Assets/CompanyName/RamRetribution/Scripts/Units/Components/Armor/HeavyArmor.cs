@@ -18,6 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
             {
                 AttackType.Melee => base.ReduceDamage(type, damage * ReduceMeleeAttack),
                 AttackType.Range => base.ReduceDamage(type, damage * ReduceRangeAttack),
+                AttackType.Magic => base.ReduceDamage(type, damage),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }

@@ -6,7 +6,6 @@ using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
-using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -22,7 +21,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
         private AIMovement _aiMovement;
         private Animator _animator;
         private CancellationTokenSource _cancellationToken;
-        
+
         public event Action<Unit> Fleeing;
         public IAttackComponent AttackComponent { get; private set; }
         public IDamageable Damageable { get; private set; }
@@ -36,9 +35,9 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement = GetComponent<AIMovement>();
             _animator = GetComponentInChildren<Animator>();
             _aiMovement.Init(_animator);
-            
+
             SelfTransform = transform;
-            
+
             Damageable = health;
             AttackComponent = attackComponent;
 
@@ -56,10 +55,8 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement.Move(destination, callback);
         }
 
-        private async UniTask MoveTowards(Transform target, Action callback = null)
+        private async UniTask MoveTowardsAsync(Transform target)
         {
-            _aiMovement.OnComplete(callback);
-            
             await _aiMovement.MoveTowards(target, _cancellationToken.Token);
         }
 
@@ -69,18 +66,25 @@ namespace CompanyName.RamRetribution.Scripts.Units
             {
                 if (CanAttack(target.SelfTransform))
                 {
+                    var lookDirection = (target.SelfTransform.position - transform.position).normalized;
+                    transform.rotation = Quaternion.LookRotation(lookDirection);
+                    
                     AttackComponent.Attack(target.Damageable);
-                    _animator.SetInteger(AIAnimatorParams.Attack, Random.Range(1,3));
+
+                    _animator.SetInteger(AIAnimatorParams.Attack,
+                        Type == UnitTypes.Ram
+                            ? Random.Range(0, AIAnimatorParams.RamsAttackAnimationCount)
+                            : Random.Range(0, AIAnimatorParams.EnemyAttackAnimationCount));
 
                     await UniTask.Delay(
                         TimeSpan.FromSeconds(AttackComponent.AttackSpeed),
-                        DelayType.DeltaTime,
+                        DelayType.Realtime,
                         PlayerLoopTiming.Update,
                         _cancellationToken.Token);
                 }
                 else
                 {
-                    await MoveTowards(target.SelfTransform);
+                    await MoveTowardsAsync(target.SelfTransform);
                 }
             }
         }
@@ -124,7 +128,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
             DeactivateAgent();
             MoveToPoint(to, () => gameObject.SetActive(false));
         }
-        
+
         public void ActivateAgent()
         {
             IsActive = true;
@@ -136,7 +140,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
             IsActive = false;
             _aiMovement.DeactivateNavMesh();
         }
-        
+
         public abstract void Accept(IUnitVisitor visitor);
 
         private bool CanAttack(Transform target)

@@ -10,7 +10,6 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
         [field: SerializeField] public ConfigId Id { get; private set; }
         [field: SerializeField] public Unit Prefab { get; private set; }
         [field: SerializeField] public PriorityTypes Priority { get; private set; }
-        [field: SerializeField] public BuffId Buff { get; private set; }
         
         [Header("Health configuration")] 
         [SerializeField] private int _healthValue;

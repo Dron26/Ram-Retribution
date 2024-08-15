@@ -26,7 +26,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private IReadOnlyList<Vector3> _enemySpots;
         private IUnitFactory _factory;
 
-        public event Action<IReadOnlyList<Unit>> RamsCreated;
+        public event Action<Squad> RamsCreated;
         public event Action<IReadOnlyList<Unit>> EnemiesCreated;
 
         public void Init(
@@ -57,15 +57,17 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 throw new InvalidOperationException(
                     $"Recreating the {nameof(_rams)} list is not allowed as it has already been initialized.");
 
+            var squad = new Squad(GameConstants.MaxRams);
+            
             _rams = new List<Unit>();
             var leader = SpawnLeader();
             Services.RegisterLeader(leader.transform);
             
-            _rams.Add(leader);
+            squad.Add(leader);
 
             if (_selectedRamsId.Count <= 0)
             {
-                RamsCreated?.Invoke(_rams);
+                RamsCreated?.Invoke(squad);
                 return;
             }
 
@@ -73,10 +75,11 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             {
                 var ram = _factory.Create(id, _ramsSpawnPoint.position);
                 ram.transform.SetParent(_ramsContainer);
-                _rams.Add(ram);
+                squad.Add(ram);
             }
 
-            RamsCreated?.Invoke(_rams);
+            squad.OnComplete();
+            RamsCreated?.Invoke(squad);
         }
 
         private Unit SpawnLeader()

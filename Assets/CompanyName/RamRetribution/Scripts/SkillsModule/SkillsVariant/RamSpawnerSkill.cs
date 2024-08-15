@@ -1,6 +1,6 @@
 using CompanyName.RamRetribution.Scripts.Gameplay;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant

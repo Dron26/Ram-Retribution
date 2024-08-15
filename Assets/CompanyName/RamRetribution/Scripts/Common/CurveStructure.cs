@@ -1,13 +1,11 @@
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.Skills.Infrastructure
+namespace CompanyName.RamRetribution.Scripts.Common
 {
     [System.Serializable]
-    public class KooficientStructure : MonoBehaviour
+    public struct CurveStructure
     {
-
         public AnimationCurve IndexI;
         public AnimationCurve IndexK;
-
     }
 }

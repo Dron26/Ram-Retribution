@@ -1,8 +1,7 @@
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Skills.Infrastructure;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 using UnityEngine;
 
 public class HealWave : ISpell

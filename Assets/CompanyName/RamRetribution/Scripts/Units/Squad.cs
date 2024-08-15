@@ -1,23 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units
 {
     public class Squad
     {
         private readonly int _maxMembers;
+        private readonly List<Unit> _units;
         
-        private List<Unit> _units;
-        private Transform _origin;
-
-        public Squad (int maxMembers)
+        public Squad(int maxMembers)
         {
             _maxMembers = maxMembers;
             _units = new List<Unit>();
         }
-        
+
         public IReadOnlyList<Unit> Units => _units;
 
         #region AddRemove
@@ -27,25 +24,34 @@ namespace CompanyName.RamRetribution.Scripts.Units
             Validate(unit);
 
             _units.Add(unit);
-            _units = _units.OrderByDescending(member => member.Priority).ToList();
+            unit.Fleeing += Remove;
         }
-        
-        private void Remove(Unit unit)
+
+        public void Remove(Unit unit)
         {
             if (_units == null || _units.Count <= 0)
                 return;
-            
+
             if (_units.Contains(unit))
+            {
+                if(unit is IPassiveSpellHolder holder)
+                    holder.DeactivatePassiveSkill(_units);
+                
                 _units.Remove(unit);
+            }
             else
                 throw new ArgumentException(
                     $"Unit {unit.Type} is not listed in squad, but you trying to delete it");
         }
 
         #endregion
-        
-        public void SetOrigin(Transform origin) 
-            => _origin = origin;
+
+        public void OnComplete()
+        {
+            foreach (var unit in _units)
+                if (unit is IPassiveSpellHolder holder)
+                    holder.ActivatePassiveSkill(_units);
+        }
 
         private void Validate(Unit unit)
         {

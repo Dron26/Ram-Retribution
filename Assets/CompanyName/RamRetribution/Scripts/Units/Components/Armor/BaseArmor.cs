@@ -6,14 +6,14 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
 {
     public abstract class BaseArmor : IArmor
     {
-        private readonly float _value;
+        private float _value;
 
         protected BaseArmor(int value)
         {
             _value = value;
         }
 
-        public float Value => _value;
+        public ref float Value => ref _value;
         
         public virtual int ReduceDamage(AttackType type, float damage)
         {

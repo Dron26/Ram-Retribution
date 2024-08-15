@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Agava.YandexGames;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.YandexSDK.Leaderboard

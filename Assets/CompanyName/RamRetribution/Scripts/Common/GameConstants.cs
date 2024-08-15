@@ -2,6 +2,7 @@ namespace CompanyName.RamRetribution.Scripts.Common
 {
     public static class GameConstants
     {
+        public const int MaxLevels = 500;
         public const int MaxSpells = 3;
         public const int MaxRams = 5;
         public const int EnemyLayerMask = 7;

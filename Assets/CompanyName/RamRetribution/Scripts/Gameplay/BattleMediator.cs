@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Units;
+using CompanyName.RamRetribution.Scripts.Units.Rams;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
 {
@@ -40,9 +41,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             _unitSpawner.EnemiesCreated -= AddEnemies;
         }
 
-        private void AddRams(IReadOnlyList<Unit> rams)
+        private void AddRams(Squad squad)
         {
-            foreach (var ram in rams)
+            foreach (var ram in squad.Units)
             {
                 _aliveRams[(int)ram.Priority].Add(ram);
                 ram.Fleeing += OnRamFleeing;
@@ -56,18 +57,20 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 _enemiesToAttack[(int)enemy.Priority].Add(enemy);
                 enemy.Fleeing += OnEnemyFleeing;
             }
-            
+
             NotifyEnemies(enemies);
             NotifyRams();
         }
-        
+
         private void NotifyRams()
         {
             foreach (var rams in _aliveRams.Values)
                 for (var index = 0; index < rams.Count; index++)
                 {
                     var ram = rams[index];
-                    ram.NotifyFindTarget(_enemiesToAttack);
+
+                    if (ram is not Demolisher)
+                        ram.NotifyFindTarget(_enemiesToAttack);
                 }
         }
 
@@ -84,7 +87,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         {
             _aliveRams[(int)ram.Priority].Remove(ram);
             ram.Fleeing -= OnRamFleeing;
-            
+
             NotifyEnemies(ram.CurrentEnemies);
         }
 
@@ -92,7 +95,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         {
             _enemiesToAttack[(int)enemy.Priority].Remove(enemy);
             enemy.Fleeing -= OnEnemyFleeing;
-            
+
             NotifyRams();
         }
     }

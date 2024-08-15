@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.SO
 {

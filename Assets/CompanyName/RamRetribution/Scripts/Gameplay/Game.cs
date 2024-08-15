@@ -22,14 +22,14 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
         private CancellationTokenSource _tokenSource;
 
-        private List<Unit> _rams;
+        private Squad _rams;
         private List<Unit> _enemies = new List<Unit>();
         private Level _currentLevel;
 
         public Game(ModulesContainer container)
             => _modulesContainer = container;
 
-        private bool RamsAlive => _rams.Count > 0;
+        private bool RamsAlive => _rams.Units.Count > 0;
         private bool HasEnemies => _enemies.Count > 0;
 
         public async UniTask Start(int levelNumber)
@@ -74,7 +74,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             var ramsPlacementVisitor =
                 new UnitsPlacementVisitor(destinations[0], new RamsPlacementStrategy());
 
-            foreach (var ram in _rams)
+            foreach (var ram in _rams.Units)
             {
                 ram.DeactivateAgent();
                 ramsPlacementVisitor.Visit(ram);
@@ -82,7 +82,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
             await UniTask.WaitUntil(() =>
             {
-                foreach (var ram in _rams)
+                foreach (var ram in _rams.Units)
                     if (!ram.IsActive)
                         return false;
 
@@ -105,18 +105,18 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
         private void NotifyRamsAttackGate()
         {
-            foreach (var ram in _rams)
+            foreach (var ram in _rams.Units)
                 ram.Attack(_currentLevel.CurrentGate).Forget();
         }
 
-        private async void OnRamsCreated(IReadOnlyList<Unit> rams)
+        private async void OnRamsCreated(Squad squad)
         {
             _unitSpawner.RamsCreated -= OnRamsCreated;
 
-            foreach (var ram in rams)
+            foreach (var ram in squad.Units)
                 ram.Fleeing += OnRamFleeing;
 
-            _rams = rams as List<Unit>;
+            _rams = squad;
 
             await MoveRamsToStartPosition(_currentLevel.EntryTilesPositions);
 
@@ -134,10 +134,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private void OnRamFleeing(Unit ram)
         {
             ram.Fleeing -= OnRamFleeing;
-            _rams.Remove(ram);
             ram.Flee(_currentLevel.EntryTilesPositions[Random.Range(0,_currentLevel.EntryTilesPositions.Count)]);
 
-            if (_rams.Count == 0)
+            if (_rams.Units.Count == 0)
             {
                 CancelToken();
                 _modulesContainer.Get<GameUI>().ShowLoseScreen();

@@ -1,8 +1,8 @@
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
@@ -21,10 +21,9 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 
         public void ActivateSkill()
         {
-            Debug.Log("Deacrese damage SpellActivated");
-            var leaderTransform = Services.LeaderTransform;
+            Debug.Log("Decrease damage SpellActivated");
             var results = new Collider[9];
-            Physics.OverlapSphereNonAlloc(leaderTransform.position, 10, results, 1 << GameConstants.EnemyLayerMask);
+            Physics.OverlapSphereNonAlloc(Services.LeaderTransform.position, 10, results, 1 << GameConstants.EnemyLayerMask);
             //Add particles and sound
 
             foreach (var enemy in results)

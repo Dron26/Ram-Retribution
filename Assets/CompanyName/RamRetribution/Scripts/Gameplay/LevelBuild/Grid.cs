@@ -1,5 +1,4 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using Generator.Scripts.Common.Enums;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
 {

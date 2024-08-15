@@ -1,6 +1,4 @@
 using System;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States;
 using UnityEngine;
 using UnityEngine.UI;
 

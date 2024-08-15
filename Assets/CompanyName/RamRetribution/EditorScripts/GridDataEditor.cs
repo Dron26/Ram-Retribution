@@ -1,7 +1,5 @@
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using Generator.Scripts;
-using Generator.Scripts.Common.Enums;
 using UnityEditor;
 using UnityEngine;
 

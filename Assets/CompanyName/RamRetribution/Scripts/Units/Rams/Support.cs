@@ -2,8 +2,8 @@ using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using System.Collections;
+using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Units.Components.Buffs.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
@@ -13,11 +13,10 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
         private float _percentOfHealing = 0.1f;
         private WaitForSeconds _coroutineDelay = new WaitForSeconds(2);
         private Coroutine _cachedCoroutine;
-        private IBuff<IDamageable> _buff;
 
         public override UnitTypes Type => UnitTypes.Ram;
 
-        public GameObject GameObject => gameObject;
+        public Unit Instance { get; }
 
         public override void Accept(IUnitVisitor visitor)
         {
@@ -45,19 +44,14 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
             }
         }
 
-        public void ActivatePassiveSkill()
+        public void ActivatePassiveSkill(List<Unit> units)
         {
-            _cachedCoroutine = StartCoroutine(CheckRamsNearByForHealingCoroutine());
+            
         }
 
-        public void DeactivatePassiveSkill()
+        public void DeactivatePassiveSkill(List<Unit> units)
         {
-            StopCoroutine(_cachedCoroutine);
-        }
-
-        private void OnDisable()
-        {
-            DeactivatePassiveSkill();
+            
         }
     }
 }

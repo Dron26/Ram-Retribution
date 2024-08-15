@@ -1,5 +1,5 @@
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
         public void ActivateSkill()
         {
             Debug.Log("MidasHand spell activated");
-            _lvlCombinator.AddGoldFromSpell();
+            _lvlCombinator.AddGold();
         }
     }
 }

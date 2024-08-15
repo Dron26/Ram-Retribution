@@ -6,7 +6,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
     public class MeleeAttack : IAttackComponent
     {
         private const float AttackDistance = 5f;
-        private readonly int _damage;
+        private float _damage;
         
         public MeleeAttack(int damage, float attackSpeed)
         {
@@ -15,18 +15,15 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         }
 
         public float AttackSpeed { get; }
-        public int Damage => _damage;
+        
+        public ref float Damage => ref _damage;
+
         public float Distance => AttackDistance;
         public AttackType AttackType => AttackType.Melee;
         
         public void Attack(IDamageable damageable)
         {
             damageable.TakeDamage(AttackType, _damage);
-        }
-
-        public void Improve(int bonusValue)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

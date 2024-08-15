@@ -1,9 +1,9 @@
-using UnityEngine;
+using CompanyName.RamRetribution.Scripts.Units;
 
 namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IRam
     {
-        public GameObject GameObject { get; }
+        public Unit Instance { get; }
     }
 }
