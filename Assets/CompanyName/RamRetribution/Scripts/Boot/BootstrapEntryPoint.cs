@@ -23,9 +23,6 @@ namespace CompanyName.RamRetribution.Scripts.Boot
 #endif
 
             StateMachine gameStateMachine = new StateMachine();
-            gameStateMachine.AddAnyTransition(new LobbyBootstrapState(gameStateMachine), null);
-            gameStateMachine.AddAnyTransition(new GameBootstrapState(gameStateMachine), null);
-
             gameStateMachine.SetState<LobbyBootstrapState>();
             
             yield break;
@@ -33,7 +30,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot
 
         private void OnInitialized()
         {
-            Services.Init();
+            Services.InitProjectCtx();
         }
     }
 }

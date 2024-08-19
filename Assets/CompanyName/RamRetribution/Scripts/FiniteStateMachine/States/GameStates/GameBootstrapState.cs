@@ -29,6 +29,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
         public override void Enter()
         {
+            Services.InitGameSceneCtx();
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(SceneNames.Gameplay);
 
             if (asyncOperation != null)
@@ -37,6 +38,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
         public override void Exit()
         {
+            Services.LvlCombinator.UnSubscribeFromGameEvents(_game);
             _modulesContainer.Get<BattleMediator>().UnRegisterSpawner();
         }
         
@@ -50,7 +52,8 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
             InitUI();
 
             _game = new Game(_modulesContainer);
-            _game.Start(LoadLevel(1)).Forget();
+            Services.LvlCombinator.SubscribeToGameEvents(_game);
+            _game.StartAsync(LoadLevel(1)).Forget();
         }
 
         private void LoadData()

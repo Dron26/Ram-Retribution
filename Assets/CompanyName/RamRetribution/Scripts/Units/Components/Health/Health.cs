@@ -25,7 +25,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
         }
 
         public event Action<float> ValueChanged;
-        public event Action HealthEnded;
+        public event Action<IDamageable> HealthEnded;
         
         public float CurrentValue => _currentValue;
         public ref float ArmorValue => ref _armor.Value;
@@ -45,7 +45,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
             ValueChanged?.Invoke(_currentValue);
             
             if(_currentValue <= 0)
-                HealthEnded?.Invoke();
+                HealthEnded?.Invoke(this);
         }
 
         public void Heal(int amount)

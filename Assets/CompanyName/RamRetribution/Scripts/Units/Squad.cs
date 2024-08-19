@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units
 {
@@ -34,8 +34,8 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
             if (_units.Contains(unit))
             {
-                if(unit is IPassiveSpellHolder holder)
-                    holder.DeactivatePassiveSkill(_units);
+                if(unit is IBuffHolder holder)
+                    holder.DeactivateBuff(_units);
                 
                 _units.Remove(unit);
             }
@@ -46,13 +46,25 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         #endregion
 
-        public void OnComplete()
+        public void OnComplete(int levelNumber)
         {
             foreach (var unit in _units)
-                if (unit is IPassiveSpellHolder holder)
-                    holder.ActivatePassiveSkill(_units);
+                if (unit is IBuffHolder holder)
+                    holder.ActivateBuff(_units,levelNumber);
         }
 
+        public void OnLevelPassed(int nextLevelNumber)
+        {
+            foreach (var unit in _units)
+            {
+                if (unit is IBuffHolder holder)
+                {
+                    holder.DeactivateBuff(_units);
+                    holder.ActivateBuff(_units, nextLevelNumber);
+                }
+            }
+        }
+        
         private void Validate(Unit unit)
         {
             if (_units.Count > 0 && unit.Type != _units[0].Type)

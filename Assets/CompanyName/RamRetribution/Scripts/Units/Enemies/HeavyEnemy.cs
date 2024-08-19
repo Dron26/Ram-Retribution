@@ -6,9 +6,14 @@ namespace CompanyName.RamRetribution.Scripts.Units.Enemies
     public class HeavyEnemy : Unit
     {
         public override UnitTypes Type => UnitTypes.Enemy;
-        public override void Accept(IUnitVisitor visitor)
+        
+        public override void Accept(IRamsVisitor visitor)
         {
-            visitor.Visit(this);
+        }
+        
+        public override void AddBuff(BuffData buffData)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

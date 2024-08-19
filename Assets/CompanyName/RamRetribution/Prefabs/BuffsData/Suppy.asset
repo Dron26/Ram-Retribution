@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5c4abc13cc34983b4a24a786c90329c, type: 3}
-  m_Name: LevelObjects
+  m_Script: {fileID: 11500000, guid: b6f9ce74a77c1ac4dbbec7288e4d0286, type: 3}
+  m_Name: Suppy
   m_EditorClassIdentifier: 
-  Gates: []
+  UnitId: 6
+  ImprovableField: 6
+  BonusValue: 0.25

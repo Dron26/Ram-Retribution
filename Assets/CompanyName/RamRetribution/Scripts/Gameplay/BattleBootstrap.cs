@@ -44,7 +44,11 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 .ResourceLoadService
                 .Load<ConfigsContainer>($"{AssetPaths.Configs}{nameof(ConfigsContainer)}");
 
-            var unitFactory = new UnitFactory(unitConfigs);
+            var buffsData = Services
+                .ResourceLoadService
+                .Load<BuffsContainer>($"{AssetPaths.Configs}{nameof(BuffsContainer)}");
+            
+            var unitFactory = new UnitFactory(unitConfigs, buffsData);
 
             _unitSpawner.Init(unitFactory, _leaderData, _selectedRamsId);
             _modulesContainer.Register(_unitSpawner);

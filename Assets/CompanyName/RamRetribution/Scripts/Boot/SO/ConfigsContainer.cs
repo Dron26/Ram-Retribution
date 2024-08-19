@@ -12,11 +12,9 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     
         public UnitConfig Get(ConfigId id)
         {
-            for (int i = 0; i < _unitConfigs.Count; i++)
-            {
+            for (var i = 0; i < _unitConfigs.Count; i++)
                 if (_unitConfigs[i].Id == id)
                     return _unitConfigs[i];
-            }
 
             throw new ArgumentException($"There is no unit config with id: {id}");
         }

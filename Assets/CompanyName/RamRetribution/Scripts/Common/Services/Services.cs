@@ -16,28 +16,31 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         public static PauseControl PauseControl { get; private set; }
         public static LvlCombinator LvlCombinator { get; private set; }
         public static GameDataBase GameDataBase { get; private set; }
-        public static Model UiModel { get; private set; }
         public static UiDataBinding UiDataBinding { get; private set; }
         public static ViewModel ViewModel { get; private set; }
         public static Transform LeaderTransform { get; private set; }
-
-        public static void Init()
+        
+        private static Model _uiModel;
+        
+        public static void InitProjectCtx()
         {
             RegisterDataService();
             RegisterResourceLoadService();
             RegisterPauseControl();
-            RegisterGameDataBase();
-            RegisterLvlCombinator();
             RegisterUiModel();
             RegisterUiViewModel();
             RegisterUiDataBinding();
         }
 
-        public static void RegisterLeader(Transform leaderTransform)
+        public static void InitGameSceneCtx()
         {
-            LeaderTransform = leaderTransform;
+            RegisterGameDataBase();
+            RegisterLvlCombinator();
         }
         
+        public static void RegisterLeader(Transform leaderTransform) 
+            => LeaderTransform = leaderTransform;
+
         private static void RegisterDataService()
             => PrefsDataService = new PrefsDataService(new JsonSerializer());
 
@@ -55,12 +58,12 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
             => LvlCombinator = new LvlCombinator(GameDataBase);
         
         private static void RegisterUiModel()
-            => UiModel = new DefaultUIModel();
+            => _uiModel = new DefaultUIModel();
         
         private static void RegisterUiDataBinding()
-            => UiDataBinding = new UiDataBinding(UiModel);
+            => UiDataBinding = new UiDataBinding(_uiModel);
         
         private static void RegisterUiViewModel()
-            => ViewModel = new DefaultViewModel(UiModel);
+            => ViewModel = new DefaultViewModel(_uiModel);
     }
 }

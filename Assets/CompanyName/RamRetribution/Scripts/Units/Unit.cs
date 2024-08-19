@@ -64,15 +64,16 @@ namespace CompanyName.RamRetribution.Scripts.Units
                     var lookDirection = (target.SelfTransform.position - transform.position).normalized;
                     transform.rotation = Quaternion.LookRotation(lookDirection);
                     
-                    AttackComponent.Attack(target.Damageable);
-
                     _animator.SetInteger(AIAnimatorParams.Attack,
                         Type == UnitTypes.Ram
                             ? Random.Range(0, AIAnimatorParams.RamsAttackAnimationCount)
                             : Random.Range(0, AIAnimatorParams.EnemyAttackAnimationCount));
-
+                    
+                    AttackComponent.Attack(target.Damageable);
+                    var attackInterval = 1f / AttackComponent.AttackSpeed;
+                    
                     await UniTask.Delay(
-                        TimeSpan.FromSeconds(AttackComponent.AttackSpeed),
+                        TimeSpan.FromSeconds(attackInterval),
                         DelayType.Realtime,
                         PlayerLoopTiming.Update,
                         _cancellationToken.Token);
@@ -140,7 +141,8 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement.DeactivateNavMesh();
         }
 
-        public abstract void Accept(IUnitVisitor visitor);
+        public abstract void Accept(IRamsVisitor visitor);
+        public abstract void AddBuff(BuffData buffData);
 
         private bool CanAttack(Transform target)
         {
@@ -152,10 +154,10 @@ namespace CompanyName.RamRetribution.Scripts.Units
             await _aiMovement.MoveTowards(target, _cancellationToken.Token);
         }
         
-        private void OnHealthEnded()
+        private void OnHealthEnded(IDamageable damageable)
         {
             CancelToken();
-            Damageable.HealthEnded -= OnHealthEnded;
+            damageable.HealthEnded -= OnHealthEnded;
             IsActive = false;
             Fleeing?.Invoke(this);
         }

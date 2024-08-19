@@ -12,7 +12,7 @@ namespace CompanyName.RamRetribution.Scripts._TestScripts
     
         private void Awake()
         {
-            Services.Init();
+            Services.InitProjectCtx();
             IFactory<Tile> factory = new TileFactory(); 
             _levelBuilder = new LevelBuilder(factory);
         }

@@ -7,23 +7,20 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
     {
         private const float AttackDistance = 5f;
         private float _damage;
+        private float _attackSpeed;
         
         public MeleeAttack(int damage, float attackSpeed)
         {
             _damage = damage;
-            AttackSpeed = attackSpeed;
+            _attackSpeed = attackSpeed;
         }
-
-        public float AttackSpeed { get; }
         
+        public ref float AttackSpeed => ref _attackSpeed;
         public ref float Damage => ref _damage;
-
         public float Distance => AttackDistance;
         public AttackType AttackType => AttackType.Melee;
         
-        public void Attack(IDamageable damageable)
-        {
-            damageable.TakeDamage(AttackType, _damage);
-        }
+        public void Attack(IDamageable damageable) 
+            => damageable.TakeDamage(AttackType, _damage);
     }
 }

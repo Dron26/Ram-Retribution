@@ -10,9 +10,8 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
         private Coroutine _cachedCoroutine;
 
         public override UnitTypes Type => UnitTypes.Ram;
-        public Unit Instance { get; }
 
-        public override void Accept(IUnitVisitor visitor)
+        public override void Accept(IRamsVisitor visitor)
         {
             visitor.Visit(this);
         }
@@ -26,10 +25,10 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
         {
             
         }
-
-        private void OnDisable()
+        
+        public override void AddBuff(BuffData buffData)
         {
-            DeactivatePassiveSkill();
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,80 +1,35 @@
 using System;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.FiniteStateMachine.Transitions;
+using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
 {
     public class StateMachine
     {
-        private readonly Dictionary<Type, StateNode> _nodes = new Dictionary<Type, StateNode>();
-        private readonly HashSet<ITransition> _anyTransitions = new HashSet<ITransition>();
-        private StateNode _currentNode;
+        private readonly Dictionary<Type, IState> _states = new Dictionary<Type, IState>();
+        private IState _currentState;
 
+        public StateMachine()
+        {
+            AddState(new LobbyBootstrapState(this));
+            AddState(new GameBootstrapState(this));
+        }
+        
         public void SetState<TState>()
             where TState : IState
         {
             var type = typeof(TState);
 
-            _currentNode?.State.Exit();
-            _currentNode = _nodes[type];
-            _currentNode.State.Enter();
+            _currentState?.Exit();
+            _currentState = _states[type];
+            _currentState.Enter();
         }
 
-        public void Update(float deltaTime)
+        private void AddState(IState state)
         {
-            ITransition transition = GetTransition();
-
-            if (transition != null)
-                ChangeState(transition.ToState);
-
-            _currentNode.State?.Update(deltaTime);
-        }
-
-        public void AddTransition(IState from, IState to, IPredicate condition)
-            => GetOrAddNode(from).AddTransition(GetOrAddNode(to).State, condition);
-
-        public void AddAnyTransition(IState to, IPredicate condition)
-            => _anyTransitions.Add(new Transition(GetOrAddNode(to).State, condition));
-
-        private StateNode GetOrAddNode(IState state)
-        {
-            StateNode stateNode = _nodes.GetValueOrDefault(state.GetType());
-
-            if (stateNode == null)
-            {
-                stateNode = new StateNode(state);
-                _nodes.Add(state.GetType(), stateNode);
-            }
-
-            return stateNode;
-        }
-
-        private void ChangeState(IState state)
-        {
-            if (state == _currentNode.State)
-                return;
-
-            IState nextState = _nodes[state.GetType()].State;
-
-            _currentNode.State?.Exit();
-            nextState?.Enter();
-            _currentNode = _nodes[state.GetType()];
-        }
-
-        private ITransition GetTransition()
-        {
-            foreach (var transition in _anyTransitions)
-                if (transition.Condition != null)
-                    if (transition.Condition.Evaluate())
-                        return transition;
-
-            foreach (var transition in _currentNode.Transitions)
-                if (transition.Condition != null)
-                    if (transition.Condition.Evaluate())
-                        return transition;
-
-            return null;
+            Type type = state.GetType();
+            _states.Add(type, state);
         }
     }
 }

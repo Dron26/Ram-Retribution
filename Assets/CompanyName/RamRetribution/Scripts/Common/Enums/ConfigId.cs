@@ -10,7 +10,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Enums
         Largos,
         Suppy,
         Tanky,
-        Trankos,
         LightEnemy,
         MediumEnemy,
         HeavyEnemy

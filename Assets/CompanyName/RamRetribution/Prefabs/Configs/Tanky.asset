@@ -20,5 +20,5 @@ MonoBehaviour:
   <ArmorValue>k__BackingField: 0
   _damage: 15
   <AttackType>k__BackingField: 0
-  <AttackSpeed>k__BackingField: 1
+  <AttackSpeed>k__BackingField: 3
   <AttackDistance>k__BackingField: 2

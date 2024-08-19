@@ -3,6 +3,7 @@ using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components.Armor;
 using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
@@ -15,9 +16,13 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
     public class UnitFactory : IUnitFactory
     {
         private readonly ConfigsContainer _configsContainer;
+        private readonly BuffsContainer _buffs;
 
-        public UnitFactory(ConfigsContainer configsContainer)
-            => _configsContainer = configsContainer;
+        public UnitFactory(ConfigsContainer configsContainer, BuffsContainer buffs)
+        {
+            _configsContainer = configsContainer;
+            _buffs = buffs;
+        }
 
         public Unit CreateLeader(LeaderDataState leaderData, Vector3 at)
         {
@@ -42,13 +47,15 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         {
             var config = _configsContainer.Get(configId);
             var instance = Object.Instantiate(config.Prefab, at, Quaternion.identity);
-            var unitComponent = instance.GetComponent<Unit>();
 
             var healthComponent = GetHealth(config);
             var attackComponent = GetAttack(config);
 
             instance.Init(healthComponent, attackComponent, config.Priority);
 
+            if(instance is IBuffHolder)
+                instance.AddBuff(_buffs.Get(configId));
+            
             return instance;
         }
 

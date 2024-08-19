@@ -51,7 +51,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             await SpawnWithDelay(configsId, currentSpawn, tokenSource);
         }
 
-        public void CreateRams()
+        public void CreateRams(int levelNumber = 1)
         {
             if (_rams != null)
                 throw new InvalidOperationException(
@@ -78,7 +78,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 squad.Add(ram);
             }
 
-            squad.OnComplete();
+            squad.OnComplete(levelNumber);
             RamsCreated?.Invoke(squad);
         }
 
@@ -96,8 +96,8 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             CancellationTokenSource tokenSource,
             float delay = 0.5f)
         {
-            IPlacementStrategy placementStrategy = new CirclePlacementStrategy(2f, 3.5f);
-            List<Unit> enemiesToAttack = new List<Unit>();
+            var placementStrategy = new CirclePlacementStrategy(2f, 3.5f);
+            var enemiesToAttack = new List<Unit>();
 
             foreach (var config in configsId)
             {
@@ -123,10 +123,8 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             await UniTask.WaitUntil(() =>
             {
                 foreach (var unit in enemiesToAttack)
-                {
                     if (!unit.IsActive)
                         return false;
-                }
 
                 return true;
             });

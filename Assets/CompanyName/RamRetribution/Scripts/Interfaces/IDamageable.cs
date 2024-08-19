@@ -6,7 +6,7 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IDamageable : IImprovable
     {
-        public event Action HealthEnded;
+        public event Action<IDamageable> HealthEnded;
         public event Action<float> ValueChanged;
 
         public float CurrentValue { get; }

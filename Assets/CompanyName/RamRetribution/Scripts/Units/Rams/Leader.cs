@@ -7,11 +7,14 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
     {
         public override UnitTypes Type => UnitTypes.Ram;
 
-        public override void Accept(IUnitVisitor visitor)
+        public override void Accept(IRamsVisitor visitor)
         {
             visitor.Visit(this);
         }
-
-        public Unit Instance { get; }
+        
+        public override void AddBuff(BuffData buffData)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

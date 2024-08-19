@@ -6,7 +6,7 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
     public interface IAttackComponent : IImprovable
     {
         public AttackType AttackType { get; }
-        public float AttackSpeed { get; }
+        public ref float AttackSpeed { get; }
         public ref float Damage { get; }
         public float Distance { get; }
         public void Attack(IDamageable damageable);
