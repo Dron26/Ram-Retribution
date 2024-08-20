@@ -3,19 +3,21 @@ using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 {
     public class RageWave : ISpell
     {
-        private readonly LvlCombinator _lvlCombinator;
+        private readonly IAttackComponent _attackComponent;
 
-        public RageWave(Sprite sprite, LvlCombinator combinator)
+        public RageWave(float baseDamage, Sprite sprite, LvlCombinator combinator)
         {
             Image = sprite;
-            _lvlCombinator = combinator;
+            _attackComponent = new MagicAttack(baseDamage, combinator);
         }
 
         public Sprite Image { get; }
@@ -36,9 +38,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
             foreach (var enemy in results)
             {
                 if (enemy.TryGetComponent(out IAttackble target))
-                {
-                    target.Damageable.TakeDamage(AttackType.Magic, _lvlCombinator.GetSpellDamage());
-                }
+                    _attackComponent.Attack(target.Damageable);
             }
         }
     }

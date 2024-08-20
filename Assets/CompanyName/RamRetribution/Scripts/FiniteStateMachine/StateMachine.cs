@@ -28,7 +28,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
 
         private void AddState(IState state)
         {
-            Type type = state.GetType();
+            var type = state.GetType();
             _states.Add(type, state);
         }
     }

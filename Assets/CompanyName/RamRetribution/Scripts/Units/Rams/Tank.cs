@@ -1,7 +1,6 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams

@@ -7,6 +7,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     public class SpellData : ScriptableObject
     {
         [field: SerializeField] public SpellsId Id { get; private set; }
+        [field: SerializeField] public float Value { get; private set; }
         [field: SerializeField] public Sprite Image { get; private set; }
     }
 }

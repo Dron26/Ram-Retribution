@@ -2,7 +2,8 @@ using System;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant;
 
 namespace CompanyName.RamRetribution.Scripts.Factorys
@@ -17,32 +18,19 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         public ISpell Create(SpellsId id)
         {
             var spellData = _spellsContainer.Get(id);
-            ISpell spell = null;
-            
-            switch (spellData.Id)
-            {
-                case SpellsId.DecreaseDamage:
-                    break;
-                case SpellsId.GateDemolish:
-                    break;
-                case SpellsId.HealWave:
-                    break;
-                case SpellsId.IncreaseDamage:
-                    break;
-                case SpellsId.RageWave:
-                    spell = new RageWave(spellData.Image, Services.LvlCombinator);
-                    break;
-                case SpellsId.MidasHand:
-                    break;
-                case SpellsId.RageIncrease:
-                    break;
-                case SpellsId.RamSpawnSkill:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
 
-            return spell;
+            return spellData.Id switch
+            {
+                SpellsId.DecreaseDamage => null,
+                SpellsId.GateDemolish => new GateDemolish(spellData.Value, spellData.Image, Services.LvlCombinator),
+                SpellsId.HealWave => null,
+                SpellsId.IncreaseDamage => null,
+                SpellsId.RageWave => new RageWave(spellData.Value, spellData.Image, Services.LvlCombinator),
+                SpellsId.MidasHand => null,
+                SpellsId.RageIncrease => null,
+                SpellsId.RamSpawnSkill => null,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

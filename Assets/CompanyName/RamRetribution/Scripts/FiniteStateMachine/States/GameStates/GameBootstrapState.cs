@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
@@ -7,6 +8,7 @@ using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Gameplay;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -21,7 +23,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         private Game _game;
         private ModulesContainer _modulesContainer;
         private LeaderDataState _leaderData;
-        private ShopDataState _shopDataState;
+        private List<ConfigId> _selectedRams;
         private GameData _gameData;
 
         public GameBootstrapState(StateMachine stateMachine)
@@ -30,7 +32,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         public override void Enter()
         {
             Services.InitGameSceneCtx();
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(SceneNames.Gameplay);
+            var asyncOperation = SceneManager.LoadSceneAsync(SceneNames.Gameplay);
 
             if (asyncOperation != null)
                 asyncOperation.completed += _ => Init();
@@ -40,6 +42,8 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         {
             Services.LvlCombinator.UnSubscribeFromGameEvents(_game);
             _modulesContainer.Get<BattleMediator>().UnRegisterSpawner();
+            
+            Services.PrefsDataService.Save(_gameData);
         }
         
         private void Init()
@@ -53,7 +57,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
             _game = new Game(_modulesContainer);
             Services.LvlCombinator.SubscribeToGameEvents(_game);
-            _game.StartAsync(LoadLevel(1)).Forget();
+            _game.StartAsync(LoadLevel()).Forget();
         }
 
         private void LoadData()
@@ -61,8 +65,8 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
             _leaderData = Services.PrefsDataService.Load<LeaderDataState>(
                 DataNames.LeaderDataState.ToString());
 
-            _shopDataState = Services.PrefsDataService.Load<ShopDataState>(
-                DataNames.ShopDataState.ToString());
+            _selectedRams = Services.PrefsDataService.Load<ShopDataState>(
+                DataNames.ShopDataState.ToString()).SelectedRams;
 
             _gameData = Services.PrefsDataService.Load<GameData>(
                 DataNames.GameData.ToString());
@@ -71,7 +75,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         private void InitBattle()
         {
             var battleBootstrap =
-                new BattleBootstrap(_modulesContainer, _shopDataState.SelectedRams, _leaderData);
+                new BattleBootstrap(_modulesContainer, _selectedRams, _leaderData);
 
             battleBootstrap.Init();
         }
@@ -89,23 +93,22 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
             var uiPrefab = Services
                 .ResourceLoadService
                 .Load<GameUI>($"{AssetPaths.CommonPrefabs}{nameof(GameUI)}");
-
+            
             var gameUI = Object.Instantiate(uiPrefab);
-            gameUI.Init(_stateMachine);
+            var wallet = new Wallet(_gameData);
+            
+            gameUI.Init(_stateMachine, wallet);
 
             _modulesContainer.Register(gameUI);
+            _modulesContainer.Register(wallet);
         }
 
-        private int LoadLevel(int number)
+        private int LoadLevel()
         {
-            var level = _gameData.TryLoadLevel(number);
+            var levelNumber = _gameData.GetLastPassedLevelIndex();
+            Debug.Log($"Level: {levelNumber} start");
 
-            Debug.Log($"Level: {level.Number} start");
-            
-            if (level == null)
-                throw new Exception();
-
-            return level.Number;
+            return levelNumber;
         }
     }
 }

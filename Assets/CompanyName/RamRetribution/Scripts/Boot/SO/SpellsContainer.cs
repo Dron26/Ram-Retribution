@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
                     return _spells[i];
             }
 
-            throw new ArgumentException($"There is no unit config with id: {id}");
+            throw new ArgumentException($"There is no spell data with id: {id}");
         }
     }
 }

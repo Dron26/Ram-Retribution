@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Common.Visitors;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
+using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components;
@@ -17,32 +19,35 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
     {
         private const float DelayForSpawn = 10f;
         private readonly ModulesContainer _modulesContainer;
+
         private LevelBuilder _levelBuilder;
         private UnitSpawner _unitSpawner;
-
-        private CancellationTokenSource _tokenSource;
+        private Wallet _wallet;
 
         private Squad _rams;
         private List<Unit> _enemies = new List<Unit>();
         private Level _currentLevel;
 
+        private CancellationTokenSource _tokenSource;
+
         public Game(ModulesContainer container)
             => _modulesContainer = container;
 
-        public event Action<int> LevelStarting; 
+        public event Action<int> LevelStarting;
         private bool RamsAlive => _rams.Units.Count > 0;
         private bool HasEnemies => _enemies.Count > 0;
 
         public async UniTask StartAsync(int levelNumber)
         {
             _tokenSource = new CancellationTokenSource();
+            _wallet = _modulesContainer.Get<Wallet>();
             _levelBuilder = _modulesContainer.Get<LevelBuilder>();
 
             LevelStarting?.Invoke(levelNumber);
-            
+
             _currentLevel = await _levelBuilder.EntryBuild(levelNumber);
             _currentLevel.GatesDestroyed += OnGatesDestroyedAsync;
-            
+
             _unitSpawner = _modulesContainer.Get<UnitSpawner>();
             _unitSpawner.RamsCreated += OnRamsCreatedAsync;
             _unitSpawner.EnemiesCreated += OnEnemiesCreated;
@@ -137,7 +142,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         private void OnRamFleeing(Unit ram)
         {
             ram.Fleeing -= OnRamFleeing;
-            ram.Flee(_currentLevel.EntryTilesPositions[Random.Range(0,_currentLevel.EntryTilesPositions.Count)]);
+            ram.Flee(_currentLevel.EntryTilesPositions[Random.Range(0, _currentLevel.EntryTilesPositions.Count)]);
 
             if (_rams.Units.Count == 0)
             {
@@ -150,26 +155,40 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
         {
             enemy.Fleeing -= OnEnemyFleeing;
             _enemies.Remove(enemy);
-            enemy.Flee(_currentLevel.EntryTilesPositions[Random.Range(0,_currentLevel.EntryTilesPositions.Count)]);
+            enemy.Flee(_currentLevel.EntryTilesPositions[Random.Range(0, _currentLevel.EntryTilesPositions.Count)]);
+
+            _wallet.Add(CurrencyTypes.Money, Services.LvlCombinator.GetGoldForUnit());
         }
 
         private async void OnGatesDestroyedAsync()
         {
             _currentLevel.GatesDestroyed -= OnGatesDestroyedAsync;
-            CancelToken();
             
-            foreach (var unit in _enemies)
-                unit.Flee(_currentLevel.EntryTilesPositions[Random.Range(0,_currentLevel.EntryTilesPositions.Count)]);
+            CancelToken();
+            PutAwayEnemies();
+            _wallet.Add(CurrencyTypes.Money, Services.LvlCombinator.GetGoldForGate());
             
             var nextLevelNumber = _currentLevel.Number + 1;
             _currentLevel = await _levelBuilder.BuildNext(nextLevelNumber);
-            
+
             _rams.OnLevelPassed(nextLevelNumber);
-            await MoveRamsToStartPositionAsync(_currentLevel.EntryTilesPositions);
+            LevelStarting?.Invoke(nextLevelNumber);
             
+            await MoveRamsToStartPositionAsync(_currentLevel.EntryTilesPositions);
+
             HandleBattleAsync().Forget();
         }
 
+        private void PutAwayEnemies()
+        {
+            if (_enemies.Count == 0) 
+                return;
+            
+            foreach (var unit in _enemies)
+                unit.Flee(_currentLevel.EntryTilesPositions[
+                    Random.Range(0, _currentLevel.EntryTilesPositions.Count)]);
+        }
+        
         private void CancelToken()
         {
             _tokenSource.Cancel();

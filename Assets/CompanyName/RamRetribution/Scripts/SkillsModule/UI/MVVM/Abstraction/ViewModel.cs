@@ -1,5 +1,6 @@
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
 {

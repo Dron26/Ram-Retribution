@@ -1,5 +1,7 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
 {
@@ -7,20 +9,19 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
     {
         private const float ReduceRangeAttack = 0.95f;
         private const float ReduceMeleeAttack = 0.9f;
-        
+
         public LightArmor(int value)
             : base(value)
         {
         }
 
-        public override int ReduceDamage(AttackType type, float damage)
+        public override int ReduceDamage(IAttackComponent attackComponent, float damage)
         {
-            return type switch
+            return attackComponent switch
             {
-                AttackType.Melee => base.ReduceDamage(type, damage * ReduceMeleeAttack),
-                AttackType.Range => base.ReduceDamage(type, damage * ReduceRangeAttack),
-                AttackType.Magic => base.ReduceDamage(type, damage),
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+                MeleeAttack => base.ReduceDamage(attackComponent, damage * ReduceMeleeAttack),
+                RangeAttack => base.ReduceDamage(attackComponent, damage * ReduceRangeAttack),
+                _ => throw new ArgumentOutOfRangeException(nameof(attackComponent))
             };
         }
     }

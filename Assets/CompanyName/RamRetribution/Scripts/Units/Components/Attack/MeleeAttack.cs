@@ -18,9 +18,8 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         public ref float AttackSpeed => ref _attackSpeed;
         public ref float Damage => ref _damage;
         public float Distance => AttackDistance;
-        public AttackType AttackType => AttackType.Melee;
         
         public void Attack(IDamageable damageable) 
-            => damageable.TakeDamage(AttackType, _damage);
+            => damageable.TakeDamage(this, _damage);
     }
 }

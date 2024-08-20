@@ -15,11 +15,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
         private readonly List<Vector3> _enemySpots = new List<Vector3>();
         private readonly List<Vector3> _entryTilesPositions = new List<Vector3>();
 
-        public Level(int number)
-        {
-            Number = number;
-        }
-        
+        public Level(int number) 
+            => Number = number;
+
         public event Action GatesDestroyed;
 
         public int Number { get; }
@@ -53,7 +51,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             if (RightGate.IsActive)
                 return RightGate;
 
-            throw new InvalidOperationException("Обе воротины сломаны.");
+            throw new InvalidOperationException("Both gate already destroyed.");
         }
         
         private void ConfigureGate(Tile tile)

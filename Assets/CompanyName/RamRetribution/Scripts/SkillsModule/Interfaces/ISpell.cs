@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CompanyName.RamRetribution.Scripts.Skills.Intefaces
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces
 {
     public interface ISpell
     {

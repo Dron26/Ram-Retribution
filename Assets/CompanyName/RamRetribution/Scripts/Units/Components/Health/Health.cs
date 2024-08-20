@@ -8,7 +8,6 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
     public class Health : IDamageable
     {
         private readonly IArmor _armor;
-        private readonly float _baseValue;
         
         private float _currentValue;
         private float _maxValue;
@@ -17,9 +16,8 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
         
         public Health(float baseValue, IArmor armor)
         {
-            _baseValue = baseValue;
-            _currentValue = _baseValue;
-            _maxValue = _baseValue;
+            _currentValue = baseValue;
+            _maxValue = baseValue;
             
             _armor = armor;
         }
@@ -30,12 +28,12 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Health
         public float CurrentValue => _currentValue;
         public ref float ArmorValue => ref _armor.Value;
         
-        public void TakeDamage(AttackType type, float damage)
+        public void TakeDamage(IAttackComponent attackComponent, float damage)
         {
             if (damage < 0)
                 throw new ArgumentException("Damage can`t be less than 0");
 
-            var reducedDamage = _armor.ReduceDamage(type, damage);
+            var reducedDamage = _armor.ReduceDamage(attackComponent, damage);
 
             if (reducedDamage == 0)
                 reducedDamage = 1;

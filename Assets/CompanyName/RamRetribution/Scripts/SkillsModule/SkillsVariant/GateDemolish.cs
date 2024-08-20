@@ -1,29 +1,32 @@
-using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
 using UnityEngine;
 
-public class GateDemolish : ISpell
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 {
-    private readonly LvlCombinator _lvlCombinator;
-    private readonly int _baseDemolishSpellDamage = 50;
-
-    public GateDemolish(Sprite image, LvlCombinator lvlCombinator)
+    public class GateDemolish : ISpell
     {
-        _lvlCombinator = lvlCombinator;
-        Image = image;
-    }
+        private readonly IAttackComponent _attackComponent;
+
+        public GateDemolish(float baseDamage ,Sprite image, LvlCombinator lvlCombinator)
+        {
+            Image = image;
+            _attackComponent = new MagicAttack(baseDamage, lvlCombinator);
+        }
     
-    public Sprite Image { get; }
+        public Sprite Image { get; }
 
-    public void ActivateSkill()
-    {
-        Debug.Log(" GateDemolish spell activated");
-        /*тут ошибка!!!!*/
-        Transform gateTransform = Services.LeaderTransform; //Надо получить ворота со сцены, чтобы нанести урон, Где хранится ссылка на него?
-        if (gateTransform.TryGetComponent(out IAttackble damagable))
-            damagable.Damageable.TakeDamage(AttackType.Range, _baseDemolishSpellDamage * _lvlCombinator.GetSpellDamage());
+        public void ActivateSkill()
+        {
+            Debug.Log(" GateDemolish spell activated");
+            /*тут ошибка!!!!*/
+            Transform gateTransform = Services.LeaderTransform; //Надо получить ворота со сцены, чтобы нанести урон, Где хранится ссылка на него?
+            if (gateTransform.TryGetComponent(out IAttackble target))
+                _attackComponent.Attack(target.Damageable);
+        }
     }
 }

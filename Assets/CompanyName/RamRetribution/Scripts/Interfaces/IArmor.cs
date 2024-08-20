@@ -5,6 +5,6 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
     public interface IArmor
     {
         public ref float Value { get; }
-        public int ReduceDamage(AttackType type ,float damage);
+        public int ReduceDamage(IAttackComponent attackComponent, float damage);
     }
 }

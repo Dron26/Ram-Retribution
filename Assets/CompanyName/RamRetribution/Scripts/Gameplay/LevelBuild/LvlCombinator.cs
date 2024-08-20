@@ -8,7 +8,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
     {
         private readonly GameDataBase _gameDataBase;
         private readonly float _maxLevelNumber;
-        
+
         private float _levelNumber;
 
         public LvlCombinator(GameDataBase gameDataBase)
@@ -17,48 +17,68 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             _maxLevelNumber = GameConstants.MaxLevels;
         }
 
-        public void SubscribeToGameEvents(Game game) 
+        public void SubscribeToGameEvents(Game game)
             => game.LevelStarting += OnLevelStarting;
 
-        public void UnSubscribeFromGameEvents(Game game) 
+        public void UnSubscribeFromGameEvents(Game game)
             => game.LevelStarting -= OnLevelStarting;
 
+        #region Curves
+
         public float GetUnitHealth(int baseHealth)
-        {
-            return baseHealth + (baseHealth * _gameDataBase.UnitHealthCurve.IndexI.Evaluate(_levelNumber / _maxLevelNumber)
-                * (baseHealth * _gameDataBase.UnitHealthCurve.IndexK.Evaluate(_levelNumber / _maxLevelNumber)));
-        }
-        
+            => baseHealth +
+               (baseHealth * _gameDataBase.UnitHealthCurve.IndexI.Evaluate(_levelNumber / _maxLevelNumber)
+                           * (baseHealth *
+                              _gameDataBase.UnitHealthCurve.IndexK.Evaluate(_levelNumber / _maxLevelNumber)));
+
         public float GetUnitDamage(int baseDamage)
+            => baseDamage +
+               (baseDamage * _gameDataBase.UnitDamageCurve.IndexI.Evaluate(_levelNumber / _maxLevelNumber)
+                           * (baseDamage *
+                              _gameDataBase.UnitDamageCurve.IndexK.Evaluate(_levelNumber / _maxLevelNumber)));
+
+        public int GetGoldForUnit()
         {
-            return baseDamage + (baseDamage * _gameDataBase.UnitDamageCurve.IndexI.Evaluate(_levelNumber / _maxLevelNumber)
-                * (baseDamage * _gameDataBase.UnitDamageCurve.IndexK.Evaluate(_levelNumber / _maxLevelNumber)));
-        }
-        
-        public int GetSpellDamage()
-        {
-            return Mathf.FloorToInt(_levelNumber * _gameDataBase.DamageBonusPerLevel);
+            var baseValue = _gameDataBase.BaseGoldPerUnit;
+
+            Debug.Log(baseValue +
+                      baseValue * _gameDataBase.GoldPerUnitCurve.IndexI.Evaluate(_levelNumber /
+                                    _maxLevelNumber)
+                                * (baseValue *
+                                   _gameDataBase.GoldPerUnitCurve.IndexK.Evaluate(_levelNumber /
+                                       _maxLevelNumber)));
+            
+            return Mathf.FloorToInt(baseValue +
+                                    baseValue * _gameDataBase.GoldPerUnitCurve.IndexI.Evaluate(_levelNumber /
+                                                  _maxLevelNumber)
+                                              * (baseValue *
+                                                 _gameDataBase.GoldPerUnitCurve.IndexK.Evaluate(_levelNumber /
+                                                     _maxLevelNumber)));
         }
 
+        #endregion
+
+        #region SpellsValues
+
+        public int GetGoldForGate()
+            => Mathf.FloorToInt(_levelNumber * _gameDataBase.BaseGoldPerGate);
+
+        public int GetSpellDamage()
+            => Mathf.FloorToInt(_levelNumber * _gameDataBase.DamageBonusPerLevel);
+
         public int GetHealingSpellValue()
-        {
-            return Mathf.FloorToInt(_levelNumber * _gameDataBase.HealthBonusPerLevel);
-        }
+            => Mathf.FloorToInt(_levelNumber * _gameDataBase.HealthBonusPerLevel);
 
         public void AddGold()
         {
-            _gameDataBase.Gold += _gameDataBase.GoldSpellValue;
+            //_gameDataBase.Gold += _gameDataBase.GoldSpellValue;
         }
 
         public int GetIncreaseDamageCoeficient()
-        {
-            return 0;
-        }
+            => 0;
 
         public int GetSpawnRamsCountValue()
-        {
-            return 0;
-        }
+            => 0;
 
         public void IncreaseRageValueAccumulation()
         {
@@ -67,7 +87,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             _gameDataBase.RageAccumulationBonus /= 2;
         }
 
-        private void OnLevelStarting(int number) 
+        #endregion
+
+        private void OnLevelStarting(int number)
             => _levelNumber = number;
     }
 }

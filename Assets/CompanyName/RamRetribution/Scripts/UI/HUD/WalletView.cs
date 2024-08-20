@@ -19,6 +19,8 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
         {
              _wallet = wallet;
              _wallet.CurrencyChanged += OnCurrencyChanged;
+             
+             _wallet.UpdateText();
         }
         
         private void OnCurrencyChanged(CurrencyTypes currency, int amount)

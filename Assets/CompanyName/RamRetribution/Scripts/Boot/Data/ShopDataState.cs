@@ -7,7 +7,7 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 namespace CompanyName.RamRetribution.Scripts.Boot.Data
 {
     [Serializable]
-    public class ShopDataState : ISaveable
+    public class ShopDataState : ISavable
     {
         public List<ConfigId> OpenedRams;
         public List<ConfigId> SelectedRams;

@@ -10,7 +10,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
     {
         public Gate Create(Gate instance, bool isLeft)
         {
-            IDamageable health = CreateHealth(1000, 50);
+            IDamageable health = CreateHealth(100, 5);
             instance.Init(health, isLeft);
             
             return instance;

@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         }
         
         public void Save<TSaveable>(TSaveable data, bool overwrite = true)
-        where TSaveable : ISaveable
+        where TSaveable : ISavable
         {
             string dataPath = GetFilePath(data.Name.ToString());
 
@@ -30,7 +30,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         }
 
         public TSaveable Load<TSaveable>(string name)
-        where TSaveable : ISaveable, new()
+        where TSaveable : ISavable, new()
         {
             string dataPath = GetFilePath(name);
 

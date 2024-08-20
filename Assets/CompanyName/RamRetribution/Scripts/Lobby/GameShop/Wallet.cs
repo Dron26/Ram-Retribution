@@ -1,7 +1,6 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Common.Services;
 
 namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 {
@@ -10,53 +9,26 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         private readonly GameData _gameData;
 
         public Wallet(GameData gameData)
+            => _gameData = gameData;
+
+        public event Action<CurrencyTypes, int> CurrencyChanged;
+
+        private int Money => _gameData.Money;
+        private int Horns => _gameData.Horns;
+
+        public void Add(CurrencyTypes type, int amount)
         {
-            _gameData = gameData;
+            var result = GetCurrencyValue(type) + amount;
+            
+            SetCurrencyValue(type, result);
+            CurrencyChanged?.Invoke(type, result);
         }
 
-        public event Action<CurrencyTypes,int> CurrencyChanged;
-        
-        public int Money => _gameData.Money;
-        public int Horns => _gameData.Horns;
-
-        public void Add(CurrencyTypes type ,int amount)
+        public void Remove(CurrencyTypes type, int amount)
         {
-            int result = 0;
-            
-            switch (type)
-            {
-                case CurrencyTypes.Money:
-                    result = _gameData.Money + amount;
-                    _gameData.Money = result;
-                    break;
-                case CurrencyTypes.Horns:
-                    result = _gameData.Horns + amount;
-                    _gameData.Horns = result;
-                    break;
-            }
-            
-            Services.PrefsDataService.Save(_gameData);
-            CurrencyChanged?.Invoke(type,result);
-        }
+            var result = GetCurrencyValue(type) - amount;
 
-        public void Remove(CurrencyTypes type ,int amount)
-        {
-            int result = 0;
-            
-            switch (type)
-            {
-                case CurrencyTypes.Money:
-                    result = _gameData.Money - amount;
-                    _gameData.Money = result;
-                    break;
-                
-                case CurrencyTypes.Horns:
-                    result = _gameData.Horns - amount;
-                    _gameData.Horns = result;
-                    break;
-            }
-            
-            Services.PrefsDataService.Save(_gameData);
+            SetCurrencyValue(type, result);
             CurrencyChanged?.Invoke(type, result);
         }
 
@@ -66,7 +38,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
             {
                 CurrencyTypes.Money => _gameData.Money >= price,
                 CurrencyTypes.Horns => _gameData.Horns >= price,
-                _ => throw new System.NotImplementedException($"Missing currency type {nameof(type)}")
+                _ => throw new ArgumentException($"Missing currency type {nameof(type)}")
             };
         }
 
@@ -74,6 +46,31 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         {
             CurrencyChanged?.Invoke(CurrencyTypes.Money, Money);
             CurrencyChanged?.Invoke(CurrencyTypes.Horns, Horns);
+        }
+
+        private int GetCurrencyValue(CurrencyTypes type)
+        {
+            return type switch
+            {
+                CurrencyTypes.Money => _gameData.Money,
+                CurrencyTypes.Horns => _gameData.Horns,
+                _ => throw new ArgumentException(nameof(type), $"Missing currency type {nameof(type)}")
+            };
+        }
+
+        private void SetCurrencyValue(CurrencyTypes type, int value)
+        {
+            switch (type)
+            {
+                case CurrencyTypes.Money:
+                    _gameData.Money = value;
+                    break;
+                case CurrencyTypes.Horns:
+                    _gameData.Horns = value;
+                    break;
+                default:
+                    throw new ArgumentException(nameof(type), $"Missing currency type {nameof(type)}");
+            }
         }
     }
 }

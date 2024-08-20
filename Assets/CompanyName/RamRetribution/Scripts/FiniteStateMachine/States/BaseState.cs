@@ -11,9 +11,5 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States
         public virtual void Exit()
         {
         }
-
-        public virtual void Update(float deltaTime)
-        {
-        }
     }
 }

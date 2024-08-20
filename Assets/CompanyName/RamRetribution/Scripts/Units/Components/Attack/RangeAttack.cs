@@ -5,7 +5,6 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
 {
     public class RangeAttack : IAttackComponent
     {
-        private readonly float _distance;
         private float _damage;
         private float _attackSpeed;
 
@@ -13,17 +12,14 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         {
             _damage = damage;
             _attackSpeed = attackSpeed;
-            _distance = distance;
+            Distance = distance;
         }
 
         public ref float AttackSpeed => ref _attackSpeed;
         public ref float Damage =>  ref _damage;
-        public float Distance => _distance;
-        public AttackType AttackType => AttackType.Range;
+        public float Distance { get; }
         
-        public void Attack(IDamageable damageable)
-        {
-            damageable.TakeDamage(AttackType, _damage);
-        }
+        public void Attack(IDamageable damageable) 
+            => damageable.TakeDamage(this, _damage);
     }
 }

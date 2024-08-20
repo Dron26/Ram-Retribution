@@ -12,7 +12,7 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
         public float CurrentValue { get; }
         public ref float ArmorValue { get; }
 
-        public void TakeDamage(AttackType type, float damage);
+        public void TakeDamage(IAttackComponent attackComponent, float damage);
         public void Heal(int amount);
     }
 }

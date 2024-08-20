@@ -8,14 +8,12 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Armor
     {
         private float _value;
 
-        protected BaseArmor(int value)
-        {
-            _value = value;
-        }
+        protected BaseArmor(int value) 
+            => _value = value;
 
         public ref float Value => ref _value;
         
-        public virtual int ReduceDamage(AttackType type, float damage)
+        public virtual int ReduceDamage(IAttackComponent attackComponent, float damage)
         {
             damage -= _value;
 

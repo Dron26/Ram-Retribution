@@ -18,7 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         }
 
         public void Save<TSaveable>(TSaveable data, bool overwrite = true)
-            where TSaveable : ISaveable
+            where TSaveable : ISavable
         {
             if (!overwrite && PlayerPrefs.HasKey(data.Name.ToString()))
                 throw new IOException($"File '{data.Name}' is already exists and cannot overwritten");
@@ -33,7 +33,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         }
 
         public TSaveable Load<TSaveable>(string name)
-            where TSaveable : ISaveable, new()
+            where TSaveable : ISavable, new()
         {
             if (!IsExists(name))
                 return new TSaveable();

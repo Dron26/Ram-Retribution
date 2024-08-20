@@ -40,9 +40,7 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
         public void Init(Wallet wallet)
         {
             _wallet = wallet;
-            
             _walletView.Init(_wallet);
-            _wallet.UpdateText();
         }
         
         private void OnPlayClicked()

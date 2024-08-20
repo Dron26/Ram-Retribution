@@ -8,7 +8,7 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 namespace CompanyName.RamRetribution.Scripts.Boot.Data
 {
     [System.Serializable]
-    public class LeaderDataState : ISaveable
+    public class LeaderDataState : ISavable
     {
         public int HealthValue;
         public int ArmorValue;
@@ -16,7 +16,6 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
         public float AttackSpeed;
         public ArmorTypes ArmorType;
         public AttackType AttackType;
-        public List<int> Spells;
 
         public LeaderDataState()
         {
@@ -31,8 +30,6 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
             AttackSpeed = config.AttackSpeed;
             ArmorType = ArmorTypes.Medium;
             AttackType = AttackType.Melee;
-            
-            Spells = new List<int>();
         }
         
         public DataNames Name => DataNames.LeaderDataState;

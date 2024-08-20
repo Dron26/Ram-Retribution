@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Interfaces;
@@ -6,7 +7,7 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 namespace CompanyName.RamRetribution.Scripts.Boot.Data
 {
     [System.Serializable]  
-    public class GameData : ISaveable
+    public class GameData : ISavable
     {
         public bool FirstEntry;
         public List<int> PassedLevels;
@@ -25,12 +26,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
         
         public DataNames Name => DataNames.GameData;
 
-        public Level TryLoadLevel(int number)
-        {
-            if (PassedLevels.Count == 0)
-                return new Level(1);
-            
-            return PassedLevels.Contains(number) ? new Level(number) : null;
-        }
+        public int GetLastPassedLevelIndex() 
+            => PassedLevels.Count == 0 ? 1 : PassedLevels.LastOrDefault();
     }
 }

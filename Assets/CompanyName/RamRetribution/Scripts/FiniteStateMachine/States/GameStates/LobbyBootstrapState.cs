@@ -8,7 +8,7 @@ using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Lobby;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
-using CompanyName.RamRetribution.Scripts.Skills.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using CompanyName.RamRetribution.Scripts.UI.HUD;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,12 +20,11 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         private readonly StateMachine _stateMachine;
         private LobbyCanvas _instance;
         private ShopDataState _shopData;
+        private GameData _gameData;
         private Wallet _wallet;
 
-        public LobbyBootstrapState(StateMachine stateMachine)
-        {
-            _stateMachine = stateMachine;
-        }
+        public LobbyBootstrapState(StateMachine stateMachine) 
+            => _stateMachine = stateMachine;
 
         public override void Enter()
         {
@@ -38,15 +37,16 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         public override void Exit()
         {
             Services.PrefsDataService.Save(_shopData);
+            Services.PrefsDataService.Save(_gameData);
         }
 
         private void PrepareScene()
         {
-            GameData gameData = Services.PrefsDataService.Load<GameData>(
+            _gameData = Services.PrefsDataService.Load<GameData>(
                 DataNames.GameData.ToString());
             
             CreateLobby();
-            CreateHUD(gameData);
+            CreateHUD(_gameData);
             InitShop();
         }
 
