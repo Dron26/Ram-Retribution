@@ -14,7 +14,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction
         {
             _model = model;
             
-            _model.ModelSkillsContainer.OnValueChange += OnModelSkillsContainerChanged;
+            _model.ModelSkillsContainer.OnValueChanged += OnModelSkillsContainerChanged;
         }
 
         private void OnModelSkillsContainerChanged(ISpell[] skills)

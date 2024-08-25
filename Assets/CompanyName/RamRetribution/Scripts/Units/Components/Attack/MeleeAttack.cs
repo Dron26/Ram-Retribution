@@ -1,5 +1,6 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
 {
@@ -8,18 +9,18 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         private const float AttackDistance = 5f;
         private float _damage;
         private float _attackSpeed;
-        
+
         public MeleeAttack(int damage, float attackSpeed)
         {
             _damage = damage;
             _attackSpeed = attackSpeed;
         }
-        
+
         public ref float AttackSpeed => ref _attackSpeed;
         public ref float Damage => ref _damage;
         public float Distance => AttackDistance;
-        
-        public void Attack(IDamageable damageable) 
-            => damageable.TakeDamage(this, _damage);
+
+        public void Attack(IAttackble entity) 
+            => entity.Damageable.TakeDamage(this, _damage);
     }
 }

@@ -5,6 +5,6 @@ namespace CompanyName.RamRetribution.Scripts.Factorys.Interfaces
 {
     public interface IGateFactory
     {
-        public Gate Create(Gate instance, bool isLeft);
+        public Gate Create(Gate instance);
     }
 }

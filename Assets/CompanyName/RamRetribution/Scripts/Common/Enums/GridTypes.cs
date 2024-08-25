@@ -4,6 +4,6 @@ namespace Generator.Scripts.Common.Enums
     {
         Forest,
         Sand,
-        Snow
+        Ice
     }
 }

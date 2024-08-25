@@ -14,7 +14,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         public static IDataService PrefsDataService { get; private set; }
         public static IResourceLoadService ResourceLoadService { get; private set; }
         public static PauseControl PauseControl { get; private set; }
-        public static LvlCombinator LvlCombinator { get; private set; }
         public static GameDataBase GameDataBase { get; private set; }
         public static UiDataBinding UiDataBinding { get; private set; }
         public static ViewModel ViewModel { get; private set; }
@@ -35,7 +34,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         public static void InitGameSceneCtx()
         {
             RegisterGameDataBase();
-            RegisterLvlCombinator();
         }
         
         public static void RegisterLeader(Transform leaderTransform) 
@@ -53,9 +51,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         private static void RegisterGameDataBase()
             => GameDataBase = ResourceLoadService
                 .Load<GameDataBase>($"{AssetPaths.GameDataBase}{nameof(GameDataBase)}");
-        
-        private static void RegisterLvlCombinator()
-            => LvlCombinator = new LvlCombinator(GameDataBase);
         
         private static void RegisterUiModel()
             => _uiModel = new DefaultUIModel();

@@ -38,7 +38,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
             foreach (var enemy in results)
             {
                 if (enemy.TryGetComponent(out IAttackble target))
-                    _attackComponent.Attack(target.Damageable);
+                    _attackComponent.Attack(target);
             }
         }
     }

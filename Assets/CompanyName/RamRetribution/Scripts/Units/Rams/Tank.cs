@@ -5,21 +5,19 @@ using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
-    public class Tank : Unit, IRam, IBuffHolder
+    public class Tank : Ram, IBuffHolder
     {
-        public override UnitTypes Type => UnitTypes.Ram;
-
         public override void Accept(IRamsVisitor visitor)
         {
             visitor.Visit(this);
         }
         
-        public void ActivateBuff(List<Unit> units, int lvlNumber)
+        public void ActivateBuff(List<Unit> units, int levelNumber)
         {
             
         }
 
-        public void DeactivateBuff(List<Unit> units)
+        public void DeactivateBuff(List<Unit> units, int levelNumber)
         {
             
         }

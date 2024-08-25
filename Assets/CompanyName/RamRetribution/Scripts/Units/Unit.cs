@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace CompanyName.RamRetribution.Scripts.Units
 {
@@ -17,16 +14,16 @@ namespace CompanyName.RamRetribution.Scripts.Units
     public abstract class Unit : MonoBehaviour, IAttackble
     {
         public readonly List<Unit> CurrentEnemies = new();
-
+        
         private AIMovement _aiMovement;
         private Animator _animator;
         private CancellationTokenSource _cancellationToken;
-
+        
         public event Action<Unit> Fleeing;
+        
         public IAttackComponent AttackComponent { get; private set; }
         public IDamageable Damageable { get; private set; }
         public Transform SelfTransform { get; private set; }
-        public abstract UnitTypes Type { get; }
         public PriorityTypes Priority { get; private set; }
         public bool IsActive { get; private set; }
 
@@ -50,11 +47,12 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         #region BattleActions
 
-        public void MoveToPoint(Vector3 destination, Action callback = null)
+        public async UniTask<bool> MoveToPoint(Vector3 destination, CancellationToken otherToken = default,
+            Action callback = null)
         {
-            _aiMovement.Move(destination, callback);
+            return await _aiMovement.MoveToPoint(destination, otherToken, callback);
         }
-        
+
         public async UniTask Attack(IAttackble target, Transform pointForAttack = null)
         {
             while (target.IsActive)
@@ -63,15 +61,10 @@ namespace CompanyName.RamRetribution.Scripts.Units
                 {
                     var lookDirection = (target.SelfTransform.position - transform.position).normalized;
                     transform.rotation = Quaternion.LookRotation(lookDirection);
-                    
-                    _animator.SetInteger(AIAnimatorParams.Attack,
-                        Type == UnitTypes.Ram
-                            ? Random.Range(0, AIAnimatorParams.RamsAttackAnimationCount)
-                            : Random.Range(0, AIAnimatorParams.EnemyAttackAnimationCount));
-                    
-                    AttackComponent.Attack(target.Damageable);
+
+                    AttackComponent.Attack(target);
                     var attackInterval = 1f / AttackComponent.AttackSpeed;
-                    
+
                     await UniTask.Delay(
                         TimeSpan.FromSeconds(attackInterval),
                         DelayType.Realtime,
@@ -89,44 +82,14 @@ namespace CompanyName.RamRetribution.Scripts.Units
             }
         }
 
-        public void NotifyFindTarget(Dictionary<int, List<Unit>> targetsByPriority)
-        {
-            CancelToken();
-
-            FindTarget(
-                targetsByPriority,
-                PriorityTypes.High,
-                PriorityTypes.Medium,
-                PriorityTypes.Small,
-                PriorityTypes.Leader);
-        }
-
-        private void FindTarget(Dictionary<int, List<Unit>> targetsByPriority,
-            params PriorityTypes[] priorityTypesArray)
-        {
-            foreach (var priority in priorityTypesArray)
-            {
-                if (targetsByPriority[(int)priority].Count > 0)
-                {
-                    var unitWithFewerAttackers = targetsByPriority[(int)priority]
-                        .OrderBy(unit => unit.CurrentEnemies.Count)
-                        .First();
-
-                    Fleeing += unitWithFewerAttackers.OnAttackersFleeing;
-                    unitWithFewerAttackers.CurrentEnemies.Add(this);
-                    Attack(unitWithFewerAttackers).Forget();
-
-                    return;
-                }
-            }
-        }
-
         #endregion
 
-        public void Flee(Vector3 to)
+        public async UniTaskVoid FleeAsync(Vector3 to)
         {
-            DeactivateAgent();
-            MoveToPoint(to, () => gameObject.SetActive(false));
+            var task = await MoveToPoint(to);
+            
+            if(task)
+                gameObject.SetActive(false);
         }
 
         public void ActivateAgent()
@@ -141,20 +104,13 @@ namespace CompanyName.RamRetribution.Scripts.Units
             _aiMovement.DeactivateNavMesh();
         }
 
-        public abstract void Accept(IRamsVisitor visitor);
-        public abstract void AddBuff(BuffData buffData);
+        private bool CanAttack(Transform target) 
+            => (target.transform.position - SelfTransform.position).sqrMagnitude <= AttackComponent.Distance;
 
-        private bool CanAttack(Transform target)
-        {
-            return (target.transform.position - SelfTransform.position).sqrMagnitude <= AttackComponent.Distance;
-        }
+        private async UniTask MoveTowardsAsync(Transform target) 
+            => await _aiMovement.MoveTowards(target, _cancellationToken.Token);
 
-        private async UniTask MoveTowardsAsync(Transform target)
-        {
-            await _aiMovement.MoveTowards(target, _cancellationToken.Token);
-        }
-        
-        private void OnHealthEnded(IDamageable damageable)
+        protected virtual void OnHealthEnded(IDamageable damageable)
         {
             CancelToken();
             damageable.HealthEnded -= OnHealthEnded;
@@ -162,14 +118,14 @@ namespace CompanyName.RamRetribution.Scripts.Units
             Fleeing?.Invoke(this);
         }
 
-        private void CancelToken()
+        protected void CancelToken()
         {
             _cancellationToken?.Cancel();
             _cancellationToken?.Dispose();
             _cancellationToken = new CancellationTokenSource();
         }
 
-        private void OnAttackersFleeing(Unit unit)
+        public void OnAttackersFleeing(Unit unit)
             => CurrentEnemies.Remove(unit);
     }
 }

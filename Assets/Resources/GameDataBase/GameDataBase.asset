@@ -12,25 +12,207 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c2d57c79efdc7b4796e39de52a0c475, type: 3}
   m_Name: GameDataBase
   m_EditorClassIdentifier: 
-  DamageKooficient: 1
-  KooficientStructureForHealth:
+  DamageBonusPerLevel: 10
+  HealthBonusPerLevel: 0
+  RageAccumulationBonus: 0
+  WoodGateBaseHealth: 200
+  RockGateBaseHealth: 400
+  WoodGateBaseArmor: 2
+  RockGateBaseArmor: 4
+  BaseGoldPerUnit: 30
+  BaseGoldPerGate: 50
+  UnitHealthCurve:
+    IndexI:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    IndexK:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  UnitDamageCurve:
+    IndexI:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    IndexK:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  GoldPerUnitCurve:
     IndexI:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.03
-        inSlope: 0
-        outSlope: 0
+        value: 0
+        inSlope: 1.967931
+        outSlope: 1.967931
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.002
+        value: 0.0039358623
+        inSlope: 3.2827964
+        outSlope: 3.2827964
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.035565175
+        value: 0.15825717
+        inSlope: 2.789286
+        outSlope: 2.789286
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.15083897
+        value: 0.27133045
+        inSlope: -0.5092096
+        outSlope: -0.5092096
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.055606816
+      - serializedVersion: 3
+        time: 0.25996828
+        value: 0.31395024
+        inSlope: -0.07194278
+        outSlope: -0.07194278
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.45055547
+      - serializedVersion: 3
+        time: 0.40694952
+        value: 0.39938575
+        inSlope: 1.8195558
+        outSlope: 1.8195558
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.05798919
+      - serializedVersion: 3
+        time: 0.5635376
+        value: 0.5139763
+        inSlope: -0.087797195
+        outSlope: -0.087797195
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.10650704
+      - serializedVersion: 3
+        time: 0.75284195
+        value: 0.65525454
+        inSlope: -0.3592881
+        outSlope: -0.3592881
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.20926446
+      - serializedVersion: 3
+        time: 0.855756
+        value: 0.8453375
+        inSlope: -0.099261045
+        outSlope: -0.099261045
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.40670568
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1.0722281
+        outSlope: 1.0722281
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    IndexK:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.98111045
+        outSlope: 0.98111045
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.040968575
+        value: 0.040194698
+        inSlope: 3.3223786
+        outSlope: 3.3223786
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.062444832
+        value: 0.16182864
+        inSlope: 3.264799
+        outSlope: 3.264799
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4538717
+        value: 0.5007854
+        inSlope: -0.029777654
+        outSlope: -0.029777654
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.11683668
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0.91409767
+        outSlope: 0.91409767
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  GateHealthCurve:
+    IndexI:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 2
+        outSlope: 2
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 2
-        outSlope: 2
+        time: 0.99922967
+        value: 0.5987805
+        inSlope: 0
+        outSlope: 0
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
@@ -43,7 +225,7 @@ MonoBehaviour:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.03
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -51,26 +233,8 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.367589
-        value: 0.30022457
-        inSlope: 1.1492243
-        outSlope: 1.1492243
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.079823725
-        outWeight: 0.06807321
-      - serializedVersion: 3
-        time: 0.68338156
-        value: 0.7830565
-        inSlope: 0.124921635
-        outSlope: 0.124921635
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
         time: 1
-        value: 1
+        value: 0.5
         inSlope: 2
         outSlope: 2
         tangentMode: 0
@@ -80,25 +244,25 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  KooficientStructureForDamage:
+  GateArmorCurve:
     IndexI:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 2
-        outSlope: 2
-        tangentMode: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0
@@ -110,43 +274,23 @@ MonoBehaviour:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.367589
-        value: 0.30022457
-        inSlope: 1.1492243
-        outSlope: 1.1492243
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.079823725
-        outWeight: 0.06807321
-      - serializedVersion: 3
-        time: 0.68338156
-        value: 0.7830565
-        inSlope: 0.124921635
-        outSlope: 0.124921635
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 2
-        outSlope: 2
-        tangentMode: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  GoldSpellLvl: 0
-  GoldSpellValue: 200
-  Gold: 0
+  <GoldSpellValue>k__BackingField: 200

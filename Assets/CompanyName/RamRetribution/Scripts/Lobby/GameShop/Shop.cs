@@ -2,9 +2,11 @@ using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 {
@@ -12,8 +14,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
     {
         [SerializeField] private ShopView _view;
 
-        [Header("Buttons")] 
-        [SerializeField] private CategoryButton _skinsButton;
+        [Header("Buttons")] [SerializeField] private CategoryButton _skinsButton;
         [SerializeField] private CategoryButton _ramsButton;
         [SerializeField] private CategoryButton _spellsButton;
         [SerializeField] private BuyButton _buyButton;
@@ -54,26 +55,27 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
             _buyButton.Clicked -= OnBuyButtonClicked;
         }
 
-        public void Init(
+        [Inject]
+        public void Construct(
             Wallet wallet,
+            IResourceLoadService loadService,
             ShopDataState shopDataState,
-            ShopContent content,
-            ItemSelector itemSelector,
-            ItemUnlocker itemUnlocker,
-            OpenItemChecker openItemChecker,
-            SelectedItemChecker selectedItemChecker)
+            ShopContent content)
         {
             _wallet = wallet;
             _shopDataState = shopDataState;
             _content = content;
-            _itemSelector = itemSelector;
-            _itemUnlocker = itemUnlocker;
-            _openItemChecker = openItemChecker;
-            _selectedItemChecker = selectedItemChecker;
 
-            _view.Init(_openItemChecker, _selectedItemChecker);
+            _itemSelector = new ItemSelector(shopDataState);
+            _itemUnlocker = new ItemUnlocker(shopDataState);
+            _openItemChecker = new OpenItemChecker(shopDataState);
+            _selectedItemChecker = new SelectedItemChecker(shopDataState);
+
+            _view.Init(loadService, _openItemChecker, _selectedItemChecker);
             _view.ItemViewClicked += OnItemViewClicked;
 
+            _content.LoadAllAssets();
+            
             OnSkinsButtonClicked();
             _selectionButton.gameObject.SetActive(false);
             _buyButton.gameObject.SetActive(false);
@@ -202,7 +204,6 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
         private void UnselectButton()
         {
-            
         }
     }
 }

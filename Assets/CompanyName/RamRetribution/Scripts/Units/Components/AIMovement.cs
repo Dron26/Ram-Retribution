@@ -22,46 +22,10 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
             enabled = false;
         }
 
-        public void Init(Animator animator)
-        {
-            _animator = animator;
-        }
-        
-        public void Move(Vector3 destination, Action callback = null)
-        {
-            StartCoroutine(MoveToPoint(destination, callback));
-        }
+        public void Init(Animator animator) 
+            => _animator = animator;
 
-        public async UniTask MoveTowards(Transform target, CancellationToken cancellationToken)
-        {
-            _agent.ResetPath();
-            enabled = true;
-            _animator.SetBool(AIAnimatorParams.Run, true);
-            
-            while (_agent.remainingDistance < _agent.stoppingDistance + float.Epsilon)
-            {
-                _agent.SetDestination(target.position);
-
-                await UniTask.Delay(
-                        TimeSpan.FromSeconds(0.5f),
-                        DelayType.Realtime, cancellationToken: cancellationToken);
-            }
-            
-            _animator.SetBool(AIAnimatorParams.Run, false);
-            enabled = false;
-        }
-
-        public void ActivateNavMesh()
-        {
-            _agent.enabled = true;
-        }
-
-        public void DeactivateNavMesh()
-        {
-            _agent.enabled = false;
-        }
-
-        private IEnumerator MoveToPoint(Vector3 destination, Action callback = null)
+        public async UniTask<bool> MoveToPoint(Vector3 destination, CancellationToken cancellationToken, Action callback = null)
         {
             _animator.SetBool(AIAnimatorParams.Run, true);
 
@@ -69,12 +33,42 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
             {
                 transform.position = Vector3.MoveTowards(
                     transform.position, destination, _agent.speed * Time.deltaTime);
-                yield return null;
+                await UniTask.Yield();
             }
 
             _animator.SetBool(AIAnimatorParams.Run, false);
             transform.position = destination;
             callback?.Invoke();
+
+            return !cancellationToken.IsCancellationRequested;
         }
+
+        public async UniTask MoveTowards(Transform target, CancellationToken cancellationToken)
+        {
+            _agent.ResetPath();
+            enabled = true;
+            _animator.SetBool(AIAnimatorParams.Run, true);
+
+            _agent.SetDestination(target.position);
+            
+            while ((target.position - _agent.transform.position).sqrMagnitude > _agent.stoppingDistance + float.Epsilon)
+            {
+                _agent.SetDestination(target.position);
+
+                await UniTask.Delay(
+                    TimeSpan.FromSeconds(0.5f),
+                    DelayType.Realtime, 
+                    cancellationToken: cancellationToken);
+            }
+
+            _animator.SetBool(AIAnimatorParams.Run, false);
+            enabled = false;
+        }
+
+        public void ActivateNavMesh() 
+            => _agent.enabled = true;
+
+        public void DeactivateNavMesh() 
+            => _agent.enabled = false;
     }
 }

@@ -5,6 +5,7 @@ using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using Generator.Scripts.Common.Enums;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -14,9 +15,11 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
     public class GridConfigurator
     {
         private readonly int _quantity;
-
-        public GridConfigurator(int gridQueueQuantity)
+        private readonly IResourceLoadService _loadService;
+        
+        public GridConfigurator(IResourceLoadService loadService, int gridQueueQuantity)
         {
+            _loadService = loadService;
             _quantity = gridQueueQuantity;
         }
 
@@ -58,10 +61,10 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
                     var randomIndex = Random.Range(0, GetFolderItemsCount($"{AssetPaths.ForestGridData}{gateTypes}"));
                     var path = $"{AssetPaths.ForestGridData + gateTypes + "/" + randomIndex}";
                     Debug.Log(path);
-                    return Services.ResourceLoadService.Load<GridData>(path);
+                    return _loadService.Load<GridData>(path);
                 case GridTypes.Sand:
                     break;
-                case GridTypes.Snow:
+                case GridTypes.Ice:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(gridTypes), gridTypes, null);

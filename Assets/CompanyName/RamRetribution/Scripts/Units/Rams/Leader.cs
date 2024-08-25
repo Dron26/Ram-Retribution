@@ -3,10 +3,8 @@ using CompanyName.RamRetribution.Scripts.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
-    public class Leader : Unit, IRam
+    public class Leader : Ram
     {
-        public override UnitTypes Type => UnitTypes.Ram;
-
         public override void Accept(IRamsVisitor visitor)
         {
             visitor.Visit(this);

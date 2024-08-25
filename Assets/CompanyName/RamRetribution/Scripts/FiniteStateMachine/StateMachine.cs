@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 
@@ -10,12 +11,12 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
         private readonly Dictionary<Type, IState> _states = new Dictionary<Type, IState>();
         private IState _currentState;
 
-        public StateMachine()
+        public StateMachine(GameData gameData, ShopDataState shopData, IDataService dataService)
         {
-            AddState(new LobbyBootstrapState(this));
-            AddState(new GameBootstrapState(this));
+            AddState(new LobbyBootstrapState(gameData, shopData, dataService));
+            AddState(new GameBootstrapState(this, gameData, dataService));
         }
-        
+
         public void SetState<TState>()
             where TState : IState
         {

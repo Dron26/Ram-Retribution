@@ -1,4 +1,3 @@
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.UI.MVVM.Abstraction;
 

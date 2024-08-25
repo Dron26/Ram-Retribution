@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.Common;
 using UnityEditor;
 
@@ -8,3 +9,4 @@ namespace CompanyName.RamRetribution.EditorScripts
     {
     }
 }
+#endif

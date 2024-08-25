@@ -1,106 +1,53 @@
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Boot;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Factorys;
-using CompanyName.RamRetribution.Scripts.Lobby;
-using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
-using CompanyName.RamRetribution.Scripts.UI.HUD;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates
 {
-    public class LobbyBootstrapState : BaseState
+    public class LobbyBootstrapState : IState
     {
-        private readonly StateMachine _stateMachine;
-        private LobbyCanvas _instance;
-        private ShopDataState _shopData;
-        private GameData _gameData;
-        private Wallet _wallet;
+        private readonly GameData _gameData;
+        private readonly ShopDataState _shopData;
+        private readonly IDataService _dataService;
 
-        public LobbyBootstrapState(StateMachine stateMachine) 
-            => _stateMachine = stateMachine;
-
-        public override void Enter()
+        public LobbyBootstrapState(GameData gameData, ShopDataState shopData,
+            IDataService dataService)
         {
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(SceneNames.Lobby);
-
-            if (asyncOperation != null)
-                asyncOperation.completed += _ => PrepareScene();
+            _gameData = gameData;
+            _shopData = shopData;
+            _dataService = dataService;
         }
 
-        public override void Exit()
+        public void Enter()
         {
-            Services.PrefsDataService.Save(_shopData);
-            Services.PrefsDataService.Save(_gameData);
+            SceneManager.LoadSceneAsync(SceneNames.Lobby);
         }
 
-        private void PrepareScene()
+        public void Exit()
         {
-            _gameData = Services.PrefsDataService.Load<GameData>(
-                DataNames.GameData.ToString());
-            
-            CreateLobby();
-            CreateHUD(_gameData);
-            InitShop();
-        }
-
-        private void CreateLobby()
-        {
-            var lobbyPrefab = Services.ResourceLoadService.Load<LobbyCanvas>(
-                $"{AssetPaths.CommonPrefabs}{nameof(LobbyCanvas)}");
-            
-            _instance = Object.Instantiate(lobbyPrefab);
-        }
-
-        private void CreateHUD(GameData gameData)
-        {
-            _wallet = new Wallet(gameData);
-
-            var hudPrefab = Services.ResourceLoadService.Load<LobbyHUD>(
-                $"{AssetPaths.CommonPrefabs}{nameof(LobbyHUD)}");
-
-            var hud = Object.Instantiate(hudPrefab);
-            hud.Init(_wallet);
-            hud.PlayClicked += OnPlayClicked;
-        }
-
-        private void InitShop()
-        {
-            _shopData = Services.PrefsDataService.Load<ShopDataState>(
-                DataNames.ShopDataState.ToString());
-            
-            var shopBootstrap = new ShopBootstrap(_instance.Shop);
-            shopBootstrap.Init(_wallet, _shopData);
+            _dataService.Save(_gameData);
+            _dataService.Save(_shopData);
         }
 
         private void InitSpells()
         {
             var spellsContainer = Services
-                    .ResourceLoadService
-                    .Load<SpellsContainer>($"{AssetPaths.Configs}{nameof(SpellsContainer)}");
-            
+                .ResourceLoadService
+                .Load<SpellsContainer>($"{AssetPaths.Configs}{nameof(SpellsContainer)}");
+
             var spellsFactory = new SpellsFactory(spellsContainer);
             var selectedSpells = new List<ISpell>();
-            
+
             for (var i = 0; i < _shopData.SelectedSpells.Count; i++)
                 selectedSpells.Add(spellsFactory.Create(_shopData.SelectedSpells[i]));
-            
+
             Services.UiDataBinding.SetNewDataForGame(selectedSpells.ToArray());
-        }
-        
-        private void OnPlayClicked(LobbyHUD hud)
-        {
-            hud.PlayClicked -= OnPlayClicked;
-            
-            InitSpells();
-            
-            _stateMachine.SetState<GameBootstrapState>();
         }
     }
 }

@@ -8,38 +8,38 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
-    public class Attacker : Unit, IRam, IBuffHolder
+    public class Attacker : Ram, IBuffHolder
     {
         private ImprovableUnitFields _improvableField;
         private float _improveBonus;
-        
-        public override UnitTypes Type => UnitTypes.Ram;
 
         public override void Accept(IRamsVisitor visitor) 
             => visitor.Visit(this);
 
-        public void ActivateBuff(List<Unit> units, int lvlNumber)
+        public void ActivateBuff(List<Unit> units, int levelNumber)
         {
-            _improveBonus *= lvlNumber;
+            var bonus = _improveBonus * levelNumber;
             
             foreach (var unit in units)
             {
                 if (unit.AttackComponent is IImprovable improvable)
                     improvable.Improve(ref GetImprovableField(unit),
-                        _improveBonus);
+                        bonus);
 
-                Debug.Log($"Unit: {unit.name} increase {_improvableField} on {_improveBonus}. " +
+                Debug.Log($"Unit: {unit.name} increase {_improvableField} on {bonus}. " +
                           $"Current stats: Damage {unit.AttackComponent.Damage}, AS {unit.AttackComponent.AttackSpeed}");
             }
         }
 
-        public void DeactivateBuff(List<Unit> units)
+        public void DeactivateBuff(List<Unit> units, int levelNumber)
         {
+            var bonus = _improveBonus * levelNumber;
+            
             foreach (var unit in units)
             {
                 if (unit.AttackComponent is IImprovable improvable)
                     improvable.UnImprove(ref GetImprovableField(unit),
-                        _improveBonus);
+                        bonus);
             }
         }
 

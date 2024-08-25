@@ -1,5 +1,6 @@
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
@@ -17,13 +18,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             _maxLevelNumber = GameConstants.MaxLevels;
         }
 
-        public void SubscribeToGameEvents(Game game)
-            => game.LevelStarting += OnLevelStarting;
+        public void OnLevelStarting(int number)
+        {
+            _levelNumber = number;
+        }
 
-        public void UnSubscribeFromGameEvents(Game game)
-            => game.LevelStarting -= OnLevelStarting;
-
-        #region Curves
+        #region UnitsCurves
 
         public float GetUnitHealth(int baseHealth)
             => baseHealth +
@@ -40,13 +40,6 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
         public int GetGoldForUnit()
         {
             var baseValue = _gameDataBase.BaseGoldPerUnit;
-
-            Debug.Log(baseValue +
-                      baseValue * _gameDataBase.GoldPerUnitCurve.IndexI.Evaluate(_levelNumber /
-                                    _maxLevelNumber)
-                                * (baseValue *
-                                   _gameDataBase.GoldPerUnitCurve.IndexK.Evaluate(_levelNumber /
-                                       _maxLevelNumber)));
             
             return Mathf.FloorToInt(baseValue +
                                     baseValue * _gameDataBase.GoldPerUnitCurve.IndexI.Evaluate(_levelNumber /
@@ -58,6 +51,30 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
 
         #endregion
 
+        #region GateCurves
+
+        public int GetGateHealth(GateTypes type)
+        {
+            var baseHealth = _gameDataBase.GetGateHealth(type);
+            
+            return Mathf.FloorToInt( baseHealth +
+                   (baseHealth * _gameDataBase.UnitHealthCurve.IndexI.Evaluate(_levelNumber / _maxLevelNumber)
+                               * (baseHealth *
+                                  _gameDataBase.UnitHealthCurve.IndexK.Evaluate(_levelNumber / _maxLevelNumber))));
+        }
+
+        public int GetGateArmor(GateTypes type)
+        {
+            var baseArmor = _gameDataBase.GetGateArmor(type);
+            
+            return Mathf.FloorToInt( baseArmor +
+                   (baseArmor * _gameDataBase.UnitHealthCurve.IndexI.Evaluate(_levelNumber / _maxLevelNumber)
+                              * (baseArmor *
+                                 _gameDataBase.UnitHealthCurve.IndexK.Evaluate(_levelNumber / _maxLevelNumber))));
+        }
+
+        #endregion
+        
         #region SpellsValues
 
         public int GetGoldForGate()
@@ -88,8 +105,5 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
         }
 
         #endregion
-
-        private void OnLevelStarting(int number)
-            => _levelNumber = number;
     }
 }

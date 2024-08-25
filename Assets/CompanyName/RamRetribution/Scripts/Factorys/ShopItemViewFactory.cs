@@ -1,6 +1,7 @@
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 using UnityEngine;
@@ -10,10 +11,12 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
     public class ShopItemViewFactory
     {
         private readonly ShopItemView _skinView;
+        private readonly IResourceLoadService _loadService;
         private ShopItemViewPrefabVisitor _visitor;
 
-        public ShopItemViewFactory()
+        public ShopItemViewFactory(IResourceLoadService loadService)
         {
+            _loadService = loadService;
             _skinView = LoadAsset<ShopItemView>();
         }
         
@@ -31,7 +34,7 @@ namespace CompanyName.RamRetribution.Scripts.Factorys
         
         private T LoadAsset<T>()
             where T : Object
-            => Services.ResourceLoadService.Load<T>(
+            => _loadService.Load<T>(
                 $"{AssetPaths.ShopPrefabs}{typeof(T).Name}");
     }
 }

@@ -4,12 +4,10 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
-    public class Demolisher : Unit, IRam
+    public class Demolisher : Ram, IRam
     {
         private readonly WaitForSeconds _coroutineDelay = new WaitForSeconds(2);
         private Coroutine _cachedCoroutine;
-
-        public override UnitTypes Type => UnitTypes.Ram;
 
         public override void Accept(IRamsVisitor visitor)
         {

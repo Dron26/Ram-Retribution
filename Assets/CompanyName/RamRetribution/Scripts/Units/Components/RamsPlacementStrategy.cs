@@ -8,9 +8,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
     {
         private readonly int _spaceBetweenMembers = 2;
         
-        public Vector3 SetPosition(Vector3 origin, Unit unit)
+        public Vector3 SetPosition(Vector3 origin)
         {
-            switch (unit)
+            /*switch (unit)
             {
                 case Leader:
                     return origin;
@@ -23,7 +23,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
                 case Support:
                     return origin + Vector3.back * _spaceBetweenMembers;
                 default: throw new NotImplementedException();
-            }
+            }*/
+
+            return Vector3.zero;
         }
     }
 }

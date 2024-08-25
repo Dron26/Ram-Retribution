@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Buildings;
+using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Factorys.Interfaces;
@@ -15,6 +16,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
         private readonly List<Vector3> _enemySpots = new List<Vector3>();
         private readonly List<Vector3> _entryTilesPositions = new List<Vector3>();
 
+        private Gate _leftGate;
+        private Gate _rightGate;
+        
         public Level(int number) 
             => Number = number;
 
@@ -22,11 +26,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
 
         public int Number { get; }
         public bool IsGateAttackedFirst { get; private set; }
-        public Gate LeftGate { get; private set; }
-        public Gate RightGate { get; private set; }
-        public IReadOnlyList<Vector3> EnemySpots => _enemySpots;
+
+        public Vector3 EnemySpawnPoint => _enemySpots[Random.Range(0, _enemySpots.Count)];
         public IReadOnlyList<Vector3> EntryTilesPositions => _entryTilesPositions;
-        public IReadOnlyList<Transform> GateAttackPoints => LeftGate.PointsForAttack;
+        
+        //Rework
+        public IReadOnlyList<Transform> GateAttackPoints => _leftGate.PointsForAttack;
 
         public void Init(Tile tile)
         {
@@ -40,49 +45,45 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
                 _enemySpots.Add(tile.transform.position);
         }
 
-        public Gate GetGate()
+        public Gate GetGateToAttack()
         {
-            if (LeftGate.IsActive && RightGate.IsActive)
-                return Random.Range(0, 1) == 0 ? LeftGate : RightGate;
+            if (_leftGate.IsActive && _rightGate.IsActive)
+                return Random.Range(0, 1) == 0 ? _leftGate : _rightGate;
 
-            if (LeftGate.IsActive)
-                return LeftGate;
+            if (_leftGate.IsActive)
+                return _leftGate;
 
-            if (RightGate.IsActive)
-                return RightGate;
+            if (_rightGate.IsActive)
+                return _rightGate;
 
             throw new InvalidOperationException("Both gate already destroyed.");
+        }
+
+        public IReadOnlyList<ConfigId> GetEnemies()
+        {
+            return new List<ConfigId>
+            {
+               ConfigId.LightEnemy, 
+               ConfigId.LightEnemy, 
+               ConfigId.LightEnemy, 
+            };
         }
         
         private void ConfigureGate(Tile tile)
         {
-            IGateFactory gateFactory;
-            
-            switch (tile.Type)
-            {
-                case TileType.WoodGate:
-                    gateFactory = new WoodGateFactory();
-                    break;
-                case TileType.RockGate:
-                    gateFactory = new RockGateFactory();
-                    break;
-                default:
-                    throw new ArgumentException();
-            }
-
             var instance = tile.GetComponentInChildren<Gate>();
             
-            if (LeftGate == null)
+            if (_rightGate == null)
             {
-                LeftGate = gateFactory.Create(instance, isLeft: true);
-                LeftGate.Damageable.HealthEnded += OnGateDestroyed;
-                LeftGate.FirstAttacked += OnGatesAttackedFirst;
+                _rightGate = instance;
+                _rightGate.Damageable.HealthEnded += OnGateDestroyed;
+                _rightGate.FirstAttacked += OnGatesAttackedFirst;
             }
             else
             {
-                RightGate = gateFactory.Create(instance, isLeft: false);
-                RightGate.Damageable.HealthEnded += OnGateDestroyed;
-                RightGate.FirstAttacked += OnGatesAttackedFirst;
+                _leftGate = instance;
+                _leftGate.Damageable.HealthEnded += OnGateDestroyed;
+                _leftGate.FirstAttacked += OnGatesAttackedFirst;
             }
             
             IsGateAttackedFirst = false;
@@ -102,7 +103,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
         {
             damageable.HealthEnded -= OnGateDestroyed;
             
-            if(!LeftGate.IsActive && !RightGate.IsActive)
+            if(!_leftGate.IsActive && !_rightGate.IsActive)
                 GatesDestroyed?.Invoke();
         }
     }

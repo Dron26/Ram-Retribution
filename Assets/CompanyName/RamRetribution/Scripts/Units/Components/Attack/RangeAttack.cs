@@ -19,7 +19,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         public ref float Damage =>  ref _damage;
         public float Distance { get; }
         
-        public void Attack(IDamageable damageable) 
-            => damageable.TakeDamage(this, _damage);
+        public void Attack(IAttackble entity) 
+            => entity.Damageable.TakeDamage(this, _damage);
     }
 }

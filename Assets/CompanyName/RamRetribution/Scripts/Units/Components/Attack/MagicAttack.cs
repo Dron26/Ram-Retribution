@@ -21,9 +21,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
 
         public float Distance { get; }
         
-        public void Attack(IDamageable damageable)
+        public void Attack(IAttackble entity)
         {
-            damageable.TakeDamage(this, _damage * _lvlCombinator.GetSpellDamage());
+            entity.Damageable.TakeDamage(this, _damage * _lvlCombinator.GetSpellDamage());
         }
     }
 }

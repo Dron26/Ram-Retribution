@@ -4,66 +4,78 @@ using System.Threading;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components;
+using CompanyName.RamRetribution.Scripts.Units.Enemies;
+using CompanyName.RamRetribution.Scripts.Units.Rams;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
 {
-    public class UnitSpawner : MonoBehaviour
+    public class UnitSpawner
     {
-        [SerializeField] private Transform _ramsSpawnPoint;
-        [SerializeField] private Transform _ramsContainer;
-        [SerializeField] private Transform _enemiesContainer;
+        private readonly LeaderDataState _leaderData;
+        private readonly EnemyFactoriesContainer _factories;
+        private readonly List<ConfigId> _selectedRamsId;
+        
+        private readonly Transform _ramsSpawnPoint;
+        private readonly Transform _ramsContainer;
+        private readonly Transform _enemiesContainer;
 
-        private LeaderDataState _leaderData;
-        private List<Unit> _rams;
-        private List<ConfigId> _selectedRamsId;
-        private IReadOnlyList<Vector3> _enemySpots;
-        private IUnitFactory _factory;
-
-        public event Action<Squad> RamsCreated;
-        public event Action<IReadOnlyList<Unit>> EnemiesCreated;
-
-        public void Init(
-            IUnitFactory factory,
+        public UnitSpawner(
             LeaderDataState leaderDataState,
-            List<ConfigId> selectedRamsId)
+            ShopDataState shopData,
+            EnemyFactoriesContainer factories,
+            Transform ramsSpawnPoint,
+            Transform ramsContainer,
+            Transform enemiesContainer)
         {
-            _factory = factory;
             _leaderData = leaderDataState;
-            _selectedRamsId = selectedRamsId;
+            _factories = factories;
+            _selectedRamsId = shopData.SelectedRams;
+
+            _ramsSpawnPoint = ramsSpawnPoint;
+            _ramsContainer = ramsContainer;
+            _enemiesContainer = enemiesContainer;
         }
 
-        public void SetEnemiesSpawnPoints(IReadOnlyList<Vector3> enemySpots)
+        public event Action<Squad<Ram>> RamsCreated;
+        public event Action<Squad<Enemy>> EnemiesCreated;
+
+        public async UniTaskVoid SpawnEnemies(int levelNumber, IReadOnlyList<ConfigId> configsId, Vector3 at,
+            CancellationTokenSource tokenSource)
         {
-            _enemySpots = enemySpots;
-        }
+            var squad = new Squad<Enemy>(configsId.Count, new CirclePlacementStrategy(1,2));
+            var factory = _factories.Get(levelNumber);
 
-        public async UniTaskVoid SpawnEnemies(List<ConfigId> configsId, CancellationTokenSource tokenSource)
-        {
-            var currentSpawn = _enemySpots[Random.Range(0, _enemySpots.Count)];
+            foreach (var config in configsId)
+            {
+                var enemy = factory.Create(config, at);
+                enemy.transform.SetParent(_enemiesContainer);
 
-            await SpawnWithDelay(configsId, currentSpawn, tokenSource);
-        }
+                squad.Add(enemy);
+            }
 
-        public void CreateRams(int levelNumber = 1)
-        {
-            if (_rams != null)
-                throw new InvalidOperationException(
-                    $"Recreating the {nameof(_rams)} list is not allowed as it has already been initialized.");
+            var atPosition = Vector3.zero.With(
+                x: at.x,
+                z: at.z - 2f);
 
-            var squad = new Squad(GameConstants.MaxRams);
+            //var task = await GoToPositionAsync(squad, atPosition, tokenSource);
+            var task = await squad.MoveTo(atPosition, tokenSource.Token);
             
-            _rams = new List<Unit>();
-            var leader = SpawnLeader();
-            Services.RegisterLeader(leader.transform);
-            
-            squad.Add(leader);
+            if (task)
+                EnemiesCreated?.Invoke(squad);
+        }
+
+        public void SpawnRams(int levelNumber)
+        {
+            var factory = new RamsFactory();
+            var squad = new Squad<Ram>(GameConstants.MaxRams, new RamsPlacementStrategy());
+            //var leader = SpawnLeader(factory);
+
+            //squad.Add(leader);
 
             if (_selectedRamsId.Count <= 0)
             {
@@ -73,7 +85,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
             foreach (var id in _selectedRamsId)
             {
-                var ram = _factory.Create(id, _ramsSpawnPoint.position);
+                var ram = factory.Create(id, _ramsSpawnPoint.position);
                 ram.transform.SetParent(_ramsContainer);
                 squad.Add(ram);
             }
@@ -82,54 +94,12 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             RamsCreated?.Invoke(squad);
         }
 
-        private Unit SpawnLeader()
-        {
-            var leader = _factory.CreateLeader(_leaderData, _ramsSpawnPoint.position);
-            leader.transform.SetParent(_ramsContainer);
-
-            return leader;
-        }
-
-        private async UniTask SpawnWithDelay(
-            List<ConfigId> configsId,
-            Vector3 currentSpawn,
-            CancellationTokenSource tokenSource,
-            float delay = 0.5f)
-        {
-            var placementStrategy = new CirclePlacementStrategy(2f, 3.5f);
-            var enemiesToAttack = new List<Unit>();
-
-            foreach (var config in configsId)
-            {
-                var enemy = _factory.Create(config, currentSpawn);
-                enemy.transform.SetParent(_enemiesContainer);
-
-                var atPosition = Vector3.zero.With(
-                    x: currentSpawn.x,
-                    z: currentSpawn.z - 2f);
-
-                enemy.MoveToPoint(placementStrategy.SetPosition(atPosition, enemy),
-                    enemy.ActivateAgent);
-
-                enemiesToAttack.Add(enemy);
-
-                await UniTask.Delay(
-                    TimeSpan.FromSeconds(delay),
-                    DelayType.DeltaTime,
-                    PlayerLoopTiming.Update,
-                    tokenSource.Token);
-            }
-
-            await UniTask.WaitUntil(() =>
-            {
-                foreach (var unit in enemiesToAttack)
-                    if (!unit.IsActive)
-                        return false;
-
-                return true;
-            });
-
-            EnemiesCreated?.Invoke(enemiesToAttack);
-        }
+        // private Ram SpawnLeader(IUnitFactory<Unit> factory)
+        // {
+        //     var leader = factory.CreateLeader(_leaderData, _ramsSpawnPoint.position);
+        //     leader.transform.SetParent(_ramsContainer);
+        //
+        //     return leader as Ram;
+        // }
     }
 }

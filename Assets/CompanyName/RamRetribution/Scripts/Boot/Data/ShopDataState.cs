@@ -9,23 +9,13 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
     [Serializable]
     public class ShopDataState : ISavable
     {
-        public List<ConfigId> OpenedRams;
-        public List<ConfigId> SelectedRams;
-        public List<SpellsId> OpenedSpells;
-        public List<SpellsId> SelectedSpells;
-        public List<SkinsId> OpenedSkins;
-        public SkinsId SelectedSkin;
-        
-        public ShopDataState()
-        {
-            OpenedRams = new List<ConfigId>();
-            SelectedRams = new List<ConfigId>();
-            OpenedSpells = new List<SpellsId>();
-            SelectedSpells = new List<SpellsId>();
-            OpenedSkins = new List<SkinsId>();
-            SelectedSkin = SkinsId.Default;
-        }
-        
+        public List<ConfigId> OpenedRams = new();
+        public List<ConfigId> SelectedRams = new();
+        public List<SpellsId> OpenedSpells = new();
+        public List<SpellsId> SelectedSpells = new();
+        public List<SkinsId> OpenedSkins = new();
+        public SkinsId SelectedSkin = SkinsId.Default;
+
         public DataNames Name => DataNames.ShopDataState;
 
         #region Skins

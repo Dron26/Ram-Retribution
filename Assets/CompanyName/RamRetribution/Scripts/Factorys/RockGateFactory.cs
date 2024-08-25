@@ -1,24 +1,34 @@
 using CompanyName.RamRetribution.Scripts.Buildings;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Factorys.Interfaces;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components.Armor;
 using CompanyName.RamRetribution.Scripts.Units.Components.Health;
+using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Factorys
 {
     public class RockGateFactory : IGateFactory
     {
-        public Gate Create(Gate instance, bool isLeft)
+        private readonly LvlCombinator _lvlCombinator;
+
+        public RockGateFactory(LvlCombinator lvlCombinator) 
+            => _lvlCombinator = lvlCombinator;
+        
+        public Gate Create(Gate instance)
         {
-            IDamageable health = CreateHealth(3000, 50);
-            instance.Init(health, isLeft);
+            IDamageable health = new Health(
+                _lvlCombinator.GetGateHealth(GateTypes.Rock),
+                new MediumArmor(
+                    _lvlCombinator.GetGateArmor(GateTypes.Rock)));
+
+            instance.Init(health);
+
+            Debug.Log($"RockGates health {health.CurrentValue} armor: {health.ArmorValue}");
             
             return instance;
-        }
-
-        private IDamageable CreateHealth(float value, int armorValue)
-        {
-            return new Health(value, new MediumArmor(armorValue));
         }
     }
 }

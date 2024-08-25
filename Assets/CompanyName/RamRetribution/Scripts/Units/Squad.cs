@@ -1,77 +1,127 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
+using CompanyName.RamRetribution.Scripts.Units.Components;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CompanyName.RamRetribution.Scripts.Units
 {
-    public class Squad
+    public class Squad<T>
+        where T : Unit
     {
         private readonly int _maxMembers;
-        private readonly List<Unit> _units;
-        
-        public Squad(int maxMembers)
+        private readonly IPlacementStrategy _placementStrategy;
+        private readonly List<T> _units;
+        private readonly List<IBuffHolder> _buffHolders;
+
+        public Squad(int maxMembers, IPlacementStrategy placementStrategy)
         {
             _maxMembers = maxMembers;
-            _units = new List<Unit>();
+            _placementStrategy = placementStrategy;
+            _units = new List<T>();
+            _buffHolders = new List<IBuffHolder>();
         }
 
-        public IReadOnlyList<Unit> Units => _units;
+        public bool IsAlive => _units.Count > 0;
+        public IReadOnlyList<T> Units => _units;
 
-        #region AddRemove
-
-        public void Add(Unit unit)
+        public void Add(T unit)
         {
             Validate(unit);
 
             _units.Add(unit);
+
+            if (unit is IBuffHolder holder)
+                _buffHolders.Add(holder);
+
             unit.Fleeing += Remove;
         }
 
-        public void Remove(Unit unit)
+        public async UniTask<bool> MoveTo(Vector3 at, CancellationToken token = default)
         {
-            if (_units == null || _units.Count <= 0)
-                return;
+            var tasks = new List<UniTask<bool>>();
 
-            if (_units.Contains(unit))
+            foreach (var unit in _units)
             {
-                if(unit is IBuffHolder holder)
-                    holder.DeactivateBuff(_units);
-                
-                _units.Remove(unit);
-            }
-            else
-                throw new ArgumentException(
-                    $"Unit {unit.Type} is not listed in squad, but you trying to delete it");
-        }
+                unit.DeactivateAgent();
+                tasks.Add(unit.MoveToPoint(at, token));
 
-        #endregion
+                await UniTask.Delay(
+                    TimeSpan.FromSeconds(1.2f),
+                    DelayType.Realtime,
+                    cancellationToken: token);
+
+                tasks.Add(unit.MoveToPoint(
+                    _placementStrategy.SetPosition(at), 
+                    token,
+                    callback: unit.ActivateAgent));
+            }
+
+            await UniTask.WhenAll(tasks).WithCancellation(token);
+            
+            /*var movePointsCountPerUnit = _units.Count * 2;
+            var tasks = new UniTask<bool>[_units.Count];
+
+            for (var i = 0; i < _units.Count; i++)
+            {
+                tasks[i] = _units[i].MoveToPoint(at);
+
+                await UniTask.Delay(
+                        TimeSpan.FromSeconds(1.2f),
+                        DelayType.Realtime)
+                    .WithCancellation(tokenSource.Token);
+            }
+
+            await UniTask.WhenAll(tasks).WithCancellation(tokenSource.Token);
+
+            foreach (var unit in _units)
+                await unit.MoveToPoint(placementStrategy.SetPosition(at, unit), callback: unit.ActivateAgent);*/
+
+            return true;
+        }
 
         public void OnComplete(int levelNumber)
-        {
-            foreach (var unit in _units)
-                if (unit is IBuffHolder holder)
-                    holder.ActivateBuff(_units,levelNumber);
-        }
+            => TryApplyBuffs(levelNumber);
 
         public void OnLevelPassed(int nextLevelNumber)
+            => TryApplyBuffs(nextLevelNumber);
+
+        private void Remove(Unit unit)
         {
-            foreach (var unit in _units)
+            if (unit is not T typedUnit || !_units.Contains(typedUnit))
+                throw new ArgumentException($"Unit {unit} is not in the squad.");
+
+            _units.Remove(typedUnit);
+
+            if (unit is IBuffHolder holder)
+                _buffHolders.Remove(holder);
+        }
+
+        private void TryApplyBuffs(int levelNumber)
+        {
+            if (_buffHolders.Count == 0)
+                return;
+
+            var units = _units.Cast<Unit>().ToList();
+
+            foreach (var holder in _buffHolders)
             {
-                if (unit is IBuffHolder holder)
-                {
-                    holder.DeactivateBuff(_units);
-                    holder.ActivateBuff(_units, nextLevelNumber);
-                }
+                holder.DeactivateBuff(units, levelNumber);
+                holder.ActivateBuff(units, levelNumber);
             }
         }
-        
-        private void Validate(Unit unit)
-        {
-            if (_units.Count > 0 && unit.Type != _units[0].Type)
-                throw new ArgumentException(
-                    $"Cannot add unit with type {unit.Type} to squad with type {_units[0].Type}");
 
-            if (_units.Count + 1 > _maxMembers || _maxMembers == 0)
+        private void Validate(T unit)
+        {
+            if (_units.Count > 0 && unit.GetType() != typeof(T))
+                throw new ArgumentException(
+                    $"Cannot add unit with type {unit} to squad with type {_units[0]}");
+
+            if (_units.Count > _maxMembers || _maxMembers == 0)
                 throw new ArgumentOutOfRangeException();
         }
     }

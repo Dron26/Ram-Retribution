@@ -5,7 +5,7 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
 {
     public interface IRamsVisitor
     {
-        public void Visit(Unit unit);
+        public void Visit(Ram unit);
         public void Visit(Leader leader);
         public void Visit(Tank tank);
         public void Visit(Attacker attacker);

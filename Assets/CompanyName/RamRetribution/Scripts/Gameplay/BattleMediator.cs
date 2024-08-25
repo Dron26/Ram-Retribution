@@ -1,47 +1,46 @@
+using System;
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Units;
+using CompanyName.RamRetribution.Scripts.Units.Enemies;
 using CompanyName.RamRetribution.Scripts.Units.Rams;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay
 {
-    public class BattleMediator
+    public class BattleMediator : IDisposable
     {
-        private readonly Dictionary<int, List<Unit>> _aliveRams = new()
+        private readonly UnitSpawner _unitSpawner;
+
+        private readonly Dictionary<int, List<Ram>> _aliveRams = new()
         {
-            { (int)PriorityTypes.Leader, new List<Unit>() },
-            { (int)PriorityTypes.Small, new List<Unit>() },
-            { (int)PriorityTypes.Medium, new List<Unit>() },
-            { (int)PriorityTypes.High, new List<Unit>() },
+            { (int)PriorityTypes.Leader, new List<Ram>() },
+            { (int)PriorityTypes.Small, new List<Ram>() },
+            { (int)PriorityTypes.Medium, new List<Ram>() },
+            { (int)PriorityTypes.High, new List<Ram>() },
         };
 
-        private readonly Dictionary<int, List<Unit>> _enemiesToAttack = new()
+        private readonly Dictionary<int, List<Enemy>> _enemies = new()
         {
-            { (int)PriorityTypes.Leader, new List<Unit>() },
-            { (int)PriorityTypes.Small, new List<Unit>() },
-            { (int)PriorityTypes.Medium, new List<Unit>() },
-            { (int)PriorityTypes.High, new List<Unit>() },
+            { (int)PriorityTypes.Small, new List<Enemy>() },
+            { (int)PriorityTypes.Medium, new List<Enemy>() },
+            { (int)PriorityTypes.High, new List<Enemy>() },
         };
 
-        private UnitSpawner _unitSpawner;
-
-        public void RegisterSpawner(UnitSpawner spawner)
+        public BattleMediator(UnitSpawner spawner)
         {
             _unitSpawner = spawner;
 
-            _unitSpawner.RamsCreated += AddRams;
-            _unitSpawner.EnemiesCreated += AddEnemies;
+            _unitSpawner.RamsCreated += OnRamsCreated;
+            _unitSpawner.EnemiesCreated += OnEnemiesCreated;
         }
 
-        public void UnRegisterSpawner()
+        public void Dispose()
         {
-            if (_unitSpawner == null) return;
-
-            _unitSpawner.RamsCreated -= AddRams;
-            _unitSpawner.EnemiesCreated -= AddEnemies;
+            _unitSpawner.RamsCreated -= OnRamsCreated;
+            _unitSpawner.EnemiesCreated -= OnEnemiesCreated;
         }
 
-        private void AddRams(Squad squad)
+        private void OnRamsCreated(Squad<Ram> squad)
         {
             foreach (var ram in squad.Units)
             {
@@ -50,15 +49,15 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             }
         }
 
-        private void AddEnemies(IReadOnlyList<Unit> enemies)
+        private void OnEnemiesCreated(Squad<Enemy> squad)
         {
-            foreach (var enemy in enemies)
+            foreach (var enemy in squad.Units)
             {
-                _enemiesToAttack[(int)enemy.Priority].Add(enemy);
+                _enemies[(int)enemy.Priority].Add(enemy);
                 enemy.Fleeing += OnEnemyFleeing;
             }
 
-            NotifyEnemies(enemies);
+            NotifyEnemies();
             NotifyRams();
         }
 
@@ -70,30 +69,31 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                     var ram = rams[index];
 
                     if (ram is not Demolisher)
-                        ram.NotifyFindTarget(_enemiesToAttack);
+                        ram.NotifyFindTarget(_enemies);
                 }
         }
 
-        private void NotifyEnemies(IReadOnlyList<Unit> enemies)
+        private void NotifyEnemies()
         {
-            for (var index = 0; index < enemies.Count; index++)
-            {
-                var enemy = enemies[index];
-                enemy.NotifyFindTarget(_aliveRams);
-            }
+            foreach (var enemies in _enemies.Values)
+                for (var index = 0; index < enemies.Count; index++)
+                {
+                    var enemy = enemies[index];
+                    enemy.NotifyFindTarget(_aliveRams);
+                }
         }
 
-        private void OnRamFleeing(Unit ram)
+        private void OnRamFleeing(Ram ram)
         {
             _aliveRams[(int)ram.Priority].Remove(ram);
             ram.Fleeing -= OnRamFleeing;
 
-            NotifyEnemies(ram.CurrentEnemies);
+            NotifyEnemies();
         }
 
-        private void OnEnemyFleeing(Unit enemy)
+        private void OnEnemyFleeing(Enemy enemy)
         {
-            _enemiesToAttack[(int)enemy.Priority].Remove(enemy);
+            _enemies[(int)enemy.Priority].Remove(enemy);
             enemy.Fleeing -= OnEnemyFleeing;
 
             NotifyRams();

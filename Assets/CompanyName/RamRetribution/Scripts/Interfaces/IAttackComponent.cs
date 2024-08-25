@@ -7,6 +7,6 @@ namespace CompanyName.RamRetribution.Scripts.Interfaces
         public ref float AttackSpeed { get; }
         public ref float Damage { get; }
         public float Distance { get; }
-        public void Attack(IDamageable damageable);
+        public void Attack(IAttackble entity);
     }
 }

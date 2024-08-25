@@ -26,7 +26,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
             /*тут ошибка!!!!*/
             Transform gateTransform = Services.LeaderTransform; //Надо получить ворота со сцены, чтобы нанести урон, Где хранится ссылка на него?
             if (gateTransform.TryGetComponent(out IAttackble target))
-                _attackComponent.Attack(target.Damageable);
+                _attackComponent.Attack(target);
         }
     }
 }

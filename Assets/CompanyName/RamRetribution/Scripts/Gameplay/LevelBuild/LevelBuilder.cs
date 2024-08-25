@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts.Buildings;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Factorys;
+using CompanyName.RamRetribution.Scripts.Factorys.Interfaces;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.Common;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using Cysharp.Threading.Tasks;
 using Generator.Scripts.Common.Enums;
@@ -19,29 +22,31 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
         private const int LevelNumberForSwitchTiles = 50;
         private const int GridsCount = 2;
 
-        private readonly GridConfigurator _gridConfigurator = new GridConfigurator(GridsCount);
-        private readonly ObjectsPool<Tile> _objectsPool;
-
+        private readonly GridConfigurator _gridConfigurator;
+        private readonly TileFactoriesContainer _factoriesContainer;
+        private readonly LvlCombinator _lvlCombinator;
+        
+        private TileObjectsPool<Tile> _tileTileObjectsPool;
         private Level _currentLevel;
         private Queue<Grid> _grids = new Queue<Grid>();
-        private TileTypes _currentTilesType;
-        private IFactory<Tile> _tileFactory;
+        private GridTypes _currentTilesFactoriesType;
         private NavMeshSurface _meshSurface;
-
-        public LevelBuilder(IFactory<Tile> factory)
+        
+        public LevelBuilder(LvlCombinator lvlCombinator, IResourceLoadService loadService, TileFactoriesContainer factoriesContainer)
         {
-            CreateSurface();
-            _objectsPool = new ObjectsPool<Tile>(factory, parent: _meshSurface.transform);
-            _objectsPool.Create(GridConstants.SizeX * GridConstants.SizeY);
-        }
-
-        public void SetFactory(TileFactory factory)
-        {
-            _tileFactory = factory;
+            _lvlCombinator = lvlCombinator;
+            
+            CreateSurface(loadService);
+            _factoriesContainer = factoriesContainer;
+            _gridConfigurator = new GridConfigurator(loadService, GridsCount);
         }
 
         public async UniTask<Level> EntryBuild(int levelNumber)
         {
+            _tileTileObjectsPool = new TileObjectsPool<Tile>(parent: _meshSurface.transform);
+            _tileTileObjectsPool.SetFactory(_factoriesContainer.GetFactory(levelNumber));
+            _tileTileObjectsPool.Create(GridConstants.SizeX * GridConstants.SizeY);
+            
             _currentLevel = new Level(levelNumber);
 
             _grids = _gridConfigurator.Get(SetGridType(levelNumber, out var gateTypes), gateTypes);
@@ -53,6 +58,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
 
         public async UniTask<Level> BuildNext(int levelNumber)
         {
+            _tileTileObjectsPool.SetFactory(_factoriesContainer.GetFactory(levelNumber));
             _currentLevel = new Level(levelNumber);
 
             if (_grids.Count < 1)
@@ -104,11 +110,10 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             Vector3 targetPosition,
             int gridSide)
         {
-            var tile = _objectsPool.Get();
+            var tile = _tileTileObjectsPool.Get();
             tile.SetType(tileType, gridSide);
             tile.transform.position = startPosition;
-
-            //var duration = Random.Range(1.5f, 2f);
+            
             var duration = Random.Range(1f, 1.3f);
             var elapsedTime = 0f;
 
@@ -120,9 +125,26 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             }
 
             tile.transform.position = targetPosition;
+            
+            if (tile.Type is TileType.WoodGate or TileType.RockGate)
+                InitGate(tile);
+            
             _currentLevel.Init(tile);
         }
 
+        private void InitGate(Tile tile)
+        {
+            IGateFactory gateFactory = tile.Type switch
+            {
+                TileType.WoodGate => new WoodGateFactory(_lvlCombinator),
+                TileType.RockGate => new RockGateFactory(_lvlCombinator),
+                _ => throw new ArgumentException()
+            };
+            
+            var instance = tile.GetComponentInChildren<Gate>();
+            gateFactory.Create(instance);
+        }
+        
         private GridTypes SetGridType(int levelNumber, out GateTypes gateTypes)
         {
             const int GroupCount = 3;
@@ -143,7 +165,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
                     gridTypes = GridTypes.Sand;
                     break;
                 case 2:
-                    gridTypes = GridTypes.Snow;
+                    gridTypes = GridTypes.Ice;
                     break;
                 default: throw new ArgumentException();
             }
@@ -155,10 +177,9 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
             return gridTypes;
         }
 
-        private void CreateSurface()
+        private void CreateSurface(IResourceLoadService loadService)
         {
-            var surfacePrefab = Services
-                .ResourceLoadService
+            var surfacePrefab = loadService
                 .Load<NavMeshSurface>($"{AssetPaths.GridData}{nameof(NavMeshSurface)}");
 
             _meshSurface = Object

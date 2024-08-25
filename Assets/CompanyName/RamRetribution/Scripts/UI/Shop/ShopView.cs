@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
 using CompanyName.RamRetribution.Scripts.Factorys;
+using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using UnityEngine;
+using Zenject;
 
 namespace CompanyName.RamRetribution.Scripts.UI.Shop
 {
@@ -19,13 +21,13 @@ namespace CompanyName.RamRetribution.Scripts.UI.Shop
         private SelectedItemChecker _selectedItemChecker;
 
         public Action<ShopItemView> ItemViewClicked;
-
-        public void Init(OpenItemChecker openItemChecker, SelectedItemChecker selectedItemChecker)
+        
+        public void Init(IResourceLoadService loadService, OpenItemChecker openItemChecker, SelectedItemChecker selectedItemChecker)
         {
             _openItemChecker = openItemChecker;
             _selectedItemChecker = selectedItemChecker;
             _itemViews = new List<ShopItemView>();
-            _itemsFactory = new ShopItemViewFactory();
+            _itemsFactory = new ShopItemViewFactory(loadService);
         }
 
         public void CreateItemViews(IReadOnlyList<ShopItem> items)

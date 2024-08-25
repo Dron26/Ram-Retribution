@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Interfaces;
+using DG.Tweening;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Buildings
 {
     public class Gate : MonoBehaviour, IAttackble
     {
+        [SerializeField] private Transform _doorTransform;
         [SerializeField] private Transform _pointsForAttackContainer;
 
-        private bool _isLeft;
+        private Animator _animator;
         private bool _isFirstAttack;
 
         public event Action<Gate> FirstAttacked;
@@ -18,20 +21,22 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
         public List<Transform> PointsForAttack { get; } = new List<Transform>();
         public bool IsActive { get; private set; }
 
+        private void Awake()
+            => _animator = GetComponent<Animator>();
+
         private void OnDestroy()
         {
             Damageable.ValueChanged -= OnValueChanged;
             Damageable.HealthEnded -= OnHealthEnded;
         }
 
-        public void Init(IDamageable damageable, bool isLeft)
+        public void Init(IDamageable damageable)
         {
             Damageable = damageable;
             Damageable.ValueChanged += OnValueChanged;
             Damageable.HealthEnded += OnHealthEnded;
 
             IsActive = true;
-            _isLeft = isLeft;
             SelfTransform = transform;
 
             var pointsCount = _pointsForAttackContainer.childCount;
@@ -42,19 +47,20 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
 
         private void OnValueChanged(float value)
         {
-            if (!_isFirstAttack)
-            {
-                FirstAttacked?.Invoke(this);
-                _isFirstAttack = true;
-            }
+            if (_isFirstAttack)
+                return;
+
+            FirstAttacked?.Invoke(this);
+            _isFirstAttack = true;
         }
 
         private void OnHealthEnded(IDamageable damageable)
         {
             damageable.HealthEnded -= OnHealthEnded;
-            
             IsActive = false;
-            gameObject.SetActive(IsActive);
+
+            var rotateVector = Vector3.zero.With(x: -90, z: 90);
+            _doorTransform.DORotate(rotateVector, 1.5f);
         }
     }
 }

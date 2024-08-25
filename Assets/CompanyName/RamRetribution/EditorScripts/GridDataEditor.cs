@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using UnityEditor;
@@ -5,7 +6,6 @@ using UnityEngine;
 
 namespace CompanyName.RamRetribution.EditorScripts
 {
-#if UNITY_EDITOR
     [CustomEditor(typeof(GridData))]
     public class GridDataEditor : Editor
     {
@@ -49,5 +49,5 @@ namespace CompanyName.RamRetribution.EditorScripts
             }
         }
     }
-#endif
 }
+#endif
