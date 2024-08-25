@@ -11,7 +11,7 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
 {
     public static class Services
     {
-        public static IDataService PrefsDataService { get; private set; }
+        public static ISaveLoadDataService PrefsSaveLoadDataService { get; private set; }
         public static IResourceLoadService ResourceLoadService { get; private set; }
         public static PauseControl PauseControl { get; private set; }
         public static GameDataBase GameDataBase { get; private set; }
@@ -23,7 +23,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         
         public static void InitProjectCtx()
         {
-            RegisterDataService();
             RegisterResourceLoadService();
             RegisterPauseControl();
             RegisterUiModel();
@@ -38,9 +37,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
         
         public static void RegisterLeader(Transform leaderTransform) 
             => LeaderTransform = leaderTransform;
-
-        private static void RegisterDataService()
-            => PrefsDataService = new PrefsDataService(new JsonSerializer());
 
         private static void RegisterResourceLoadService()
             => ResourceLoadService = new ResourceLoaderService();

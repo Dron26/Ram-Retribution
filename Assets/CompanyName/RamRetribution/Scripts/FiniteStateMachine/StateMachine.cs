@@ -11,10 +11,10 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine
         private readonly Dictionary<Type, IState> _states = new Dictionary<Type, IState>();
         private IState _currentState;
 
-        public StateMachine(GameData gameData, ShopDataState shopData, IDataService dataService)
+        public StateMachine(ISaveLoadDataService saveLoadDataService, GameData gameData, ShopDataState shopDataState, LeaderDataState leaderDataState)
         {
-            AddState(new LobbyBootstrapState(gameData, shopData, dataService));
-            AddState(new GameBootstrapState(this, gameData, dataService));
+            AddState(new LobbyBootstrapState(saveLoadDataService, gameData, shopDataState));
+            AddState(new GameBootstrapState(saveLoadDataService, gameData));
         }
 
         public void SetState<TState>()

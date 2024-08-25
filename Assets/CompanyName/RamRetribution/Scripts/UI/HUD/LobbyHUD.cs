@@ -22,7 +22,7 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
 
         private StateMachine _stateMachine;
         private Wallet _wallet;
-        private IDataService _dataService;
+        private ISaveLoadDataService _saveLoadDataService;
 
         private void OnEnable()
         {
@@ -41,12 +41,12 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
         }
 
         [Inject]
-        public void Construct(StateMachine stateMachine, Wallet wallet, IDataService dataService)
+        public void Construct(StateMachine stateMachine, Wallet wallet, ISaveLoadDataService saveLoadDataService)
         {
             _stateMachine = stateMachine;
             _wallet = wallet;
             _walletView.Init(_wallet);
-            _dataService = dataService;
+            _saveLoadDataService = saveLoadDataService;
         }
 
         private void OnPlayClicked()
@@ -61,12 +61,12 @@ namespace CompanyName.RamRetribution.Scripts.UI.HUD
 
         private void DeleteGameData()
         {
-            _dataService.Delete(DataNames.GameData.ToString());
+            _saveLoadDataService.Delete(DataNames.GameData.ToString());
         }
 
         private void DeleteShopData()
         {
-            _dataService.Delete(DataNames.ShopDataState.ToString());
+            _saveLoadDataService.Delete(DataNames.ShopDataState.ToString());
         }
     }
 }

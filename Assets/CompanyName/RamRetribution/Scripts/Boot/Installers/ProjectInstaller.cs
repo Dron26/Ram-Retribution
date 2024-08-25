@@ -6,7 +6,6 @@ using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
-using CompanyName.RamRetribution.Scripts.Units.Rams;
 using Zenject;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.Installers
@@ -30,8 +29,8 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Installers
             ISerializer serializer = new JsonSerializer();
 
             Container
-                .Bind<IDataService>()
-                .To<PrefsDataService>()
+                .Bind<ISaveLoadDataService>()
+                .To<PrefsSaveLoadDataService>()
                 .FromNew()
                 .AsSingle()
                 .WithArguments(serializer)
@@ -42,27 +41,25 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Installers
         {
             Container
                 .Bind<GameData>()
-                .FromMethod(() => Container.Resolve<IDataService>().Load<GameData>(DataNames.GameData.ToString()))
+                .FromMethod(ctx => Container
+                    .Resolve<ISaveLoadDataService>()
+                    .Load<GameData>(DataNames.GameData))
                 .AsCached()
                 .NonLazy();
 
             Container
-                .Bind<UnitConfig>()
-                .WithId(nameof(Leader))
-                .FromMethod(() => Container.Resolve<ConfigsContainer>().Get(ConfigId.Leader))
-                .AsSingle()
-                .Lazy();
-            
-            Container
                 .Bind<LeaderDataState>()
-                .FromNew()
+                .FromMethod(ctx => Container
+                    .Resolve<ISaveLoadDataService>()
+                    .Load<LeaderDataState>(DataNames.LeaderDataState))
                 .AsCached()
                 .Lazy();
-            
+
             Container
                 .Bind<ShopDataState>()
-                .FromMethod(() =>
-                    Container.Resolve<IDataService>().Load<ShopDataState>(DataNames.ShopDataState.ToString()))
+                .FromMethod(ctx => Container
+                    .Resolve<ISaveLoadDataService>()
+                    .Load<ShopDataState>(DataNames.ShopDataState))
                 .AsCached()
                 .Lazy();
         }

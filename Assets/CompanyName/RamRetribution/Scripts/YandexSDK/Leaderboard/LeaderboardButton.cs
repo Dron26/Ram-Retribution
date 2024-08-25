@@ -64,8 +64,8 @@ namespace CompanyName.RamRetribution.Scripts.YandexSDK.Leaderboard
             _view.gameObject.SetActive(true);
             Services.PauseControl.SetPauseOnUI(true);
             
-            var data = Services.PrefsDataService.Load<GameData>(
-                DataNames.GameData.ToString());
+            var data = Services.PrefsSaveLoadDataService.Load<GameData>(
+                DataNames.GameData);
             
             _leaderboard.SetPlayer(data.BrokenGates);
             _leaderboard.Fill();

@@ -22,6 +22,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         [SerializeField] private Button _unSelectionButton;
         [SerializeField] private Image _selectedText;
 
+        private ISaveLoadDataService _saveLoadDataService;
         private Wallet _wallet;
         private ShopContent _content;
         private ShopItemView _selectedView;
@@ -58,10 +59,12 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
         [Inject]
         public void Construct(
             Wallet wallet,
-            IResourceLoadService loadService,
+            ISaveLoadDataService saveLoadService,
+            IResourceLoadService resourceLoadService,
             ShopDataState shopDataState,
             ShopContent content)
         {
+            _saveLoadDataService = saveLoadService;
             _wallet = wallet;
             _shopDataState = shopDataState;
             _content = content;
@@ -71,7 +74,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
             _openItemChecker = new OpenItemChecker(shopDataState);
             _selectedItemChecker = new SelectedItemChecker(shopDataState);
 
-            _view.Init(loadService, _openItemChecker, _selectedItemChecker);
+            _view.Init(resourceLoadService, _openItemChecker, _selectedItemChecker);
             _view.ItemViewClicked += OnItemViewClicked;
 
             _content.LoadAllAssets();
@@ -154,7 +157,7 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 
                 _selectedView.Unlock();
 
-                Services.PrefsDataService.Save(_shopDataState);
+                _saveLoadDataService.Save(_shopDataState);
             }
 
             OnItemViewClicked(_selectedView);

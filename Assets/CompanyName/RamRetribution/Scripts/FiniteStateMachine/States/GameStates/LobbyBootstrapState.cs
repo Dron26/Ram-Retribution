@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Interfaces;
@@ -12,16 +13,16 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 {
     public class LobbyBootstrapState : IState
     {
+        private readonly ISaveLoadDataService _saveLoadDataService;
+        
         private readonly GameData _gameData;
         private readonly ShopDataState _shopData;
-        private readonly IDataService _dataService;
 
-        public LobbyBootstrapState(GameData gameData, ShopDataState shopData,
-            IDataService dataService)
+        public LobbyBootstrapState(ISaveLoadDataService saveLoadDataService, GameData gameData, ShopDataState shopData) 
         {
+            _saveLoadDataService = saveLoadDataService;
             _gameData = gameData;
             _shopData = shopData;
-            _dataService = dataService;
         }
 
         public void Enter()
@@ -31,8 +32,8 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
         public void Exit()
         {
-            _dataService.Save(_gameData);
-            _dataService.Save(_shopData);
+            _saveLoadDataService.Save(_gameData);
+            _saveLoadDataService.Save(_shopData);
         }
 
         private void InitSpells()

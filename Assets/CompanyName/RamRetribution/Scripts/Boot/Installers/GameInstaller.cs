@@ -1,6 +1,5 @@
 using Cinemachine;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
-using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Factorys;
 using CompanyName.RamRetribution.Scripts.Gameplay;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;

@@ -1,16 +1,19 @@
 using System.IO;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Common.Services
 {
-    public class PrefsDataService : IDataService
+    public class PrefsSaveLoadDataService : ISaveLoadDataService
     {
         private readonly ISerializer _serializer;
+        private readonly IResourceLoadService _loadService;
 
-        public PrefsDataService(ISerializer serializer)
+        public PrefsSaveLoadDataService(ISerializer serializer, IResourceLoadService loadService)
         {
             _serializer = serializer;
+            _loadService = loadService;
 
 #if !UNITY_EDITOR
             Agava.YandexGames.Utility.PlayerPrefs.Load();
@@ -32,18 +35,25 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
 #endif
         }
 
-        public TSaveable Load<TSaveable>(string name)
+        public TSaveable Load<TSaveable>(DataNames name)
             where TSaveable : ISavable, new()
         {
-            if (!IsExists(name))
-                return new TSaveable();
+            if (!IsExists(name.ToString()))
+            {
+                var savable = new TSaveable();
+                
+                if(savable is IInitializableData initializableData)
+                    initializableData.Init(_loadService);
 
+                return savable;
+            }
+            
             string json;
 
 #if !UNITY_EDITOR && UNITY_WEBGL
             json = Agava.YandexGames.Utility.PlayerPrefs.GetString(name);
 #else
-            json = PlayerPrefs.GetString(name);
+            json = PlayerPrefs.GetString(name.ToString());
 #endif
             return _serializer.Deserialize<TSaveable>(json);
         }
@@ -63,15 +73,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Services
                 Debug.LogWarning($"Data with name '{name}' does not exist, " +
                                  $"but you are trying to delete it");
             }
-        }
-
-        public void DeleteAll()
-        {
-#if !UNITY_EDITOR && UNITY_WEBGL
-            Agava.YandexGames.Utility.PlayerPrefs.DeleteAll();
-#else
-            PlayerPrefs.DeleteAll();
-#endif
         }
 
         private bool IsExists(string name)
