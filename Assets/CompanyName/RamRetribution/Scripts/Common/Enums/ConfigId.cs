@@ -12,6 +12,6 @@ namespace CompanyName.RamRetribution.Scripts.Common.Enums
         Tanky,
         LightEnemy,
         MediumEnemy,
-        HeavyEnemy
+        HeavyEnemy,
     }
 }

@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BehaviorDesigner.Runtime;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Rams;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Enemies
 {
-    public class Enemy : Unit
+    public abstract class Enemy : Unit
     {
         public new event Action<Enemy> Fleeing;
-        
+        public abstract CurrencyTypes RewardCurrency { get; }
+
         public void NotifyFindTarget(Dictionary<int, List<Ram>> targetsByPriority)
         {
             CancelToken();

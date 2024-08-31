@@ -1,5 +1,5 @@
 using CompanyName.RamRetribution.Scripts.Boot.Data;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 
 namespace CompanyName.RamRetribution.Scripts.Common.Visitors.Shop

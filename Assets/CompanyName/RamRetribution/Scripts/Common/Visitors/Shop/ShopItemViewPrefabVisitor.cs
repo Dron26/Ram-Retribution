@@ -1,4 +1,4 @@
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 

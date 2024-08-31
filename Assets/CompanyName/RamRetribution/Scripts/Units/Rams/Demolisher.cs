@@ -1,18 +1,16 @@
-using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Boot.SO;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
-    public class Demolisher : Ram, IRam
+    public class Demolisher : Ram
     {
         private readonly WaitForSeconds _coroutineDelay = new WaitForSeconds(2);
         private Coroutine _cachedCoroutine;
 
-        public override void Accept(IRamsVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
+        public override void Accept(IRamsVisitor visitor) 
+            => visitor.Visit(this);
 
         public void ActivatePassiveSkill()
         {

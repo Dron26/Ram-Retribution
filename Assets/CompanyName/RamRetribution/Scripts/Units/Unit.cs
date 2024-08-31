@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Units
 {
     [SelectionBase]
-    [RequireComponent(typeof(AIMovement))]
+    [RequireComponent(typeof(Animator))]
     public abstract class Unit : MonoBehaviour, IAttackble
     {
         public readonly List<Unit> CurrentEnemies = new();
@@ -30,7 +30,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
         public void Init(IDamageable health, IAttackComponent attackComponent, PriorityTypes priority)
         {
             _aiMovement = GetComponent<AIMovement>();
-            _animator = GetComponentInChildren<Animator>();
+            _animator = GetComponent<Animator>();
             _aiMovement.Init(_animator);
 
             SelfTransform = transform;
@@ -47,13 +47,16 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         #region BattleActions
 
-        public async UniTask<bool> MoveToPoint(Vector3 destination, CancellationToken otherToken = default,
+        public async UniTask MoveNavMeshAsync(Transform target) 
+            => await _aiMovement.NavMeshMoveAsync(target, _cancellationToken.Token);
+        
+        public async UniTask<bool> TransformMoveToPointAsync(Vector3 destination, CancellationToken otherToken = default,
             Action callback = null)
         {
-            return await _aiMovement.MoveToPoint(destination, otherToken, callback);
+            return await _aiMovement.TransformMoveToPointAsync(destination, otherToken, callback);
         }
 
-        public async UniTask Attack(IAttackble target, Transform pointForAttack = null)
+        public async UniTaskVoid Attack(IAttackble target)
         {
             while (target.IsActive)
             {
@@ -73,11 +76,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
                 }
                 else
                 {
-                    var targetToMove = pointForAttack == null
-                        ? target.SelfTransform
-                        : pointForAttack;
-
-                    await MoveTowardsAsync(targetToMove);
+                    await MoveNavMeshAsync(target.SelfTransform);
                 }
             }
         }
@@ -86,7 +85,7 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         public async UniTaskVoid FleeAsync(Vector3 to)
         {
-            var task = await MoveToPoint(to);
+            var task = await TransformMoveToPointAsync(to);
             
             if(task)
                 gameObject.SetActive(false);
@@ -106,9 +105,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         private bool CanAttack(Transform target) 
             => (target.transform.position - SelfTransform.position).sqrMagnitude <= AttackComponent.Distance;
-
-        private async UniTask MoveTowardsAsync(Transform target) 
-            => await _aiMovement.MoveTowards(target, _cancellationToken.Token);
 
         protected virtual void OnHealthEnded(IDamageable damageable)
         {

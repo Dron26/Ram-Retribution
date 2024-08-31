@@ -1,8 +1,7 @@
-using System;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameStates;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using UnityEngine;
 using UnityEngine.UI;

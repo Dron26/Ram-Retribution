@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Generator.Scripts.Level
+namespace Generator.Scripts
 {
      public class PoolTile : MonoBehaviour
     {

@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
+using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Factorys;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Variants;
+using CompanyName.RamRetribution.Scripts.Factories.Units;
+using CompanyName.RamRetribution.Scripts.Factories.Units.Variant;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using CompanyName.RamRetribution.Scripts.Units.Enemies;
@@ -16,90 +22,123 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 {
     public class UnitSpawner
     {
-        private readonly LeaderDataState _leaderData;
-        private readonly EnemyFactoriesContainer _factories;
-        private readonly List<ConfigId> _selectedRamsId;
-        
+        private readonly ConfigsContainer _configsContainer;
+        private readonly IResourceLoadService _loadService;
+
         private readonly Transform _ramsSpawnPoint;
         private readonly Transform _ramsContainer;
         private readonly Transform _enemiesContainer;
 
+        private readonly RamFactory _ramFactory;
+        private readonly Squad<Ram> _ramSquad;
+
+        private EnemyObjectsPool _enemyObjectsPool;
+        private LocationTypes _locationType = LocationTypes.None;
+
         public UnitSpawner(
-            LeaderDataState leaderDataState,
-            ShopDataState shopData,
-            EnemyFactoriesContainer factories,
+            Leader leader,
+            RamFactory ramFactory,
             Transform ramsSpawnPoint,
             Transform ramsContainer,
             Transform enemiesContainer)
         {
-            _leaderData = leaderDataState;
-            _factories = factories;
-            _selectedRamsId = shopData.SelectedRams;
-
+            _ramFactory = ramFactory;
             _ramsSpawnPoint = ramsSpawnPoint;
             _ramsContainer = ramsContainer;
             _enemiesContainer = enemiesContainer;
+
+            var placementStrategy = new RamsPlacementStrategy(new RamsPlacementVisitor(spaceBetweenMembers: 1.5f));
+            _ramSquad = new Squad<Ram>(GameConstants.MaxRamsWithoutLeader).SetPlacementStrategy(placementStrategy);
+            
+            leader.transform.SetParent(_ramsContainer);
+            _ramSquad.Add(leader);
         }
 
         public event Action<Squad<Ram>> RamsCreated;
         public event Action<Squad<Enemy>> EnemiesCreated;
 
-        public async UniTaskVoid SpawnEnemies(int levelNumber, IReadOnlyList<ConfigId> configsId, Vector3 at,
-            CancellationTokenSource tokenSource)
+        public async UniTask<bool> SpawnEnemies(int levelNumber, IReadOnlyList<ConfigId> configsId, Vector3 at,
+            CancellationToken token)
         {
-            var squad = new Squad<Enemy>(configsId.Count, new CirclePlacementStrategy(1,2));
-            var factory = _factories.Get(levelNumber);
+            TryChangeType(levelNumber);
 
-            foreach (var config in configsId)
+            var squad = new Squad<Enemy>(configsId.Count).SetPlacementStrategy(new CirclePlacementStrategy(1f,1.5f));
+
+            foreach (var id in configsId)
             {
-                var enemy = factory.Create(config, at);
-                enemy.transform.SetParent(_enemiesContainer);
-
+                var enemy = _enemyObjectsPool.Get(id);
                 squad.Add(enemy);
             }
 
             var atPosition = Vector3.zero.With(
                 x: at.x,
-                z: at.z - 2f);
-
-            //var task = await GoToPositionAsync(squad, atPosition, tokenSource);
-            var task = await squad.MoveTo(atPosition, tokenSource.Token);
+                z: at.z - 1f);
             
-            if (task)
-                EnemiesCreated?.Invoke(squad);
+            var task = await squad.MoveTo(atPosition, token);
+
+            if (!task)
+                return false;
+
+            EnemiesCreated?.Invoke(squad);
+            return true;
         }
 
-        public void SpawnRams(int levelNumber)
+        public void SpawnRams(IReadOnlyList<ConfigId> selectedRams, int levelNumber)
         {
-            var factory = new RamsFactory();
-            var squad = new Squad<Ram>(GameConstants.MaxRams, new RamsPlacementStrategy());
-            //var leader = SpawnLeader(factory);
-
-            //squad.Add(leader);
-
-            if (_selectedRamsId.Count <= 0)
+            if (selectedRams.Count <= 0)
             {
-                RamsCreated?.Invoke(squad);
+                RamsCreated?.Invoke(_ramSquad);
                 return;
             }
 
-            foreach (var id in _selectedRamsId)
+            foreach (var ram in selectedRams.Select(id => _ramFactory.CreateByConfig(id, _ramsSpawnPoint.position)))
             {
-                var ram = factory.Create(id, _ramsSpawnPoint.position);
                 ram.transform.SetParent(_ramsContainer);
-                squad.Add(ram);
+                _ramSquad.Add(ram);
             }
 
-            squad.OnComplete(levelNumber);
-            RamsCreated?.Invoke(squad);
+            _ramSquad.OnComplete(levelNumber);
+            RamsCreated?.Invoke(_ramSquad);
         }
 
-        // private Ram SpawnLeader(IUnitFactory<Unit> factory)
-        // {
-        //     var leader = factory.CreateLeader(_leaderData, _ramsSpawnPoint.position);
-        //     leader.transform.SetParent(_ramsContainer);
-        //
-        //     return leader as Ram;
-        // }
+        private void TryChangeType(int levelNumber)
+        {
+            var newLocationType = levelNumber switch
+            {
+                >= 1 and <= GameConstants.ForestLocationEndLevel
+                    => LocationTypes.Forest,
+
+                > GameConstants.ForestLocationEndLevel and <= GameConstants.SandLocationEndLevel
+                    => LocationTypes.Sand,
+
+                > GameConstants.SandLocationEndLevel and <= GameConstants.MaxLevels
+                    => LocationTypes.Ice,
+
+                _ => throw new ArgumentException()
+            };
+
+            if (newLocationType == _locationType)
+                return;
+
+            _locationType = newLocationType;
+            SetFactory();
+        }
+
+        private void SetFactory()
+        {
+            EnemyFactory enemyFactory = _locationType switch
+            {
+                LocationTypes.Forest => new ForestEnemiesFactory(_configsContainer, _loadService),
+                LocationTypes.Sand => new SandEnemiesFactory(_configsContainer, _loadService),
+                LocationTypes.Ice => new IceEnemiesFactory(_configsContainer, _loadService),
+                LocationTypes.None => throw new ArgumentException(
+                    $"You must set locationType before creating Tiles pool and factories"),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            var enemiesForEachType = GameConstants.MaxEnemiesInSquad;
+            _enemyObjectsPool = new EnemyObjectsPool(enemyFactory, container: _enemiesContainer);
+            _enemyObjectsPool.Create(enemiesForEachType);
+        }
     }
 }

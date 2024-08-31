@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Units;
-using CompanyName.RamRetribution.Scripts.Units.Rams;
 
-namespace CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces
 {
     public interface IBuffHolder
     {

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Common.Enums;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 using DG.Tweening;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
 
         public event Action<Gate> FirstAttacked;
         public IDamageable Damageable { get; private set; }
+        public GateTypes Type { get; private set; }
         public Transform SelfTransform { get; private set; }
         public List<Transform> PointsForAttack { get; } = new List<Transform>();
         public bool IsActive { get; private set; }
@@ -30,12 +32,13 @@ namespace CompanyName.RamRetribution.Scripts.Buildings
             Damageable.HealthEnded -= OnHealthEnded;
         }
 
-        public void Init(IDamageable damageable)
+        public void Init(IDamageable damageable, GateTypes type)
         {
             Damageable = damageable;
             Damageable.ValueChanged += OnValueChanged;
             Damageable.HealthEnded += OnHealthEnded;
 
+            Type = type;
             IsActive = true;
             SelfTransform = transform;
 

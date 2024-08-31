@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
-using CompanyName.RamRetribution.Scripts.Factorys;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Factories;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using UnityEngine;
-using Zenject;
 
 namespace CompanyName.RamRetribution.Scripts.UI.Shop
 {

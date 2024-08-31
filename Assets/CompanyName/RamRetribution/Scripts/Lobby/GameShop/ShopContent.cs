@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 {

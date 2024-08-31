@@ -1,20 +1,19 @@
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 {
     public class DecreaseDamage : ISpell
     {
-        private readonly LvlCombinator _lvlCombinator;
+        private readonly LevelCombinator _levelCombinator;
     
-        public DecreaseDamage(LvlCombinator lvlCombinator, Sprite spellImage)
+        public DecreaseDamage(LevelCombinator levelCombinator, Sprite spellImage)
         {
-            _lvlCombinator = lvlCombinator;
+            _levelCombinator = levelCombinator;
             Image = spellImage;
         }
 

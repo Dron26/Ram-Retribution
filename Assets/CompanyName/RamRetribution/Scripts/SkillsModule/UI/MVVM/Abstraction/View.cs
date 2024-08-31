@@ -1,5 +1,4 @@
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using UnityEngine;
 

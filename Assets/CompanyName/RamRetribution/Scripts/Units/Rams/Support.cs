@@ -1,10 +1,7 @@
-using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using System.Collections;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
-using UnityEngine;
+using CompanyName.RamRetribution.Scripts.Boot.SO;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Interfaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Rams
 {
@@ -12,11 +9,9 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
     {
         private float _percentOfHealing = 0.1f;
 
-        public override void Accept(IRamsVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
-        
+        public override void Accept(IRamsVisitor visitor) 
+            => visitor.Visit(this);
+
         public void ActivateBuff(List<Unit> units, int levelNumber)
         {
             

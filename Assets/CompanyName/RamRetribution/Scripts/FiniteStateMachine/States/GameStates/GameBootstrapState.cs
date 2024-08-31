@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Gameplay;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
+using CompanyName.RamRetribution.Scripts.FiniteStateMachine.Interfaces;
 using CompanyName.RamRetribution.Scripts.UI;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -31,11 +30,6 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
         public void Exit() 
             => _saveLoadDataService.Save(_gameData);
 
-        private void Init()
-        {
-            InitUI();
-        }
-
         private void InitUI()
         {
             var uiPrefab = Services
@@ -44,11 +38,7 @@ namespace CompanyName.RamRetribution.Scripts.FiniteStateMachine.States.GameState
 
             var gameUI = Object.Instantiate(uiPrefab);
             // var wallet = new Wallet(_gameData);
-            //
             // gameUI.Init(_stateMachine, wallet);
-
-            // _modulesContainer.Register(gameUI);
-            // _modulesContainer.Register(wallet);
         }
     }
 }

@@ -1,8 +1,9 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
+using CompanyName.RamRetribution.Scripts.Boot.SO;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Interfaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Rams
                     improvable.Improve(ref GetImprovableField(unit),
                         bonus);
 
-                Debug.Log($"Unit: {unit.name} increase {_improvableField} on {bonus}. " +
+                Debug.Log($"Unit: {unit.name} increased {_improvableField} on {bonus}. " +
                           $"Current stats: Damage {unit.AttackComponent.Damage}, AS {unit.AttackComponent.AttackSpeed}");
             }
         }

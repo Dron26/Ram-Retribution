@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.Data
 {
@@ -68,7 +68,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Data
             if (OpenedRams.Contains(configId) == false)
                 throw new ArgumentException($"Unit {configId} is not opened, but you trying to select him");
 
-            if (SelectedRams.Count >= GameConstants.MaxRams)
+            if (SelectedRams.Count >= GameConstants.MaxRamsWithoutLeader)
                 SelectedRams.RemoveAt(SelectedRams.Count - 1);
             
             SelectedRams.Add(configId);

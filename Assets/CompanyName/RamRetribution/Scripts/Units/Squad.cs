@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
+using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace CompanyName.RamRetribution.Scripts.Units
 {
@@ -14,14 +14,14 @@ namespace CompanyName.RamRetribution.Scripts.Units
         where T : Unit
     {
         private readonly int _maxMembers;
-        private readonly IPlacementStrategy _placementStrategy;
         private readonly List<T> _units;
         private readonly List<IBuffHolder> _buffHolders;
+        
+        private IPlacementStrategy _placementStrategy;
 
-        public Squad(int maxMembers, IPlacementStrategy placementStrategy)
+        public Squad(int maxMembers)
         {
             _maxMembers = maxMembers;
-            _placementStrategy = placementStrategy;
             _units = new List<T>();
             _buffHolders = new List<IBuffHolder>();
         }
@@ -31,8 +31,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
 
         public void Add(T unit)
         {
-            Validate(unit);
-
             _units.Add(unit);
 
             if (unit is IBuffHolder holder)
@@ -48,47 +46,66 @@ namespace CompanyName.RamRetribution.Scripts.Units
             foreach (var unit in _units)
             {
                 unit.DeactivateAgent();
-                tasks.Add(unit.MoveToPoint(at, token));
-
+                tasks.Add(unit.TransformMoveToPointAsync(at, token));
+                
                 await UniTask.Delay(
-                    TimeSpan.FromSeconds(1.2f),
-                    DelayType.Realtime,
+                    TimeSpan.FromSeconds(1.5f),
+                    DelayType.DeltaTime,
                     cancellationToken: token);
+            }
 
-                tasks.Add(unit.MoveToPoint(
-                    _placementStrategy.SetPosition(at), 
+            await UniTask.WhenAny(tasks).WithCancellation(token);
+            
+            tasks.Clear();
+            
+            foreach (var unit in _units)
+            {
+                tasks.Add(unit.TransformMoveToPointAsync(
+                    _placementStrategy.SetPosition(at,unit),
                     token,
                     callback: unit.ActivateAgent));
             }
 
             await UniTask.WhenAll(tasks).WithCancellation(token);
             
-            /*var movePointsCountPerUnit = _units.Count * 2;
-            var tasks = new UniTask<bool>[_units.Count];
-
-            for (var i = 0; i < _units.Count; i++)
+            /*foreach (var unit in _units)
             {
-                tasks[i] = _units[i].MoveToPoint(at);
+                unit.DeactivateAgent();
+                tasks.Add(unit.MoveToPoint(at, token));
 
                 await UniTask.Delay(
-                        TimeSpan.FromSeconds(1.2f),
-                        DelayType.Realtime)
-                    .WithCancellation(tokenSource.Token);
+                    TimeSpan.FromSeconds(1.2f),
+                    DelayType.DeltaTime,
+                    cancellationToken: token);
+
+                tasks.Add(unit.MoveToPoint(
+                    _placementStrategy.SetPosition(at,unit),
+                    token,
+                    callback: unit.ActivateAgent));
             }
 
-            await UniTask.WhenAll(tasks).WithCancellation(tokenSource.Token);
-
-            foreach (var unit in _units)
-                await unit.MoveToPoint(placementStrategy.SetPosition(at, unit), callback: unit.ActivateAgent);*/
+            await UniTask.WhenAll(tasks).WithCancellation(token);*/
 
             return true;
         }
 
+        public void Attack(IAttackble attackble)
+        {
+            foreach (var unit in _units)
+                unit.Attack(attackble).Forget();
+        }
+        
         public void OnComplete(int levelNumber)
             => TryApplyBuffs(levelNumber);
 
         public void OnLevelPassed(int nextLevelNumber)
             => TryApplyBuffs(nextLevelNumber);
+
+        public Squad<T> SetPlacementStrategy(IPlacementStrategy strategy)
+        {
+            _placementStrategy = strategy;
+            return this;
+        }
 
         private void Remove(Unit unit)
         {
@@ -113,16 +130,6 @@ namespace CompanyName.RamRetribution.Scripts.Units
                 holder.DeactivateBuff(units, levelNumber);
                 holder.ActivateBuff(units, levelNumber);
             }
-        }
-
-        private void Validate(T unit)
-        {
-            if (_units.Count > 0 && unit.GetType() != typeof(T))
-                throw new ArgumentException(
-                    $"Cannot add unit with type {unit} to squad with type {_units[0]}");
-
-            if (_units.Count > _maxMembers || _maxMembers == 0)
-                throw new ArgumentOutOfRangeException();
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
 {

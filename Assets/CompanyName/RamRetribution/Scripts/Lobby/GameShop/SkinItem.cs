@@ -1,5 +1,5 @@
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop

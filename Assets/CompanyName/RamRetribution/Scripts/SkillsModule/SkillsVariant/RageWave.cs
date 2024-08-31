@@ -1,11 +1,9 @@
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
@@ -14,7 +12,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
     {
         private readonly IAttackComponent _attackComponent;
 
-        public RageWave(float baseDamage, Sprite sprite, LvlCombinator combinator)
+        public RageWave(float baseDamage, Sprite sprite, LevelCombinator combinator)
         {
             Image = sprite;
             _attackComponent = new MagicAttack(baseDamage, combinator);

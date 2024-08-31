@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Factorys;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Factories;
+using CompanyName.RamRetribution.Scripts.FiniteStateMachine.Interfaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using UnityEngine.SceneManagement;
 

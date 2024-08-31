@@ -1,10 +1,10 @@
 using CompanyName.RamRetribution.Scripts.Boot.Data;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Boot.SO;
 using CompanyName.RamRetribution.Scripts.Common;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.FiniteStateMachine;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
 using Zenject;
 
@@ -17,10 +17,10 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Installers
             BindStateMachine();
             BindDataService();
             BindResourcesLoaderService();
+            BindData();
             BindPauseControl();
             BindWallet();
             BindConfigs();
-            BindData();
             BindGameDataBase();
         }
 
@@ -41,7 +41,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Installers
         {
             Container
                 .Bind<GameData>()
-                .FromMethod(ctx => Container
+                .FromMethod(_ => Container
                     .Resolve<ISaveLoadDataService>()
                     .Load<GameData>(DataNames.GameData))
                 .AsCached()
@@ -49,7 +49,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Installers
 
             Container
                 .Bind<LeaderDataState>()
-                .FromMethod(ctx => Container
+                .FromMethod(_ => Container
                     .Resolve<ISaveLoadDataService>()
                     .Load<LeaderDataState>(DataNames.LeaderDataState))
                 .AsCached()
@@ -57,7 +57,7 @@ namespace CompanyName.RamRetribution.Scripts.Boot.Installers
 
             Container
                 .Bind<ShopDataState>()
-                .FromMethod(ctx => Container
+                .FromMethod(_ => Container
                     .Resolve<ISaveLoadDataService>()
                     .Load<ShopDataState>(DataNames.ShopDataState))
                 .AsCached()

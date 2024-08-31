@@ -1,4 +1,5 @@
 using System;
+using CompanyName.RamRetribution.Scripts.Common.Visitors.Variants;
 using CompanyName.RamRetribution.Scripts.Units.Rams;
 using UnityEngine;
 
@@ -6,26 +7,19 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
 {
     public class RamsPlacementStrategy : IPlacementStrategy
     {
-        private readonly int _spaceBetweenMembers = 2;
-        
-        public Vector3 SetPosition(Vector3 origin)
-        {
-            /*switch (unit)
-            {
-                case Leader:
-                    return origin;
-                case Attacker:
-                    return origin + Vector3.left * _spaceBetweenMembers;
-                case Demolisher:
-                    return origin + Vector3.right * _spaceBetweenMembers;
-                case Tank:
-                    return origin + Vector3.forward * _spaceBetweenMembers;
-                case Support:
-                    return origin + Vector3.back * _spaceBetweenMembers;
-                default: throw new NotImplementedException();
-            }*/
+        private readonly RamsPlacementVisitor _ramsPlacementVisitor;
 
-            return Vector3.zero;
+        public RamsPlacementStrategy(RamsPlacementVisitor placementVisitor) 
+            => _ramsPlacementVisitor = placementVisitor;
+
+        public Vector3 SetPosition(Vector3 origin, Unit unit)
+        {
+            if (unit is not Ram ram)
+                throw new ArgumentException($"Expected unit of type 'Ram', but received '{unit.GetType().Name}'.");
+
+            _ramsPlacementVisitor.Visit(ram);
+            
+            return _ramsPlacementVisitor.Position + origin;
         }
     }
 }

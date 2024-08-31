@@ -1,37 +1,38 @@
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using UnityEngine;
 
-public class HealWave : ISpell
+namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 {
-    private LvlCombinator _lvlCombinator;
-    private const int FriendlyLayerMask = 8; // Add constants.cs for layers
-    private int _baseHealingValue;
-
-    public HealWave(LvlCombinator lvlCombinator, Sprite skillImage)
+    public class HealWave : ISpell
     {
-        _lvlCombinator = lvlCombinator;
-        Image = skillImage;
-        _baseHealingValue *= _lvlCombinator.GetHealingSpellValue();
-    }
-    public Sprite Image { get; }
+        private LevelCombinator _levelCombinator;
+        private const int FriendlyLayerMask = 8; // Add constants.cs for layers
+        private int _baseHealingValue;
 
-    public void ActivateSkill()
-    {
-        Debug.Log(" Heal SpellActivated");
-        var leaderTransform = Services.LeaderTransform;
-        var results = new Collider[9];
-        Physics.OverlapSphereNonAlloc(leaderTransform.position, 10, results, 1 << FriendlyLayerMask);
-        //Add particles and sound
-
-        foreach (var enemy in results)
+        public HealWave(LevelCombinator levelCombinator, Sprite skillImage)
         {
-            if (enemy.TryGetComponent(out IRam ram))
+            _levelCombinator = levelCombinator;
+            Image = skillImage;
+            _baseHealingValue *= _levelCombinator.GetHealingSpellValue();
+        }
+        public Sprite Image { get; }
+
+        public void ActivateSkill()
+        {
+            Debug.Log(" Heal SpellActivated");
+            var leaderTransform = Services.LeaderTransform;
+            var results = new Collider[9];
+            Physics.OverlapSphereNonAlloc(leaderTransform.position, 10, results, 1 << FriendlyLayerMask);
+            //Add particles and sound
+
+            foreach (var enemy in results)
             {
-                //ram.Heal(_baseHealingValue);
+                // if (enemy.TryGetComponent(out IRam ram))
+                // {
+                //     //ram.Heal(_baseHealingValue);
+                // }
             }
         }
     }

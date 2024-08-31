@@ -1,17 +1,17 @@
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
 {
     public class MagicAttack : IAttackComponent
     {
         private readonly float _damage;
-        private readonly LvlCombinator _lvlCombinator;
+        private readonly LevelCombinator _levelCombinator;
 
-        public MagicAttack(float baseDamage, LvlCombinator lvlCombinator)
+        public MagicAttack(float baseDamage, LevelCombinator levelCombinator)
         {
             _damage = baseDamage;
-            _lvlCombinator = lvlCombinator;
+            _levelCombinator = levelCombinator;
         }
         
         public ref float AttackSpeed 
@@ -23,7 +23,7 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
         
         public void Attack(IAttackble entity)
         {
-            entity.Damageable.TakeDamage(this, _damage * _lvlCombinator.GetSpellDamage());
+            entity.Damageable.TakeDamage(this, _damage * _levelCombinator.GetSpellDamage());
         }
     }
 }

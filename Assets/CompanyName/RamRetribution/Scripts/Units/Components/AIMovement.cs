@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Threading;
 using CompanyName.RamRetribution.Scripts.Common;
 using Cysharp.Threading.Tasks;
@@ -18,18 +17,19 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
         {
             _agent = GetComponent<NavMeshAgent>();
 
-            _agent.enabled = false;
+            //_agent.enabled = false;
             enabled = false;
         }
 
-        public void Init(Animator animator) 
+        public void Init(Animator animator)
             => _animator = animator;
 
-        public async UniTask<bool> MoveToPoint(Vector3 destination, CancellationToken cancellationToken, Action callback = null)
+        public async UniTask<bool> TransformMoveToPointAsync(Vector3 destination, CancellationToken cancellationToken,
+            Action callback = null)
         {
             _animator.SetBool(AIAnimatorParams.Run, true);
 
-            while ((destination - transform.position).sqrMagnitude > _agent.stoppingDistance + float.Epsilon)
+            while ((destination - transform.position).sqrMagnitude > _agent.stoppingDistance)
             {
                 transform.position = Vector3.MoveTowards(
                     transform.position, destination, _agent.speed * Time.deltaTime);
@@ -43,21 +43,30 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
             return !cancellationToken.IsCancellationRequested;
         }
 
-        public async UniTask MoveTowards(Transform target, CancellationToken cancellationToken)
+        //
+
+        public void TransformMoveToPoint(Vector3 destination)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position, destination, _agent.speed * Time.deltaTime);
+        }
+
+        //
+        public async UniTask NavMeshMoveAsync(Transform target, CancellationToken cancellationToken)
         {
             _agent.ResetPath();
             enabled = true;
             _animator.SetBool(AIAnimatorParams.Run, true);
 
             _agent.SetDestination(target.position);
-            
-            while ((target.position - _agent.transform.position).sqrMagnitude > _agent.stoppingDistance + float.Epsilon)
+
+            while ((target.position - _agent.transform.position).sqrMagnitude > _agent.stoppingDistance)
             {
                 _agent.SetDestination(target.position);
 
                 await UniTask.Delay(
                     TimeSpan.FromSeconds(0.5f),
-                    DelayType.Realtime, 
+                    DelayType.Realtime,
                     cancellationToken: cancellationToken);
             }
 
@@ -65,10 +74,10 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
             enabled = false;
         }
 
-        public void ActivateNavMesh() 
+        public void ActivateNavMesh()
             => _agent.enabled = true;
 
-        public void DeactivateNavMesh() 
+        public void DeactivateNavMesh()
             => _agent.enabled = false;
     }
 }

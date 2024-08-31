@@ -8,11 +8,11 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
     public class MidasHand : ISpell
     {
         private readonly Wallet _wallet;
-        private readonly LvlCombinator _lvlCombinator;
+        private readonly LevelCombinator _levelCombinator;
 
-        public MidasHand(LvlCombinator lvlCombinator, Sprite sprite)
+        public MidasHand(LevelCombinator levelCombinator, Sprite sprite)
         {
-            _lvlCombinator = lvlCombinator;
+            _levelCombinator = levelCombinator;
             Image = sprite;
         }
         public Sprite Image { get; }
@@ -20,7 +20,7 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
         public void ActivateSkill()
         {
             Debug.Log("MidasHand spell activated");
-            _lvlCombinator.AddGold();
+            _levelCombinator.AddGold();
         }
     }
 }

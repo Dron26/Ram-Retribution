@@ -5,14 +5,13 @@ using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.Common;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
+namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.Tiles
 {
     public abstract class Tile : MonoBehaviour
     {
         [SerializeField] private TilesDictionary _tilesDictionary;
         
         public TileType Type { get; private set; }
-        public int Side { get; private set; }
         
         private void Awake()
         {
@@ -43,8 +42,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
                         break;
                 }
             }
-
-            Side = side;
+            
             Type = type;
             _tilesDictionary[type][index].gameObject.SetActive(true);
         }

@@ -1,4 +1,4 @@
-using CompanyName.RamRetribution.Scripts.Factorys;
+using CompanyName.RamRetribution.Scripts.Factories;
 using Zenject;
 
 namespace CompanyName.RamRetribution.Scripts.Boot.Installers

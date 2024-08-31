@@ -1,6 +1,6 @@
 using System;
 
-namespace CompanyName.RamRetribution.Scripts.SkillsModule.Infrastructure
+namespace CompanyName.RamRetribution.Scripts.Common
 {
     public class ReactiveProperty<T>
     {

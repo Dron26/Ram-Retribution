@@ -1,7 +1,5 @@
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using UnityEngine;
 
@@ -13,10 +11,10 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 
         private const int FriendlyLayerMask = 8; // Add constants.cs for layers
 
-        public IncreaseAllyDamage(LvlCombinator lvlCombinator, Sprite image)
+        public IncreaseAllyDamage(LevelCombinator levelCombinator, Sprite image)
         {
             Image = image;
-            _bonusValue *= lvlCombinator.GetIncreaseDamageCoeficient();
+            _bonusValue *= levelCombinator.GetIncreaseDamageCoeficient();
 
         }
         public Sprite Image { get; }
@@ -36,10 +34,10 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
 
             foreach (var enemy in results)
             {
-                if (enemy.TryGetComponent(out IRam ram))
-                {
-                    //ram.IncreseDamageValue; (Надо найти интерфейс или класс, через который можно на время увеличить урон Unit(Баранам)
-                }
+                // if (enemy.TryGetComponent(out IRam ram))
+                // {
+                //     //ram.IncreseDamageValue; (Надо найти интерфейс или класс, через который можно на время увеличить урон Unit(Баранам)
+                // }
             }
         }
     }

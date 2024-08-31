@@ -1,190 +1,33 @@
-using System;
-using System.Collections.Generic;
-using CompanyName.RamRetribution.Scripts.Buildings;
 using CompanyName.RamRetribution.Scripts.Common;
-using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Common.Services;
-using CompanyName.RamRetribution.Scripts.Factorys;
-using CompanyName.RamRetribution.Scripts.Factorys.Interfaces;
-using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.Common;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.ReworkLevelBuild_GridConfigurator;
 using Cysharp.Threading.Tasks;
-using Generator.Scripts.Common.Enums;
-using Unity.AI.Navigation;
 using UnityEngine;
-using Object = UnityEngine.Object;
-using Random = UnityEngine.Random;
 
 namespace CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild
 {
     public class LevelBuilder
     {
-        private const int LevelNumberForSwitchTiles = 50;
-        private const int GridsCount = 2;
-
         private readonly GridConfigurator _gridConfigurator;
-        private readonly TileFactoriesContainer _factoriesContainer;
-        private readonly LvlCombinator _lvlCombinator;
-        
-        private TileObjectsPool<Tile> _tileTileObjectsPool;
+
         private Level _currentLevel;
-        private Queue<Grid> _grids = new Queue<Grid>();
-        private GridTypes _currentTilesFactoriesType;
-        private NavMeshSurface _meshSurface;
-        
-        public LevelBuilder(LvlCombinator lvlCombinator, IResourceLoadService loadService, TileFactoriesContainer factoriesContainer)
+        private Vector3 _startBuildPosition;
+
+        public LevelBuilder(GridConfigurator gridConfigurator)
         {
-            _lvlCombinator = lvlCombinator;
-            
-            CreateSurface(loadService);
-            _factoriesContainer = factoriesContainer;
-            _gridConfigurator = new GridConfigurator(loadService, GridsCount);
+            _gridConfigurator = gridConfigurator;
+            _startBuildPosition = Vector3.zero;
         }
 
-        public async UniTask<Level> EntryBuild(int levelNumber)
+        public async UniTask<Level> Build(int levelNumber)
         {
-            _tileTileObjectsPool = new TileObjectsPool<Tile>(parent: _meshSurface.transform);
-            _tileTileObjectsPool.SetFactory(_factoriesContainer.GetFactory(levelNumber));
-            _tileTileObjectsPool.Create(GridConstants.SizeX * GridConstants.SizeY);
-            
-            _currentLevel = new Level(levelNumber);
+            var grid = await _gridConfigurator.CreateAsync(levelNumber, _startBuildPosition);
 
-            _grids = _gridConfigurator.Get(SetGridType(levelNumber, out var gateTypes), gateTypes);
-
-            await AnimateTilesFall(_grids.Dequeue(), Vector3.zero);
+            _currentLevel = new Level(levelNumber, grid);
             
+            _startBuildPosition = Vector3.zero
+                .With(z: GridConstants.SizeY * GridConstants.StepBetweenTiles);
+
             return _currentLevel;
-        }
-
-        public async UniTask<Level> BuildNext(int levelNumber)
-        {
-            _tileTileObjectsPool.SetFactory(_factoriesContainer.GetFactory(levelNumber));
-            _currentLevel = new Level(levelNumber);
-
-            if (_grids.Count < 1)
-                _gridConfigurator.Get(SetGridType(levelNumber, out var gateTypes), gateTypes);
-
-            await AnimateTilesFall(
-                _grids.Dequeue(),
-                Vector3.zero
-                    .With(x: 0, z: GridConstants.SizeY * GridConstants.StepBetweenTiles));
-            
-            return _currentLevel;
-        }
-        
-        private async UniTask AnimateTilesFall(Grid grid, Vector3 gridStart)
-        {
-            for (var y = 0; y < GridConstants.SizeY; y++)
-            {
-                var isOdd = y % 2 == 0;
-                var startX = isOdd ? 0 : GridConstants.SizeX - 1;
-                var endX = isOdd ? GridConstants.SizeX : -1;
-                var step = isOdd ? 1 : -1;
-
-                for (var x = startX; x != endX; x += step)
-                {
-                    var targetPosition = gridStart + Vector3.zero.With(
-                        x: x * GridConstants.StepBetweenTiles,
-                        z: y * GridConstants.StepBetweenTiles);
-
-                    var startPosition = gridStart + Vector3.zero.With(
-                        x: targetPosition.x,
-                        y: Random.Range(3, 7),
-                        z: targetPosition.z);
-
-                    var gridSide = x < GridConstants.SizeX / 2
-                        ? GridConstants.LeftSide
-                        : GridConstants.RightSide;
-
-                    await MoveTileToPosition(grid.Tiles[x, y], startPosition, targetPosition, gridSide);
-                }
-            }
-
-            _meshSurface.RemoveData();
-            _meshSurface.BuildNavMesh();
-        }
-
-        private async UniTask MoveTileToPosition(
-            TileType tileType,
-            Vector3 startPosition,
-            Vector3 targetPosition,
-            int gridSide)
-        {
-            var tile = _tileTileObjectsPool.Get();
-            tile.SetType(tileType, gridSide);
-            tile.transform.position = startPosition;
-            
-            var duration = Random.Range(1f, 1.3f);
-            var elapsedTime = 0f;
-
-            while (elapsedTime < duration)
-            {
-                tile.transform.position = Vector3.Lerp(startPosition, targetPosition, (elapsedTime / duration));
-                elapsedTime += Time.deltaTime;
-                await UniTask.Yield();
-            }
-
-            tile.transform.position = targetPosition;
-            
-            if (tile.Type is TileType.WoodGate or TileType.RockGate)
-                InitGate(tile);
-            
-            _currentLevel.Init(tile);
-        }
-
-        private void InitGate(Tile tile)
-        {
-            IGateFactory gateFactory = tile.Type switch
-            {
-                TileType.WoodGate => new WoodGateFactory(_lvlCombinator),
-                TileType.RockGate => new RockGateFactory(_lvlCombinator),
-                _ => throw new ArgumentException()
-            };
-            
-            var instance = tile.GetComponentInChildren<Gate>();
-            gateFactory.Create(instance);
-        }
-        
-        private GridTypes SetGridType(int levelNumber, out GateTypes gateTypes)
-        {
-            const int GroupCount = 3;
-            const int WoodChance = 60;
-
-            var levelIndexFromZero = levelNumber - 1;
-            var groupNumber = levelIndexFromZero / LevelNumberForSwitchTiles;
-            var gateTypeChance = Random.Range(0, 100);
-
-            GridTypes gridTypes;
-
-            switch (groupNumber % GroupCount)
-            {
-                case 0:
-                    gridTypes = GridTypes.Forest;
-                    break;
-                case 1:
-                    gridTypes = GridTypes.Sand;
-                    break;
-                case 2:
-                    gridTypes = GridTypes.Ice;
-                    break;
-                default: throw new ArgumentException();
-            }
-
-            gateTypes = gateTypeChance <= WoodChance
-                ? GateTypes.Wood
-                : GateTypes.Rock;
-
-            return gridTypes;
-        }
-
-        private void CreateSurface(IResourceLoadService loadService)
-        {
-            var surfacePrefab = loadService
-                .Load<NavMeshSurface>($"{AssetPaths.GridData}{nameof(NavMeshSurface)}");
-
-            _meshSurface = Object
-                .Instantiate(surfacePrefab)
-                .GetComponent<NavMeshSurface>();
         }
     }
 }

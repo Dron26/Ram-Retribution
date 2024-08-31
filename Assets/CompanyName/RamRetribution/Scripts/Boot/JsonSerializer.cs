@@ -1,4 +1,4 @@
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.Boot

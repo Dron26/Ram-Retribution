@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Lobby.GameShop;
+using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.ReworkLevelBuild_GridConfigurator;
 using CompanyName.RamRetribution.Scripts.Units;
 using CompanyName.RamRetribution.Scripts.Units.Enemies;
 using CompanyName.RamRetribution.Scripts.Units.Rams;
@@ -19,44 +20,41 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
 
         private readonly LevelBuilder _levelBuilder;
         private readonly UnitSpawner _unitSpawner;
-        private readonly LvlCombinator _lvlCombinator;
-        private readonly Wallet _wallet;
 
         private Squad<Ram> _rams;
         private Squad<Enemy> _enemies;
         private Level _currentLevel;
 
-        private CancellationTokenSource _tokenSource;
+        private CancellationTokenSource _tokenSource = new CancellationTokenSource();
 
-        public Game(Wallet wallet, UnitSpawner spawner, LevelBuilder levelBuilder, LvlCombinator lvlCombinator)
+        public Game(UnitSpawner spawner, IResourceLoadService loadService, LevelCombinator levelCombinator)
         {
-            _wallet = wallet;
             _unitSpawner = spawner;
-            _levelBuilder = levelBuilder;
-            _lvlCombinator = lvlCombinator;
+            levelCombinator.SubscribeOnGameEvents(this);
+            
+            _levelBuilder = new LevelBuilder(new GridConfigurator(loadService, levelCombinator));
         }
 
         public event Action<int> LevelStarting;
+        public event Action<Enemy> EnemyDefeated;
+        public event Action<GateTypes> GatesDestroyed;
 
-        public async UniTask StartAsync(int levelNumber)
+        public async UniTaskVoid StartAsync(IReadOnlyList<ConfigId> selectedRams, int levelNumber)
         {
-            _tokenSource = new CancellationTokenSource();
-
             LevelStarting?.Invoke(levelNumber);
-            _lvlCombinator.OnLevelStarting(levelNumber);
-
-            _currentLevel = await _levelBuilder.EntryBuild(levelNumber);
+            
+            _currentLevel = await _levelBuilder.Build(levelNumber);
             _currentLevel.GatesDestroyed += OnGatesDestroyedAsync;
 
             _unitSpawner.RamsCreated += OnRamsCreatedAsync;
             _unitSpawner.EnemiesCreated += OnEnemiesCreated;
 
-            _unitSpawner.SpawnRams(levelNumber);
+            _unitSpawner.SpawnRams(selectedRams, levelNumber);
         }
 
         private async UniTaskVoid HandleBattleAsync()
         {
-            NotifyRamsAttackGate();
+            NotifyRamsAttackGate().Forget();
 
             await UniTask.WaitUntil(() => _currentLevel.IsGateAttackedFirst);
 
@@ -65,46 +63,40 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
                 await UniTask.Delay(TimeSpan.FromSeconds(DelayForSpawn), DelayType.Realtime)
                     .WithCancellation(_tokenSource.Token);
 
-                await SpawnEnemiesAsync()
-                    .WithCancellation(_tokenSource.Token);
+                SpawnEnemiesAsync().Forget();
 
                 await UniTask.WaitUntil(() => !_enemies.IsAlive)
                     .WithCancellation(_tokenSource.Token);
 
-                NotifyRamsAttackGate();
+                NotifyRamsAttackGate().Forget();
             }
         }
 
-        private async UniTask MoveRamsToStartPositionAsync(IReadOnlyList<Vector3> destinations)
-        {
-            //var tasks = new UniTask<bool>[_rams.Units.Count];
+        private async UniTask MoveRamsToStartPositionAsync(IReadOnlyList<Vector3> destinations) 
+            => await _rams.MoveTo(destinations[Random.Range(0, destinations.Count)]);
 
-            await _rams.MoveTo(destinations[Random.Range(0, destinations.Count)]);
-            
-            // for (var i = 0; i < _rams.Units.Count; i++)
-            // {
-            //     tasks[i] = _rams.Units[i].MoveToPoint(destinations[Random.Range(0, destinations.Count)],
-            //         callback: _rams.Units[i].ActivateAgent);
-            // }
-            //
-            // await UniTask.WhenAll(tasks);
-        }
-
-        private async UniTask SpawnEnemiesAsync()
+        private async UniTaskVoid SpawnEnemiesAsync()
         {
-            _unitSpawner.SpawnEnemies(_currentLevel.Number,
+           var isSpawned = await _unitSpawner.SpawnEnemies(_currentLevel.Number,
                 _currentLevel.GetEnemies(),
-                _currentLevel.EnemySpawnPoint,
-                _tokenSource).Forget();
+                _currentLevel.EnemiesSpawnPoint,
+                _tokenSource.Token);
 
-            await UniTask.WaitUntil(() => _enemies.IsAlive);
+           if (!isSpawned)
+               throw new Exception($"Something wrong with enemies spawn");
         }
 
-        private void NotifyRamsAttackGate()
+        private async UniTaskVoid NotifyRamsAttackGate()
         {
-            for (var i = 0; i < _rams.Units.Count; i++)
-                _rams.Units[i].Attack(_currentLevel.GetGateToAttack(), _currentLevel.GateAttackPoints[i]).Forget();
+            var tasks = new List<UniTask>();
+
+            foreach (var ram in _rams.Units)
+                tasks.Add(ram.MoveNavMeshAsync(_currentLevel.GetGateToAttack().transform));
+
+            await UniTask.WhenAll(tasks);
         }
+
+        #region EventHandlers
 
         private async void OnRamsCreatedAsync(Squad<Ram> squad)
         {
@@ -147,28 +139,31 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             enemy.FleeAsync(
                 _currentLevel.EntryTilesPositions[Random.Range(0, _currentLevel.EntryTilesPositions.Count)]).Forget();
 
-            _wallet.Add(CurrencyTypes.Money, _lvlCombinator.GetGoldForUnit());
+            EnemyDefeated?.Invoke(enemy);
         }
 
-        private async void OnGatesDestroyedAsync()
+        private async void OnGatesDestroyedAsync(GateTypes gateType)
         {
             _currentLevel.GatesDestroyed -= OnGatesDestroyedAsync;
 
             CancelToken();
             PutAwayEnemies();
-            _wallet.Add(CurrencyTypes.Money, _lvlCombinator.GetGoldForGate());
+            GatesDestroyed?.Invoke(gateType);
 
             var nextLevelNumber = _currentLevel.Number + 1;
-            _currentLevel = await _levelBuilder.BuildNext(nextLevelNumber);
+            LevelStarting?.Invoke(nextLevelNumber);
+            _currentLevel = await _levelBuilder.Build(nextLevelNumber);
 
             _rams.OnLevelPassed(nextLevelNumber);
-            LevelStarting?.Invoke(nextLevelNumber);
-            _lvlCombinator.OnLevelStarting(nextLevelNumber);
 
             await MoveRamsToStartPositionAsync(_currentLevel.EntryTilesPositions);
 
             HandleBattleAsync().Forget();
         }
+
+        #endregion
+
+        #region CommonActions
 
         private void PutAwayEnemies()
         {
@@ -185,5 +180,7 @@ namespace CompanyName.RamRetribution.Scripts.Gameplay
             _tokenSource.Dispose();
             _tokenSource = new CancellationTokenSource();
         }
+
+        #endregion
     }
 }

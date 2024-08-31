@@ -1,9 +1,8 @@
 using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.SkillsModule.Intefaces;
 using CompanyName.RamRetribution.Scripts.SkillsModule.Interfaces;
 using CompanyName.RamRetribution.Scripts.Units.Components.Attack;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 using UnityEngine;
 
 namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
@@ -12,10 +11,10 @@ namespace CompanyName.RamRetribution.Scripts.SkillsModule.SkillsVariant
     {
         private readonly IAttackComponent _attackComponent;
 
-        public GateDemolish(float baseDamage ,Sprite image, LvlCombinator lvlCombinator)
+        public GateDemolish(float baseDamage ,Sprite image, LevelCombinator levelCombinator)
         {
             Image = image;
-            _attackComponent = new MagicAttack(baseDamage, lvlCombinator);
+            _attackComponent = new MagicAttack(baseDamage, levelCombinator);
         }
     
         public Sprite Image { get; }

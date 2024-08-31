@@ -1,96 +1,106 @@
 using Cinemachine;
 using CompanyName.RamRetribution.Scripts.Boot.Data;
-using CompanyName.RamRetribution.Scripts.Factorys;
+using CompanyName.RamRetribution.Scripts.Boot.SO;
+using CompanyName.RamRetribution.Scripts.Common;
+using CompanyName.RamRetribution.Scripts.Factories.Units;
 using CompanyName.RamRetribution.Scripts.Gameplay;
 using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild;
-using CompanyName.RamRetribution.Scripts.Gameplay.LevelBuild.Common;
-using CompanyName.RamRetribution.Scripts.Interfaces;
-using CompanyName.RamRetribution.Scripts.Units.Enemies;
+using CompanyName.RamRetribution.Scripts.Units.Rams;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
-public class GameInstaller : MonoInstaller
+namespace CompanyName.RamRetribution.Scripts.Boot.Installers
 {
-    [SerializeField] private CinemachineVirtualCamera _virtualCamera;
-
-    [SerializeField] private Transform _ramsSpawnPoint;
-    [SerializeField] private Transform _ramsContainer;
-    [SerializeField] private Transform _enemiesContainer;
-
-    public override void InstallBindings()
+    public class GameInstaller : MonoInstaller
     {
-        BindLvlCombinator();
-        BindGame();
-        BindUnitSpawner();
-        //BindBattleMediator();
-        BindLevelBuilder();
-        BindCamera();
+        [SerializeField] private CinemachineVirtualCamera _virtualCamera;
 
-        Container.BindInterfacesTo<BattleMediator>().AsSingle();
-    }
+        [SerializeField] private Transform _ramsSpawnPoint;
+        [SerializeField] private Transform _ramsContainer;
+        [SerializeField] private Transform _enemiesContainer;
 
-    public override void Start()
-    {
-        var lvlNumber = Container.Resolve<GameData>().GetLastPassedLevelIndex();
+        public override void InstallBindings()
+        {
+            Container.BindInterfacesAndSelfTo<BattleMediator>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelCombinator>().AsSingle();
 
-        Container.Resolve<Game>().StartAsync(lvlNumber).Forget();
-    }
+            BindGame();
+            BindBuffsContainer();
+            BindRamFactory();
+            BindLeader();
+            BindUnitSpawner();
+            BindCamera();
+        }
 
-    private void BindGame()
-    {
-        Container
-            .Bind<Game>()
-            .FromNew()
-            .AsSingle()
-            .NonLazy();
-    }
+        public override void Start()
+        {
+            var lvlNumber = Container.Resolve<GameData>().GetLastPassedLevelIndex();
+            var selectedRams = Container.Resolve<ShopDataState>().SelectedRams;
 
-    private void BindUnitSpawner()
-    {
-        IUnitFactory<Enemy> forestEnemiesFactory = Container.Instantiate<ForestEnemiesFactory>();
+            Container.Resolve<Game>().StartAsync(selectedRams, lvlNumber).Forget();
+        }
 
-        Container
-            .Bind<UnitSpawner>()
-            .FromNew()
-            .AsSingle()
-            .WithArguments(
-                new EnemyFactoriesContainer(forestEnemiesFactory), 
-                _ramsSpawnPoint, 
-                _ramsContainer,
-                _enemiesContainer)
-            .Lazy();
-    }
+        private void BindGame()
+        {
+            Container
+                .Bind<Game>()
+                .FromNew()
+                .AsSingle()
+                .NonLazy();
+        }
 
-    private void BindLevelBuilder()
-    {
-        ITileFactory<Tile> forestTileFactory = Container.Instantiate<ForestTileFactory>();
-        ITileFactory<Tile> sandTileFactory = Container.Instantiate<SandTileFactory>();
-        ITileFactory<Tile> iceTileFactory = Container.Instantiate<IceTileFactory>();
+        private void BindRamFactory()
+        {
+            Container
+                .Bind<RamFactory>()
+                .FromNew()
+                .AsSingle()
+                .Lazy();
+        }
 
-        Container
-            .Bind<LevelBuilder>()
-            .FromNew()
-            .AsSingle()
-            .WithArguments(new TileFactoriesContainer(forestTileFactory, sandTileFactory, iceTileFactory))
-            .Lazy();
-    }
+        private void BindBuffsContainer()
+        {
+            Container
+                .Bind<BuffsContainer>()
+                .FromResource($"{AssetPaths.Configs}{nameof(BuffsContainer)}")
+                .AsSingle()
+                .Lazy();
+        }
+        
+        private void BindLeader()
+        {
+            Container
+                .Bind<Leader>()
+                .FromMethod(CreateLeader)
+                .AsSingle()
+                .Lazy();
+        }
 
-    private void BindLvlCombinator()
-    {
-        Container
-            .Bind<LvlCombinator>()
-            .FromNew()
-            .AsCached()
-            .Lazy();
-    }
+        private void BindUnitSpawner()
+        {
+            Container
+                .Bind<UnitSpawner>()
+                .FromNew()
+                .AsSingle()
+                .WithArguments(_ramsSpawnPoint, _ramsContainer, _enemiesContainer)
+                .Lazy();
+        }
 
-    private void BindCamera()
-    {
-        Container
-            .Bind<CinemachineVirtualCamera>()
-            .FromInstance(_virtualCamera)
-            .AsCached()
-            .NonLazy();
+        private void BindCamera()
+        {
+            Container
+                .Bind<CinemachineVirtualCamera>()
+                .FromInstance(_virtualCamera)
+                .AsCached()
+                .NonLazy();
+        }
+
+        private Leader CreateLeader(InjectContext ctx)
+        {
+            return Container
+                .Resolve<RamFactory>()
+                .CreateLeader(Container.Resolve<LeaderDataState>(), _ramsSpawnPoint.position);
+        }
     }
 }

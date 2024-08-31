@@ -1,8 +1,7 @@
 using CompanyName.RamRetribution.Scripts.Boot.Data;
+using CompanyName.RamRetribution.Scripts.Boot.Data.Interfaces;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Common.Services;
 using CompanyName.RamRetribution.Scripts.Common.Visitors.Shop;
-using CompanyName.RamRetribution.Scripts.Interfaces;
 using CompanyName.RamRetribution.Scripts.UI.Shop;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +13,8 @@ namespace CompanyName.RamRetribution.Scripts.Lobby.GameShop
     {
         [SerializeField] private ShopView _view;
 
-        [Header("Buttons")] [SerializeField] private CategoryButton _skinsButton;
+        [Header("Buttons")] 
+        [SerializeField] private CategoryButton _skinsButton;
         [SerializeField] private CategoryButton _ramsButton;
         [SerializeField] private CategoryButton _spellsButton;
         [SerializeField] private BuyButton _buyButton;

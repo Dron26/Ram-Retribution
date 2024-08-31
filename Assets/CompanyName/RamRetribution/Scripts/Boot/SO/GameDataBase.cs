@@ -20,15 +20,18 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
         public int RockGateBaseArmor;
         
         [Header("Gold configuration")]
-        public int BaseGoldPerUnit;
-        public int BaseGoldPerGate;
+        public int BaseGoldPerLightEnemy;
+        [FormerlySerializedAs("BaseGoldPerMediunEnemy")] public int BaseGoldPerMediumEnemy;
+        public int BaseGoldPerHeavyEnemy; 
+        public int BaseGoldPerWoodGate;
+        public int BaseGoldPerRockGate;
 
         [Header("Unit Curves")]
         public CurveStructure UnitHealthCurve;
         public CurveStructure UnitDamageCurve;
-        public CurveStructure GoldPerUnitCurve;
+        public CurveStructure GoldPerEnemyCurve;
 
-        [Header("Gate Curves")] 
+        [Header("Gate stats Curves")] 
         public CurveStructure GateHealthCurve;
         public CurveStructure GateArmorCurve;
         

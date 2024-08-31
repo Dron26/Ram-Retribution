@@ -1,5 +1,4 @@
-using CompanyName.RamRetribution.Scripts.Common.Enums;
-using CompanyName.RamRetribution.Scripts.Interfaces;
+using CompanyName.RamRetribution.Scripts.Units.Components.Interfaces;
 
 namespace CompanyName.RamRetribution.Scripts.Units.Components.Attack
 {

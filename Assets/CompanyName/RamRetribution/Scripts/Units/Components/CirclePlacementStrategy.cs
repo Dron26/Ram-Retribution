@@ -1,3 +1,4 @@
+using System;
 using CompanyName.RamRetribution.Scripts.Common;
 using UnityEngine;
 
@@ -14,8 +15,12 @@ namespace CompanyName.RamRetribution.Scripts.Units.Components
             _maxRadius = maxRadius;
         }
         
-        public Vector3 SetPosition(Vector3 origin)
+        public Vector3 SetPosition(Vector3 origin, Unit unit = null)
         {
+            if (unit != null)
+                throw new ArgumentException($"{GetType().Name} does not support placing units. " +
+                                            "Please provide a null value for the unit parameter.");
+            
             return origin.RandomPointInCircle(_minRadius, _maxRadius);
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CompanyName.RamRetribution.Scripts.Common.Enums;
 using UnityEngine;
 
@@ -12,9 +13,8 @@ namespace CompanyName.RamRetribution.Scripts.Boot.SO
     
         public UnitConfig Get(ConfigId id)
         {
-            for (var i = 0; i < _unitConfigs.Count; i++)
-                if (_unitConfigs[i].Id == id)
-                    return _unitConfigs[i];
+            foreach (var config in _unitConfigs.Where(config => config.Id == id))
+                return config;
 
             throw new ArgumentException($"There is no unit config with id: {id}");
         }
